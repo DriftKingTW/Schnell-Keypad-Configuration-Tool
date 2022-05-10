@@ -265,7 +265,7 @@ initializeLayout();
     </div>
     <div id="output" class="flex justify-center">
       <div class="">
-        <label for="">Output JSON Config:</label>
+        <label for="">Output JSON Config</label>
         <hr />
         {{ outputJsonString }}
       </div>
