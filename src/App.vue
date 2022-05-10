@@ -93,8 +93,8 @@ const initializeLayout = () => {
   layout[2][0].keySize = "w-1.5u";
   layout[3][0].keySize = "w-1.5u";
   layout[4][0].keySize = "w-1.5u";
-  layout[1][6].keySize = "h-2u";
-  layout[3][6].keySize = "h-2u";
+  // layout[1][6].keySize = "h-2u";
+  // layout[3][6].keySize = "h-2u";
   layout[4][4].keySize = "w-2u";
   layout[4][1].keySize = "w-1.5u";
   layout[4][2].keySize = "w-1.5u";
@@ -204,64 +204,101 @@ initializeLayout();
 </script>
 
 <template>
-  <label for="title">Layout Title</label>
-  <input
-    type="text"
-    name="title"
-    v-model="title"
-    class="border-solid border-2 my-2 ml-2"
-    @keyup="updateOutputData"
-  />
-  <input
-    type="button"
-    name="export"
-    value="Export"
-    class="btn border-solid border-2 my-2 ml-2"
-    @click="exportJsonConfig"
-  />
-  <input
-    type="button"
-    name="reset"
-    value="Reset"
-    class="btn border-solid border-2 my-2 ml-2"
-    @click="initializeLayout"
-  />
-  <br />
-  <div @keydown.prevent="updateKey($event)">
-    <template v-for="(_, row) in layout">
-      <template v-for="(key, col) in layout[row]">
+  <div class="container mx-auto">
+    <div id="toolbar" class="flex justify-center">
+      <div>
+        <label for="title">Layout Title</label>
         <input
-          v-if="!key.dummy"
-          type="button"
-          :value="key.dummy ? 'DUMMY' : key.keyInfo"
-          :disabled="key.dummy"
-          class="btn key-btn"
-          :class="{
-            'key-btn-active': key.active,
-            'key-btn-dummy': key.dummy,
-            'key-1u': key.keySize === '1u',
-            'key-w-1-25u': key.keySize === 'w-1.25u',
-            'key-w-1-5u': key.keySize === 'w-1.5u',
-            'key-w-2u': key.keySize === 'w-2u',
-            'key-h-1-25u': key.keySize === 'h-1.25u',
-            'key-h-1-5u': key.keySize === 'h-1.5u',
-            'key-h-2u': key.keySize === 'h-2u',
-          }"
-          @click="toggleActive(row, col)"
+          type="text"
+          name="title"
+          v-model="title"
+          class="input"
+          @keyup="updateOutputData"
         />
-      </template>
-      <br />
-    </template>
-  </div>
-  <div>
-    Output JSON Config:
-    <hr />
-    {{ outputJsonString }}
+        <input
+          type="button"
+          name="export"
+          value="Export"
+          class="btn btn-export"
+          @click="exportJsonConfig"
+        />
+        <input
+          type="button"
+          name="reset"
+          value="Reset"
+          class="btn btn-reset"
+          @click="initializeLayout"
+        />
+      </div>
+    </div>
+    <div
+      id="keymap"
+      class="flex justify-center"
+      @keydown.prevent="updateKey($event)"
+    >
+      <div>
+        <template v-for="(_, row) in layout">
+          <template v-for="(key, col) in layout[row]">
+            <input
+              v-if="!key.dummy"
+              type="button"
+              :value="key.dummy ? 'DUMMY' : key.keyInfo"
+              :disabled="key.dummy"
+              class="key-btn"
+              :class="{
+                'key-btn-active': key.active,
+                'key-btn-dummy': key.dummy,
+                'key-1u': key.keySize === '1u',
+                'key-w-1-25u': key.keySize === 'w-1.25u',
+                'key-w-1-5u': key.keySize === 'w-1.5u',
+                'key-w-2u': key.keySize === 'w-2u',
+                'key-h-1-25u': key.keySize === 'h-1.25u',
+                'key-h-1-5u': key.keySize === 'h-1.5u',
+                'key-h-2u': key.keySize === 'h-2u',
+              }"
+              @click="toggleActive(row, col)"
+            />
+          </template>
+          <br />
+        </template>
+      </div>
+    </div>
+    <div id="output" class="flex justify-center">
+      <div class="">
+        <label for="">Output JSON Config:</label>
+        <hr />
+        {{ outputJsonString }}
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-.btn:focus {
+label {
+  @apply mx-4 text-slate-600;
+}
+
+.input {
+  @apply border-solid border-2 py-1 px-2 ml-2 m-1;
+}
+
+.btn {
+  @apply rounded px-4 py-1 mx-1 cursor-pointer;
+}
+
+.btn-export {
+  @apply bg-lime-600 text-white
+  hover:bg-lime-700
+  active:bg-lime-800;
+}
+
+.btn-reset {
+  @apply bg-gray-200 text-slate-600
+  hover:bg-gray-300
+  active:bg-gray-400;
+}
+
+.key-btn:focus {
   outline: none;
   box-shadow: none;
 }
