@@ -179,6 +179,10 @@ const updateOutputData = () => {
   outputJsonString.value = JSON.stringify(configJsonArray);
 };
 
+/**
+ * Export and download JSON config file
+ *
+ */
 const exportJsonConfig = () => {
   const element = document.createElement("a");
   element.setAttribute(
