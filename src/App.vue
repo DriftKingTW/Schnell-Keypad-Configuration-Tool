@@ -308,7 +308,7 @@ label {
 }
 
 .key-btn {
-  @apply rounded bg-slate-300 hover:bg-slate-400 w-16 h-16 m-1;
+  @apply rounded bg-slate-300 hover:bg-slate-400 w-16 h-16 m-1 cursor-pointer;
 }
 
 .key-btn-active {
