@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { readonly, shallowReadonly, ref, reactive } from "vue";
+import { JsonViewer } from "vue3-json-viewer";
+
+import "vue3-json-viewer/dist/index.css";
 
 // User defined keyboard parameters
 const ROWS = 5;
@@ -61,8 +64,16 @@ let currentLayoutIndex: number = 0;
 let outputJsonString = ref("");
 
 // Non-reactive data
-let configJsonObject: ConfigJSONObject = { ...defaultConfigJsonObject };
+let configJsonObject: ConfigJSONObject = reactive({
+  ...defaultConfigJsonObject,
+});
 let configJsonArray: ConfigJSONArray = [];
+
+// Computed
+
+const outputJsonObject = () => {
+  return [...configJsonArray];
+};
 
 // Functions
 
@@ -266,8 +277,17 @@ initializeLayout();
     <div id="output" class="flex justify-center mt-4">
       <div>
         <label for="">Output JSON Config</label>
-        <hr class="my-2" />
-        {{ outputJsonString }}
+        <!-- <hr  /> -->
+        <JsonViewer
+          :value="outputJsonObject()"
+          class="mt-4"
+          copyable
+          boxed
+          sort
+          :expanded="false"
+          :expand-depth="0"
+          theme="light"
+        />
       </div>
     </div>
   </div>
