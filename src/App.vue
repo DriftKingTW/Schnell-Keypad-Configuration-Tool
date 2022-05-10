@@ -205,7 +205,7 @@ initializeLayout();
 
 <template>
   <div class="container mx-auto">
-    <div id="toolbar" class="flex justify-center">
+    <div id="toolbar" class="flex justify-center mt-4">
       <div>
         <label for="title">Layout Title</label>
         <input
@@ -233,7 +233,7 @@ initializeLayout();
     </div>
     <div
       id="keymap"
-      class="flex justify-center"
+      class="flex justify-center mt-4"
       @keydown.prevent="updateKey($event)"
     >
       <div>
@@ -263,10 +263,10 @@ initializeLayout();
         </template>
       </div>
     </div>
-    <div id="output" class="flex justify-center">
-      <div class="">
+    <div id="output" class="flex justify-center mt-4">
+      <div>
         <label for="">Output JSON Config</label>
-        <hr />
+        <hr class="my-2" />
         {{ outputJsonString }}
       </div>
     </div>
