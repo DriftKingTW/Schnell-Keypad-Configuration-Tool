@@ -72,6 +72,7 @@ let configJsonArray: ConfigJSONArray = [];
 // Computed
 
 const outputJsonObject = () => {
+  updateOutputData();
   return [...configJsonArray];
 };
 
@@ -135,9 +136,6 @@ const updateKey = (e: any) => {
   layout[currentKeyLocation.row][currentKeyLocation.col].keyStroke =
     e.key.charCodeAt(0);
   layout[currentKeyLocation.row][currentKeyLocation.col].keyInfo = e.code;
-
-  // Update current config to output variable
-  updateOutputData();
 
   // Reset key location and keys' state
   currentKeyLocation = { ...defaultCoordinate };
@@ -219,13 +217,7 @@ initializeLayout();
     <div id="toolbar" class="flex justify-center mt-4">
       <div>
         <label for="title">Layout Title</label>
-        <input
-          type="text"
-          name="title"
-          v-model="title"
-          class="input"
-          @keyup="updateOutputData"
-        />
+        <input type="text" name="title" v-model="title" class="input" />
         <input
           type="button"
           name="export"
