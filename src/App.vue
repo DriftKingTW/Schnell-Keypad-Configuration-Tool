@@ -312,7 +312,7 @@ label {
 }
 
 .key-btn-active {
-  @apply bg-teal-300 hover:bg-teal-500;
+  @apply bg-amber-300 hover:bg-amber-400;
 }
 
 .key-btn-dummy {
