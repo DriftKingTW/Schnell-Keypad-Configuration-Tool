@@ -317,7 +317,7 @@ label {
 }
 
 .btn-reset {
-  @apply bg-gray-200 text-slate-600
+  @apply bg-gray-200 text-slate-400
   hover:bg-gray-300
   active:bg-gray-400;
 }
