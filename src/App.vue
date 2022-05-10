@@ -110,6 +110,7 @@ const initializeLayout = () => {
   layout[4][4].keySize = "w-2u";
   layout[4][1].keySize = "w-1.5u";
   layout[4][2].keySize = "w-1.5u";
+  layout[4][6].keySize = "w-1.25u";
 };
 
 /**
