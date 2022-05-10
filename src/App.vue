@@ -278,6 +278,10 @@ label {
   @apply mx-4 text-slate-600;
 }
 
+#output > div {
+  width: 50ch;
+}
+
 .input {
   @apply border-solid border-2 py-1 px-2 ml-2 m-1;
 }
