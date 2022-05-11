@@ -83,22 +83,24 @@ const defaultConfigJsonObject: ConfigJSONObject = shallowReadonly({
 });
 
 // Reactive data
-const title = ref("");
 let layout: Key[][] = reactive([]);
 let currentKeyLocation: Coordinate = reactive({ ...defaultCoordinate });
-let currentLayoutIndex: number = 0;
+let currentLayoutIndex = ref(0);
 let outputJsonString = ref("");
 let configJsonObject: ConfigJSONObject = reactive({
   ...defaultConfigJsonObject,
 });
+let configJsonArray: ConfigJSONArray = reactive([]);
 
-// Non-reactive data
-let configJsonArray: ConfigJSONArray = [];
+// Load saved data in localStorage
+const savedData = localStorage.getItem("keyconfig");
+if (savedData) {
+  configJsonArray = [...JSON.parse(savedData)];
+}
 
 // Computed
 
 const outputJsonObject = computed(() => {
-  updateOutputData();
   return [...configJsonArray];
 });
 
@@ -108,9 +110,8 @@ const outputJsonObject = computed(() => {
  * Initialize current layout's data
  *
  */
-const initializeLayout = () => {
+const initializeLayout = (reset: boolean = false) => {
   layout.length = 0;
-  configJsonArray.length = 0;
 
   // Initialize an empty keyboard matrix
   for (let r = 0; r < ROWS; r++) {
@@ -119,6 +120,23 @@ const initializeLayout = () => {
       layout[r].push({ ...defaultKey });
     }
   }
+
+  // Load data if exists
+  if (configJsonArray[currentLayoutIndex.value] && !reset) {
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const loadData = { ...defaultKey };
+        loadData.keyStroke =
+          configJsonArray[currentLayoutIndex.value].keymap[r][c];
+        loadData.keyInfo =
+          configJsonArray[currentLayoutIndex.value].keyInfo[r][c];
+        layout[r][c] = loadData;
+      }
+    }
+  }
+
+  // Initialize output data
+  updateOutputData();
 
   // Configure dummy keys
   DUMMY_KEYS.forEach((key) => {
@@ -156,6 +174,8 @@ const updateKey = (e: any) => {
     e.key.charCodeAt(0);
   layout[currentKeyLocation.row][currentKeyLocation.col].keyInfo = e.code;
 
+  updateOutputData();
+
   // Reset key location and keys' state
   currentKeyLocation = { ...defaultCoordinate };
   resetKeysState();
@@ -187,7 +207,9 @@ const validateKeyLocation = () => {
  */
 const updateOutputData = () => {
   configJsonObject = {
-    title: title.value,
+    title: configJsonArray[currentLayoutIndex.value]
+      ? configJsonArray[currentLayoutIndex.value].title
+      : "",
     keymap: [],
     keyInfo: [],
   };
@@ -203,8 +225,10 @@ const updateOutputData = () => {
   configJsonObject.keymap = [...keymap];
   configJsonObject.keyInfo = [...keyInfo];
 
-  configJsonArray[currentLayoutIndex] = { ...configJsonObject };
+  configJsonArray[currentLayoutIndex.value] = { ...configJsonObject };
   outputJsonString.value = JSON.stringify(configJsonArray);
+
+  localStorage.setItem("keyconfig", outputJsonString.value);
 };
 
 /**
@@ -242,12 +266,22 @@ initializeLayout();
       <div>
         <label for="title">Layout Title</label>
         <input
+          v-if="configJsonArray[currentLayoutIndex]"
           type="text"
           name="title"
           placeholder="New Layout"
-          v-model="title"
-          class="input"
+          v-model="configJsonArray[currentLayoutIndex].title"
+          class="text-input"
+          @input="updateOutputData"
         />
+        <select
+          name="add_layout"
+          v-model="currentLayoutIndex"
+          @change="initializeLayout()"
+          class="btn"
+        >
+          <option v-for="(_, i) in 10" :value="i">Layout {{ i + 1 }}</option>
+        </select>
         <input
           type="button"
           name="export"
@@ -260,7 +294,7 @@ initializeLayout();
           name="reset"
           value="Reset"
           class="btn btn-reset"
-          @click="initializeLayout"
+          @click="initializeLayout(true)"
         />
       </div>
     </div>
@@ -306,7 +340,7 @@ initializeLayout();
           copyable
           boxed
           sort
-          :expanded="false"
+          :expanded="true"
           :expand-depth="0"
           theme="light"
         />
