@@ -88,11 +88,11 @@ let layout: Key[][] = reactive([]);
 let currentKeyLocation: Coordinate = reactive({ ...defaultCoordinate });
 let currentLayoutIndex: number = 0;
 let outputJsonString = ref("");
-
-// Non-reactive data
 let configJsonObject: ConfigJSONObject = reactive({
   ...defaultConfigJsonObject,
 });
+
+// Non-reactive data
 let configJsonArray: ConfigJSONArray = [];
 
 // Computed
