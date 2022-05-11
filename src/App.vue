@@ -232,6 +232,11 @@ initializeLayout();
 </script>
 
 <template>
+  <div id="nav" class="bg-stone-700 w-full h-12 text-white">
+    <div class="container mx-auto h-full flex items-center">
+      <div class="text-xl">TinyPICO BLE Keypad Configuration Tool</div>
+    </div>
+  </div>
   <div class="container mx-auto">
     <div id="toolbar" class="flex justify-center mt-4">
       <div>
