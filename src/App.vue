@@ -354,18 +354,28 @@ label {
   @apply mx-4 text-slate-600;
 }
 
+input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+select:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+select {
+  @apply rounded border-solid border-2 ml-2 m-1 cursor-pointer text-slate-600
+  focus:border-lime-600;
+}
+
 #output > div {
   width: 50ch;
 }
 
-.input {
+.text-input {
   @apply rounded border-solid border-2 py-1 px-2 ml-2 m-1
   focus:border-lime-600;
-}
-
-.input:focus {
-  outline: none;
-  box-shadow: none;
 }
 
 .btn {
