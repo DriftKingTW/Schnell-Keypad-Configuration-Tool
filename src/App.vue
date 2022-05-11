@@ -258,7 +258,7 @@ initializeLayout();
 
 <template>
   <div id="nav" class="bg-stone-700 w-full h-12 text-white">
-    <div class="container mx-auto h-full flex items-center">
+    <div class="container mx-auto h-full flex items-center justify-center">
       <div class="text-xl">TinyPICO BLE Keypad Configuration Tool</div>
     </div>
   </div>
