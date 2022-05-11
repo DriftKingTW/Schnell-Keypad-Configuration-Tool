@@ -340,7 +340,7 @@ initializeLayout();
           copyable
           boxed
           sort
-          :expanded="true"
+          :expanded="false"
           :expand-depth="0"
           theme="light"
         />
