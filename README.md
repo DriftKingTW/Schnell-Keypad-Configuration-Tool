@@ -13,24 +13,24 @@ This is a web based key configuration tool for [this](https://github.com/DriftKi
 
 ## Project setup
 
-```
+```shell
 npm install
 ```
 
 ### Compiles and hot-reloads for development
 
-```
+```shell
 npm run dev
 ```
 
 ### Compiles and minifies for production
 
-```
+```shell
 npm run build
 ```
 
 ### Preview for production build
 
-```
+```shell
 npm run preview
 ```
