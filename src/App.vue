@@ -4,28 +4,31 @@ import { JsonViewer } from "vue3-json-viewer";
 
 import "vue3-json-viewer/dist/index.css";
 
-// User defined keyboard parameters
-const ROWS = 5;
-const COLS = 7;
-const DUMMY_KEYS = [
-  { row: 2, col: 6 },
-  { row: 0, col: 6 },
-  { row: 4, col: 3 },
-  { row: 4, col: 5 },
-];
-
 // Type declarations
-type Key = {
-  keyStroke: number;
-  keyInfo: string;
-  keySize: "1u" | "w-1.25u" | "w-1.5u" | "w-2u" | "h-1.25u" | "h-1.5u" | "h-2u";
-  dummy: boolean;
-  active: boolean;
-};
-
 type Coordinate = {
   row: number;
   col: number;
+};
+
+interface KeyboardLayout extends Coordinate {
+  size: KeySize;
+}
+
+type KeySize =
+  | "1u"
+  | "w-1.25u"
+  | "w-1.5u"
+  | "w-2u"
+  | "h-1.25u"
+  | "h-1.5u"
+  | "h-2u";
+
+type Key = {
+  keyStroke: number;
+  keyInfo: string;
+  keySize: KeySize;
+  dummy: boolean;
+  active: boolean;
 };
 
 type ConfigJSONObject = {
@@ -35,6 +38,29 @@ type ConfigJSONObject = {
 };
 
 type ConfigJSONArray = ConfigJSONObject[];
+
+// User defined keyboard parameters
+const ROWS = 5;
+const COLS = 7;
+const DUMMY_KEYS: Coordinate[] = [
+  { row: 2, col: 6 },
+  { row: 0, col: 6 },
+  { row: 4, col: 3 },
+  { row: 4, col: 5 },
+];
+const KEYBOARD_LAYOUT: KeyboardLayout[] = [
+  { row: 0, col: 0, size: "w-1.5u" },
+  { row: 1, col: 0, size: "w-1.5u" },
+  { row: 2, col: 0, size: "w-1.5u" },
+  { row: 3, col: 0, size: "w-1.5u" },
+  { row: 4, col: 0, size: "w-1.5u" },
+  // { row: 1, col: 6, size: "h-2u" },
+  // { row: 3, col: 6, size: "h-2u" },
+  { row: 4, col: 4, size: "w-2u" },
+  { row: 4, col: 1, size: "w-1.5u" },
+  { row: 4, col: 2, size: "w-1.5u" },
+  { row: 4, col: 6, size: "w-1.25u" },
+];
 
 // Default objects
 const defaultKey: Key = readonly({
@@ -95,22 +121,14 @@ const initializeLayout = () => {
   }
 
   // Configure dummy keys
-  DUMMY_KEYS.forEach((dmyKey) => {
-    layout[dmyKey.row][dmyKey.col].dummy = true;
+  DUMMY_KEYS.forEach((key) => {
+    layout[key.row][key.col].dummy = true;
   });
 
-  // Configure key size
-  layout[0][0].keySize = "w-1.5u";
-  layout[1][0].keySize = "w-1.5u";
-  layout[2][0].keySize = "w-1.5u";
-  layout[3][0].keySize = "w-1.5u";
-  layout[4][0].keySize = "w-1.5u";
-  // layout[1][6].keySize = "h-2u";
-  // layout[3][6].keySize = "h-2u";
-  layout[4][4].keySize = "w-2u";
-  layout[4][1].keySize = "w-1.5u";
-  layout[4][2].keySize = "w-1.5u";
-  layout[4][6].keySize = "w-1.25u";
+  // Configure dummy keys
+  KEYBOARD_LAYOUT.forEach((key) => {
+    layout[key.row][key.col].keySize = key.size;
+  });
 };
 
 /**
