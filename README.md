@@ -1,6 +1,6 @@
-# TinyPICO-BLE-Keypad-Key-Configuration-Tool
+# TinyPICO BLE Keypad Key Configuration Tool
 
-This is a web key configuration file generator for [this](https://github.com/DriftKingTW/TinyPICO-BLE-Keypad) custom BLE keypad.
+This is a web based key configuration tool for [this](https://github.com/DriftKingTW/TinyPICO-BLE-Keypad) custom BLE keypad.
 
 [Web Demo](https://github.com/DriftKingTW/TinyPICO-BLE-Keypad-Key-Configuration-Tool)
 
