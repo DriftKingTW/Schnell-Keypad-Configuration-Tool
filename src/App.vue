@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { readonly, shallowReadonly, ref, reactive } from "vue";
+import { readonly, shallowReadonly, ref, reactive, computed } from "vue";
 import { JsonViewer } from "vue3-json-viewer";
 
 import "vue3-json-viewer/dist/index.css";
@@ -97,10 +97,10 @@ let configJsonArray: ConfigJSONArray = [];
 
 // Computed
 
-const outputJsonObject = () => {
+const outputJsonObject = computed(() => {
   updateOutputData();
   return [...configJsonArray];
-};
+});
 
 // Functions
 
@@ -301,7 +301,7 @@ initializeLayout();
         <label for="">Output JSON Config</label>
         <!-- <hr  /> -->
         <JsonViewer
-          :value="outputJsonObject()"
+          :value="outputJsonObject"
           class="mt-4"
           copyable
           boxed
