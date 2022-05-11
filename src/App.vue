@@ -109,6 +109,7 @@ const outputJsonObject = computed(() => {
 /**
  * Initialize current layout's data
  *
+ * @param {boolean} reset - Resets current layout, false for default
  */
 const initializeLayout = (reset: boolean = false) => {
   layout.length = 0;
