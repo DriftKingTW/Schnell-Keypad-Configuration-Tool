@@ -218,7 +218,13 @@ initializeLayout();
     <div id="toolbar" class="flex justify-center mt-4">
       <div>
         <label for="title">Layout Title</label>
-        <input type="text" name="title" v-model="title" class="input" />
+        <input
+          type="text"
+          name="title"
+          placeholder="New Layout"
+          v-model="title"
+          class="input"
+        />
         <input
           type="button"
           name="export"
@@ -296,7 +302,13 @@ label {
 }
 
 .input {
-  @apply border-solid border-2 py-1 px-2 ml-2 m-1;
+  @apply rounded border-solid border-2 py-1 px-2 ml-2 m-1
+  focus:border-lime-600;
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .btn {
