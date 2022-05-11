@@ -10,6 +10,7 @@ This is a web based key configuration tool for [this](https://github.com/DriftKi
 - [ ] Dark/Light theme support
 - [ ] Vertical key cap layout ui
 - [ ] Customize keyboard layout
+- [ ] Editable key label
 
 ## Project setup
 
