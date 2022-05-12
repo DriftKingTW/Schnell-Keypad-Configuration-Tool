@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { readonly, shallowReadonly, ref, reactive, computed } from "vue";
 import { JsonViewer } from "vue3-json-viewer";
+import { useI18n } from "vue-i18n";
 
 import "vue3-json-viewer/dist/index.css";
+
+// Set page title
+const i18n = useI18n();
+document.title = i18n.t("navTitle");
 
 // Type declarations
 type Coordinate = {
@@ -253,6 +258,14 @@ const exportJsonConfig = () => {
   document.body.removeChild(element);
 };
 
+/**
+ * Update page title after changing the language
+ *
+ */
+const updatePageTitle = () => {
+  document.title = i18n.t("navTitle");
+};
+
 initializeLayout();
 </script>
 
@@ -265,7 +278,7 @@ initializeLayout();
   <div class="container mx-auto">
     <div id="toolbar" class="flex justify-center mt-4">
       <div>
-        <select v-model="$i18n.locale" class="btn">
+        <select v-model="$i18n.locale" class="btn" @change="updatePageTitle">
           <option value="en-US">English</option>
           <option value="zh-TW">中文（繁體）</option>
           <option value="zh-CN">中文（简体）</option>
