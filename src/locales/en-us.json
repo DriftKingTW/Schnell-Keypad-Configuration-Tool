@@ -1,0 +1,10 @@
+{
+  "navTitle": "TinyPICO BLE Keypad Configuration Tool",
+  "layoutTitle": "Layout Title",
+  "outputJsonConfig": "Output JSON Config",
+  "layout": "Layout",
+  "newLayout": "New Layout",
+  "export": "Export",
+  "reset": "Reset",
+  "copy": "Copy"
+}

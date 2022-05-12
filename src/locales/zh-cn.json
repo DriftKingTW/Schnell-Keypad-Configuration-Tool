@@ -1,0 +1,10 @@
+{
+  "navTitle": "TinyPICO 蓝牙键盘键位设置工具",
+  "layoutTitle": "布局名称",
+  "outputJsonConfig": "JSON 設定文本",
+  "layout": "佈局",
+  "newLayout": "新布局",
+  "export": "导出",
+  "reset": "重设",
+  "copy": "拷贝"
+}

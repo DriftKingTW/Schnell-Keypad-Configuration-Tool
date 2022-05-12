@@ -259,18 +259,23 @@ initializeLayout();
 <template>
   <div id="nav" class="bg-stone-700 w-full h-12 text-white">
     <div class="container mx-auto h-full flex items-center justify-center">
-      <div class="text-xl">TinyPICO BLE Keypad Configuration Tool</div>
+      <div class="text-xl">{{ $t("navTitle") }}</div>
     </div>
   </div>
   <div class="container mx-auto">
     <div id="toolbar" class="flex justify-center mt-4">
       <div>
-        <label for="title">Layout Title</label>
+        <select v-model="$i18n.locale" class="btn">
+          <option value="en-US">English</option>
+          <option value="zh-TW">中文（繁體）</option>
+          <option value="zh-CN">中文（简体）</option>
+        </select>
+        <label for="title">{{ $t("layoutTitle") }}</label>
         <input
           v-if="configJsonArray[currentLayoutIndex]"
           type="text"
           name="title"
-          placeholder="New Layout"
+          :placeholder="$t('newLayout')"
           v-model="configJsonArray[currentLayoutIndex].title"
           class="text-input"
           @input="updateOutputData"
@@ -281,19 +286,21 @@ initializeLayout();
           @change="initializeLayout()"
           class="btn"
         >
-          <option v-for="(_, i) in 10" :value="i">Layout {{ i + 1 }}</option>
+          <option v-for="(_, i) in 10" :value="i">
+            {{ $t("layout") }} {{ i + 1 }}
+          </option>
         </select>
         <input
           type="button"
           name="export"
-          value="Export"
+          :value="$t('export')"
           class="btn btn-export"
           @click="exportJsonConfig"
         />
         <input
           type="button"
           name="reset"
-          value="Reset"
+          :value="$t('reset')"
           class="btn btn-reset"
           @click="initializeLayout(true)"
         />
@@ -333,7 +340,7 @@ initializeLayout();
     </div>
     <div id="output" class="flex justify-center mt-4">
       <div>
-        <label for="">Output JSON Config</label>
+        <label for="">{{ $t("outputJsonConfig") }}</label>
         <!-- <hr  /> -->
         <JsonViewer
           :value="outputJsonObject"
@@ -344,7 +351,9 @@ initializeLayout();
           :expanded="false"
           :expand-depth="0"
           theme="light"
-        />
+        >
+          <template v-slot:copy>{{ $t("copy") }}</template>
+        </JsonViewer>
       </div>
     </div>
   </div>
