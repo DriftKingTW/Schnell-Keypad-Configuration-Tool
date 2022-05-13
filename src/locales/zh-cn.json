@@ -5,6 +5,7 @@
   "layout": "佈局",
   "newLayout": "新布局",
   "export": "导出",
-  "reset": "重设",
-  "copy": "拷贝"
+  "copy": "拷贝",
+  "resetLayout": "重设布局",
+  "resetKey": "单键重设"
 }

@@ -96,6 +96,7 @@ let configJsonObject: ConfigJSONObject = reactive({
   ...defaultConfigJsonObject,
 });
 let configJsonArray: ConfigJSONArray = reactive([]);
+let resetKeyMode = ref(false);
 
 // Load saved data in localStorage
 const savedData = localStorage.getItem("keyconfig");
@@ -164,6 +165,15 @@ const initializeLayout = (reset: boolean = false) => {
  *
  */
 const toggleActive = (row: number, col: number) => {
+  if (resetKeyMode.value) {
+    const newKey: Key = { ...defaultKey };
+    newKey.keySize = layout[row][col].keySize;
+    newKey.dummy = layout[row][col].dummy;
+    layout[row][col] = newKey;
+    resetKeyMode.value = false;
+    updateOutputData();
+    return;
+  }
   const originalActive: boolean = layout[row][col].active;
   currentKeyLocation = { row: row, col: col };
   resetKeysState();
@@ -198,6 +208,14 @@ const updateKey = (e: any) => {
 const resetKeysState = () => {
   // Reset all key active to false
   layout.map((row) => row.map((k) => (k.active = false)));
+};
+
+/**
+ * Reset single key's data to default
+ *
+ */
+const resetKey = () => {
+  resetKeyMode.value = true;
 };
 
 /**
@@ -283,9 +301,9 @@ initializeLayout();
     <div id="toolbar" class="flex justify-center mt-4">
       <div>
         <select v-model="$i18n.locale" class="btn" @change="updatePageTitle">
-          <option value="en-US"> 🇺🇸 English </option>
-          <option value="zh-TW"> 🇹🇼 中文（繁體）</option>
-          <option value="zh-CN"> 🇨🇳 中文（简体）</option>
+          <option value="en-US">🇺🇸 English</option>
+          <option value="zh-TW">🇹🇼 中文（繁體）</option>
+          <option value="zh-CN">🇨🇳 中文（简体）</option>
         </select>
         <label for="title">{{ $t("layoutTitle") }}</label>
         <input
@@ -317,9 +335,17 @@ initializeLayout();
         <input
           type="button"
           name="reset"
-          :value="$t('reset')"
+          :value="$t('resetLayout')"
           class="btn btn-reset"
           @click="initializeLayout(true)"
+        />
+        <input
+          type="button"
+          name="reset_key"
+          :value="$t('resetKey')"
+          class="btn btn-reset"
+          :class="resetKeyMode ? 'key-btn-active' : ''"
+          @click="resetKey"
         />
       </div>
     </div>

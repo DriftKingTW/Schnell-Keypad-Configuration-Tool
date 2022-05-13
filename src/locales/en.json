@@ -5,6 +5,7 @@
   "layout": "Layout",
   "newLayout": "New Layout",
   "export": "Export",
-  "reset": "Reset",
-  "copy": "Copy"
+  "copy": "Copy",
+  "resetLayout": "Reset Layout",
+  "resetKey": "Reset Key"
 }
