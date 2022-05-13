@@ -109,6 +109,10 @@ const outputJsonObject = computed(() => {
   return [...configJsonArray];
 });
 
+const darkMode = computed(() => {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+});
+
 // Functions
 
 /**
@@ -270,7 +274,7 @@ initializeLayout();
 </script>
 
 <template>
-  <div id="nav" class="bg-stone-700 w-full h-12 text-white">
+  <div id="nav" class="bg-stone-700 w-full h-12 text-white dark:bg-stone-800">
     <div class="container mx-auto h-full flex items-center justify-center">
       <div class="text-xl">{{ $t("navTitle") }}</div>
     </div>
@@ -363,7 +367,7 @@ initializeLayout();
           sort
           :expanded="false"
           :expand-depth="0"
-          theme="light"
+          :theme="darkMode ? 'dark' : 'light'"
         >
           <template v-slot:copy>{{ $t("copy") }}</template>
         </JsonViewer>
@@ -374,7 +378,8 @@ initializeLayout();
 
 <style scoped lang="scss">
 label {
-  @apply mx-4 text-slate-600;
+  @apply mx-4 text-slate-600
+  dark:text-stone-400;
 }
 
 input:focus {
@@ -389,7 +394,8 @@ select:focus {
 
 select {
   @apply rounded border-solid border-2 ml-2 m-1 cursor-pointer text-slate-600
-  focus:border-lime-600;
+  focus:border-lime-600
+  dark:bg-stone-800 dark:border-none dark:text-neutral-400;
 }
 
 #output > div {
@@ -398,7 +404,8 @@ select {
 
 .text-input {
   @apply rounded border-solid border-2 py-1 px-2 ml-2 m-1
-  focus:border-lime-600;
+  focus:border-lime-600
+  dark:bg-stone-800 dark:border-none dark:text-neutral-400;
 }
 
 .btn {
@@ -408,13 +415,15 @@ select {
 .btn-export {
   @apply bg-lime-600 text-white
   hover:bg-lime-700
-  active:bg-lime-800;
+  active:bg-lime-800
+  dark:bg-lime-700 dark:hover:bg-lime-800 dark:active:bg-lime-900;
 }
 
 .btn-reset {
   @apply bg-gray-200 text-slate-400
   hover:bg-gray-300
-  active:bg-gray-400;
+  active:bg-gray-400
+  dark:bg-neutral-700 dark:hover:bg-neutral-800 dark:active:bg-neutral-900 dark:text-neutral-400;
 }
 
 .key-btn:focus {
@@ -423,15 +432,18 @@ select {
 }
 
 .key-btn {
-  @apply rounded bg-slate-300 hover:bg-slate-400 text-slate-600 w-16 h-16 m-1 cursor-pointer;
+  @apply rounded bg-slate-300 hover:bg-slate-400 text-slate-600 w-16 h-16 m-1 cursor-pointer
+  dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-slate-600;
 }
 
 .key-btn-active {
-  @apply bg-amber-300 hover:bg-amber-400;
+  @apply bg-amber-300 hover:bg-amber-400
+  dark:bg-amber-400 dark:hover:bg-amber-500 dark:text-neutral-900;
 }
 
 .key-btn-dummy {
-  @apply bg-slate-100 text-slate-300;
+  @apply bg-slate-100 text-slate-300
+  dark:bg-neutral-800 dark:text-neutral-600;
 }
 
 .key-1u {
