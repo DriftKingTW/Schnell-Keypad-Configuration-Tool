@@ -7,7 +7,7 @@ This is a web based key configuration tool for [this](https://github.com/DriftKi
 ## TODOs
 
 - [x] i18n multi-language support
-- [ ] Dark/Light theme support
+- [x] Dark/Light theme support
 - [ ] Vertical key cap layout ui
 - [ ] Customize keyboard layout
 - [ ] Editable key label
