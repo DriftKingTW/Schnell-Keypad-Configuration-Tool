@@ -215,7 +215,7 @@ const resetKeysState = () => {
  *
  */
 const resetKey = () => {
-  resetKeyMode.value = true;
+  resetKeyMode.value = !resetKeyMode.value;
 };
 
 /**
