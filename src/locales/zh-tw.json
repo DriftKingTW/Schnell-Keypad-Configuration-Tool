@@ -1,0 +1,11 @@
+{
+  "navTitle": "TinyPICO 藍牙鍵盤鍵位設定工具",
+  "layoutTitle": "佈局名稱",
+  "outputJsonConfig": "JSON 設定文件",
+  "layout": "佈局",
+  "newLayout": "新佈局",
+  "export": "輸出",
+  "copy": "複製",
+  "resetKey": "單鍵重置",
+  "resetLayout": "重置佈局"
+}
