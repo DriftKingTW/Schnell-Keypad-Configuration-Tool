@@ -1,5 +1,7 @@
 # TinyPICO BLE Keypad Key Configuration Tool
 
+[![Build Status](https://app.travis-ci.com/DriftKingTW/TinyPICO-BLE-Keypad-Key-Configuration-Tool.svg?branch=master)](https://app.travis-ci.com/DriftKingTW/TinyPICO-BLE-Keypad-Key-Configuration-Tool)
+
 This is a web based key configuration tool for [this](https://github.com/DriftKingTW/TinyPICO-BLE-Keypad) custom BLE keypad.
 
 [Web Demo](https://github.com/DriftKingTW/TinyPICO-BLE-Keypad-Key-Configuration-Tool)
