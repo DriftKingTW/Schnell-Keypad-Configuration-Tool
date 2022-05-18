@@ -292,7 +292,11 @@ initializeLayout();
 </script>
 
 <template>
-  <div id="nav" class="bg-stone-700 w-full h-12 text-white dark:bg-stone-800">
+  <div
+    id="nav"
+    class="bg-stone-700 w-full h-12 text-white dark:bg-stone-800"
+    style="min-width: 600px"
+  >
     <div class="container mx-auto h-full flex items-center justify-center">
       <div class="text-xl mx-4">{{ $t("navTitle") }}</div>
       <select
@@ -306,51 +310,58 @@ initializeLayout();
       </select>
     </div>
   </div>
-  <div class="container mx-auto">
+  <div class="container mx-auto" style="min-width: 600px">
     <div id="toolbar" class="flex justify-center mt-4">
       <div>
-        <label for="title">{{ $t("layoutTitle") }}</label>
-        <input
-          v-if="configJsonArray[currentLayoutIndex]"
-          type="text"
-          name="title"
-          :placeholder="$t('newLayout')"
-          v-model="configJsonArray[currentLayoutIndex].title"
-          class="text-input"
-          @input="updateOutputData"
-        />
-        <select
-          name="add_layout"
-          v-model="currentLayoutIndex"
-          @change="initializeLayout()"
-          class="btn"
-        >
-          <option v-for="(_, i) in 10" :value="i">
-            {{ $t("layout") }} {{ i + 1 }}
-          </option>
-        </select>
-        <input
-          type="button"
-          name="export"
-          :value="$t('export')"
-          class="btn btn-export"
-          @click="exportJsonConfig"
-        />
-        <input
-          type="button"
-          name="reset"
-          :value="$t('resetLayout')"
-          class="btn btn-reset"
-          @click="initializeLayout(true)"
-        />
-        <input
-          type="button"
-          name="reset_key"
-          :value="$t('resetKey')"
-          class="btn btn-reset"
-          :class="resetKeyMode ? 'key-btn-active' : ''"
-          @click="resetKey"
-        />
+        <div class="flex">
+          <div>
+            <label for="title">{{ $t("layoutTitle") }}</label>
+            <input
+              v-if="configJsonArray[currentLayoutIndex]"
+              type="text"
+              name="title"
+              :placeholder="$t('newLayout')"
+              v-model="configJsonArray[currentLayoutIndex].title"
+              class="text-input"
+              @input="updateOutputData"
+            />
+            <select
+              name="add_layout"
+              v-model="currentLayoutIndex"
+              @change="initializeLayout()"
+              class="btn"
+            >
+              <option v-for="(_, i) in 10" :value="i">
+                {{ $t("layout") }} {{ i + 1 }}
+              </option>
+            </select>
+            <input
+              type="button"
+              name="export"
+              :value="$t('export')"
+              class="btn btn-export"
+              @click="exportJsonConfig"
+            />
+          </div>
+        </div>
+        <div class="my-2"></div>
+        <div class="flex">
+          <input
+            type="button"
+            name="reset"
+            :value="$t('resetLayout')"
+            class="btn btn-reset grow"
+            @click="initializeLayout(true)"
+          />
+          <input
+            type="button"
+            name="reset_key"
+            :value="$t('resetKey')"
+            class="btn btn-reset grow"
+            :class="resetKeyMode ? 'key-btn-active' : ''"
+            @click="resetKey"
+          />
+        </div>
       </div>
     </div>
     <div
