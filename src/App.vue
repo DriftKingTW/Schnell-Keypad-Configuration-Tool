@@ -294,17 +294,21 @@ initializeLayout();
 <template>
   <div id="nav" class="bg-stone-700 w-full h-12 text-white dark:bg-stone-800">
     <div class="container mx-auto h-full flex items-center justify-center">
-      <div class="text-xl">{{ $t("navTitle") }}</div>
+      <div class="text-xl mx-4">{{ $t("navTitle") }}</div>
+      <select
+        v-model="$i18n.locale"
+        class="btn language-selector"
+        @change="updatePageTitle"
+      >
+        <option value="en-US">🇺🇸 English</option>
+        <option value="zh-TW">🇹🇼 中文（繁體）</option>
+        <option value="zh-CN">🇨🇳 中文（简体）</option>
+      </select>
     </div>
   </div>
   <div class="container mx-auto">
     <div id="toolbar" class="flex justify-center mt-4">
       <div>
-        <select v-model="$i18n.locale" class="btn" @change="updatePageTitle">
-          <option value="en-US">🇺🇸 English</option>
-          <option value="zh-TW">🇹🇼 中文（繁體）</option>
-          <option value="zh-CN">🇨🇳 中文（简体）</option>
-        </select>
         <label for="title">{{ $t("layoutTitle") }}</label>
         <input
           v-if="configJsonArray[currentLayoutIndex]"
@@ -426,6 +430,10 @@ select {
 
 #output > div {
   width: 50ch;
+}
+
+.language-selector {
+  @apply bg-stone-700 text-white border-none;
 }
 
 .text-input {
