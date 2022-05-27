@@ -13,7 +13,7 @@ This is a web based key configuration tool for [this](https://github.com/DriftKi
 - [ ] Vertical key cap layout ui
 - [ ] Customize keyboard layout
 - [ ] Editable key label
-- [ ] Upload existing config file
+- [x] Upload existing config file
 - [x] Reset single key
 
 ## Project setup
