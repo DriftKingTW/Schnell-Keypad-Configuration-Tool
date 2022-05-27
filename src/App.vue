@@ -97,6 +97,7 @@ let configJsonObject: ConfigJSONObject = reactive({
 });
 let configJsonArray: ConfigJSONArray = reactive([]);
 let resetKeyMode = ref(false);
+let showOverlay = ref(false);
 
 // Load saved data in localStorage
 const savedData = localStorage.getItem("keyconfig");
@@ -288,130 +289,185 @@ const updatePageTitle = () => {
   document.title = i18n.t("navTitle");
 };
 
+/**
+ * Log the uploaded file to the console
+ * @param {event} Event The file upload event
+ */
+const uploadFile = (event: any) => {
+  const file: File = event.dataTransfer.files[0];
+  let reader = new FileReader();
+  reader.onload = loadConfigFile;
+  reader.readAsText(file);
+  showOverlay.value = false;
+};
+
+/**
+ * Log the uploaded file to the console
+ * @param {event} Event The file loaded event
+ */
+const loadConfigFile = (event: any) => {
+  let str: string = event.target.result;
+  let json: ConfigJSONObject[] = JSON.parse(str);
+  configJsonArray = [...json];
+  initializeLayout();
+};
+
+/**
+ * Show drag'n drop overlay
+ *
+ */
+const dragover = () => {
+  showOverlay.value = true;
+};
+
+/**
+ * Remove drag'n drop overlay
+ *
+ */
+const dragleave = () => {
+  showOverlay.value = false;
+};
+
 initializeLayout();
 </script>
 
 <template>
   <div
-    id="nav"
-    class="bg-stone-700 w-full h-12 text-white dark:bg-stone-800"
-    style="min-width: 600px"
+    class="w-screen h-screen"
+    @drop.prevent="uploadFile"
+    @dragover.prevent="dragover"
   >
-    <div class="container mx-auto h-full flex items-center justify-center">
-      <div class="text-xl mx-4">{{ $t("navTitle") }}</div>
-      <select
-        v-model="$i18n.locale"
-        class="btn language-selector"
-        @change="updatePageTitle"
-      >
-        <option value="en-US">🇺🇸 English</option>
-        <option value="zh-TW">🇹🇼 中文（繁體）</option>
-        <option value="zh-CN">🇨🇳 中文（简体）</option>
-      </select>
+    <!-- Drag'n Drop Overlay -->
+    <div v-if="showOverlay" @dragleave="dragleave">
+      <div ref="dragOverlay" class="drag-overlay">
+        <h2 class="text-center text-white text-5xl font-bold animate-bounce">
+          Drop it!
+        </h2>
+      </div>
     </div>
-  </div>
-  <div class="container mx-auto" style="min-width: 600px">
-    <div id="toolbar" class="flex justify-center mt-4">
-      <div>
-        <div class="flex">
-          <div>
-            <label for="title">{{ $t("layoutTitle") }}</label>
-            <input
-              v-if="configJsonArray[currentLayoutIndex]"
-              type="text"
-              name="title"
-              :placeholder="$t('newLayout')"
-              v-model="configJsonArray[currentLayoutIndex].title"
-              class="text-input"
-              @input="updateOutputData"
-            />
-            <select
-              name="add_layout"
-              v-model="currentLayoutIndex"
-              @change="initializeLayout()"
-              class="btn"
-            >
-              <option v-for="(_, i) in 10" :value="i">
-                {{ $t("layout") }} {{ i + 1 }}
-              </option>
-            </select>
+    <!-- Navbar -->
+    <div
+      id="nav"
+      class="bg-stone-700 w-full h-12 text-white dark:bg-stone-800"
+      style="min-width: 600px"
+    >
+      <div class="container mx-auto h-full flex items-center justify-center">
+        <div class="text-xl mx-4">{{ $t("navTitle") }}</div>
+        <select
+          v-model="$i18n.locale"
+          class="btn language-selector"
+          @change="updatePageTitle"
+        >
+          <option value="en-US">🇺🇸 English</option>
+          <option value="zh-TW">🇹🇼 中文（繁體）</option>
+          <option value="zh-CN">🇨🇳 中文（简体）</option>
+        </select>
+      </div>
+    </div>
+    <!-- Key Configurator -->
+    <div class="container mx-auto" style="min-width: 600px">
+      <div id="toolbar" class="flex justify-center mt-4">
+        <div>
+          <div class="flex">
+            <div>
+              <label for="title">{{ $t("layoutTitle") }}</label>
+              <input
+                v-if="configJsonArray[currentLayoutIndex]"
+                type="text"
+                name="title"
+                :placeholder="$t('newLayout')"
+                v-model="configJsonArray[currentLayoutIndex].title"
+                class="text-input"
+                @input="updateOutputData"
+              />
+              <select
+                name="add_layout"
+                v-model="currentLayoutIndex"
+                @change="initializeLayout()"
+                class="btn"
+              >
+                <option v-for="(_, i) in 10" :value="i">
+                  {{ $t("layout") }} {{ i + 1 }}
+                </option>
+              </select>
+              <input
+                type="button"
+                name="export"
+                :value="$t('export')"
+                class="btn btn-export"
+                @click="exportJsonConfig"
+              />
+            </div>
+          </div>
+          <div class="my-2"></div>
+          <div class="flex">
             <input
               type="button"
-              name="export"
-              :value="$t('export')"
-              class="btn btn-export"
-              @click="exportJsonConfig"
+              name="reset"
+              :value="$t('resetLayout')"
+              class="btn btn-reset grow"
+              @click="initializeLayout(true)"
+            />
+            <input
+              type="button"
+              name="reset_key"
+              :value="$t('resetKey')"
+              class="btn btn-reset grow"
+              :class="resetKeyMode ? 'key-btn-active' : ''"
+              @click="resetKey"
             />
           </div>
         </div>
-        <div class="my-2"></div>
-        <div class="flex">
-          <input
-            type="button"
-            name="reset"
-            :value="$t('resetLayout')"
-            class="btn btn-reset grow"
-            @click="initializeLayout(true)"
-          />
-          <input
-            type="button"
-            name="reset_key"
-            :value="$t('resetKey')"
-            class="btn btn-reset grow"
-            :class="resetKeyMode ? 'key-btn-active' : ''"
-            @click="resetKey"
-          />
+      </div>
+      <div
+        id="keymap"
+        class="flex justify-center mt-4"
+        @keydown.prevent="updateKey($event)"
+      >
+        <div>
+          <template v-for="(_, row) in layout">
+            <template v-for="(key, col) in layout[row]">
+              <input
+                v-if="!key.dummy"
+                type="button"
+                :value="key.dummy ? 'DUMMY' : key.keyInfo"
+                :disabled="key.dummy"
+                class="key-btn"
+                :class="{
+                  'key-btn-active': key.active,
+                  'key-btn-dummy': key.dummy,
+                  'key-1u': key.keySize === '1u',
+                  'key-w-1-25u': key.keySize === 'w-1.25u',
+                  'key-w-1-5u': key.keySize === 'w-1.5u',
+                  'key-w-2u': key.keySize === 'w-2u',
+                  'key-h-1-25u': key.keySize === 'h-1.25u',
+                  'key-h-1-5u': key.keySize === 'h-1.5u',
+                  'key-h-2u': key.keySize === 'h-2u',
+                }"
+                @click="toggleActive(row, col)"
+              />
+            </template>
+            <br />
+          </template>
         </div>
       </div>
-    </div>
-    <div
-      id="keymap"
-      class="flex justify-center mt-4"
-      @keydown.prevent="updateKey($event)"
-    >
-      <div>
-        <template v-for="(_, row) in layout">
-          <template v-for="(key, col) in layout[row]">
-            <input
-              v-if="!key.dummy"
-              type="button"
-              :value="key.dummy ? 'DUMMY' : key.keyInfo"
-              :disabled="key.dummy"
-              class="key-btn"
-              :class="{
-                'key-btn-active': key.active,
-                'key-btn-dummy': key.dummy,
-                'key-1u': key.keySize === '1u',
-                'key-w-1-25u': key.keySize === 'w-1.25u',
-                'key-w-1-5u': key.keySize === 'w-1.5u',
-                'key-w-2u': key.keySize === 'w-2u',
-                'key-h-1-25u': key.keySize === 'h-1.25u',
-                'key-h-1-5u': key.keySize === 'h-1.5u',
-                'key-h-2u': key.keySize === 'h-2u',
-              }"
-              @click="toggleActive(row, col)"
-            />
-          </template>
-          <br />
-        </template>
-      </div>
-    </div>
-    <div id="output" class="flex justify-center mt-4">
-      <div>
-        <label for="">{{ $t("outputJsonConfig") }}</label>
-        <!-- <hr  /> -->
-        <JsonViewer
-          :value="outputJsonObject"
-          class="mt-4"
-          copyable
-          boxed
-          sort
-          :expanded="false"
-          :expand-depth="0"
-          :theme="darkMode ? 'dark' : 'light'"
-        >
-          <template v-slot:copy>{{ $t("copy") }}</template>
-        </JsonViewer>
+      <div id="output" class="flex justify-center mt-4">
+        <div>
+          <label for="">{{ $t("outputJsonConfig") }}</label>
+          <!-- <hr  /> -->
+          <JsonViewer
+            :value="outputJsonObject"
+            class="mt-4"
+            copyable
+            boxed
+            sort
+            :expanded="false"
+            :expand-depth="0"
+            :theme="darkMode ? 'dark' : 'light'"
+          >
+            <template v-slot:copy>{{ $t("copy") }}</template>
+          </JsonViewer>
+        </div>
       </div>
     </div>
   </div>
@@ -441,6 +497,16 @@ select {
 
 #output > div {
   width: 50ch;
+}
+
+.drag-overlay {
+  @apply fixed top-0 left-0 right-0 bottom-0
+  h-screen w-full z-50
+  overflow-hidden
+  bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500
+  flex flex-col items-center justify-center
+  opacity-75
+  animate-pulse;
 }
 
 .language-selector {
