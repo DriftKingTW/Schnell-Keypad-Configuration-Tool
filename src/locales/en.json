@@ -7,5 +7,7 @@
   "export": "Export",
   "copy": "Copy",
   "resetLayout": "Reset Layout",
-  "resetKey": "Reset Key"
+  "resetKey": "Reset Key",
+  "hint": "Hint",
+  "hintUpload": "You can load existing config by dropping configuration file on the page!"
 }
