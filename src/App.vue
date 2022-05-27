@@ -365,7 +365,7 @@ initializeLayout();
       </div>
     </div>
     <!-- Hint -->
-    <p class="text-neutral-400 my-2 text-center">
+    <p class="text-neutral-400 mt-4 text-center">
       <span class="label">{{ $t("hint") }}</span>
       {{ $t("hintUpload") }}
     </p>
