@@ -364,6 +364,11 @@ initializeLayout();
         </select>
       </div>
     </div>
+    <!-- Hint -->
+    <p class="text-neutral-400 my-2 text-center">
+      <span class="label">Hint</span>
+      You can load existing config by dropping configuration file on the page!
+    </p>
     <!-- Key Configurator -->
     <div class="container mx-auto" style="min-width: 600px">
       <div id="toolbar" class="flex justify-center mt-4">
@@ -497,6 +502,10 @@ select {
 
 #output > div {
   width: 50ch;
+}
+
+.label {
+  @apply bg-stone-600 px-2 py-1 rounded text-neutral-200 mr-1;
 }
 
 .drag-overlay {
