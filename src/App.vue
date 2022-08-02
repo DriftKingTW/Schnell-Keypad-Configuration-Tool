@@ -479,6 +479,13 @@ initializeLayout();
 </template>
 
 <style scoped lang="scss">
+.jv-dark {
+  @apply border-neutral-700 bg-neutral-800;
+  :deep(.jv-ellipsis) {
+    @apply bg-neutral-700;
+  }
+}
+
 label {
   @apply mx-4 text-slate-600
   dark:text-stone-400;
