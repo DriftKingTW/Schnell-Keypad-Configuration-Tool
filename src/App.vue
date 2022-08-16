@@ -117,7 +117,7 @@ const darkMode = computed(() => {
 });
 
 const manifestLatest = computed(() => {
-  return window.location.href + "/firmware/manifest.json";
+  return import.meta.env.BASE_URL + "/firmware/manifest.json";
 });
 
 // Functions
