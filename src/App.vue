@@ -2,6 +2,7 @@
 import { readonly, shallowReadonly, ref, reactive, computed } from "vue";
 import { JsonViewer } from "vue3-json-viewer";
 import { useI18n } from "vue-i18n";
+import "esp-web-tools/dist/web/install-button";
 
 import "vue3-json-viewer/dist/index.css";
 
@@ -113,6 +114,10 @@ const outputJsonObject = computed(() => {
 
 const darkMode = computed(() => {
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
+});
+
+const manifestLatest = computed(() => {
+  return "../public/firmware/manifest.json";
 });
 
 // Functions
@@ -395,33 +400,46 @@ initializeLayout();
                   {{ $t("layout") }} {{ i + 1 }}
                 </option>
               </select>
-              <input
-                type="button"
-                name="export"
-                :value="$t('export')"
-                class="btn btn-export"
-                @click="exportJsonConfig"
-              />
             </div>
           </div>
           <div class="my-2"></div>
-          <div class="flex">
-            <input
-              type="button"
-              name="reset"
-              :value="$t('resetLayout')"
-              class="btn btn-reset grow"
-              @click="initializeLayout(true)"
-            />
-            <input
-              type="button"
-              name="reset_key"
-              :value="$t('resetKey')"
-              class="btn btn-reset grow"
-              :class="resetKeyMode ? 'key-btn-active' : ''"
-              @click="resetKey"
-            />
-          </div>
+        </div>
+      </div>
+      <div class="flex justify-center mt-4">
+        <div class="flex">
+          <input
+            type="button"
+            name="reset"
+            :value="$t('resetLayout')"
+            class="btn btn-reset grow"
+            @click="initializeLayout(true)"
+          />
+          <input
+            type="button"
+            name="reset_key"
+            :value="$t('resetKey')"
+            class="btn btn-reset grow"
+            :class="resetKeyMode ? 'key-btn-active' : ''"
+            @click="resetKey"
+          />
+          <input
+            type="button"
+            name="export"
+            :value="$t('export')"
+            class="btn btn-export"
+            @click="exportJsonConfig"
+          />
+          <esp-web-install-button :manifest="manifestLatest">
+            <button slot="activate" type="button" class="btn btn-install">
+              {{ $t("firmwareInstall") }}
+            </button>
+            <span slot="unsupported">
+              Ah snap, your browser doesn't have Web Serial support!
+            </span>
+            <span slot="not-allowed">
+              Ah snap, you are not allowed to use this on HTTP!
+            </span>
+          </esp-web-install-button>
         </div>
       </div>
       <div
@@ -479,6 +497,11 @@ initializeLayout();
 </template>
 
 <style scoped lang="scss">
+.break {
+  flex-basis: 100%;
+  height: 0;
+}
+
 .jv-dark {
   @apply border-neutral-700 bg-neutral-800;
   :deep(.jv-ellipsis) {
@@ -544,6 +567,13 @@ select {
   hover:bg-lime-700
   active:bg-lime-800
   dark:bg-lime-700 dark:hover:bg-lime-800 dark:active:bg-lime-900;
+}
+
+.btn-install {
+  @apply bg-cyan-600 text-white
+  hover:bg-cyan-700
+  active:bg-cyan-800
+  dark:bg-cyan-700 dark:hover:bg-cyan-800 dark:active:bg-cyan-900;
 }
 
 .btn-reset {

@@ -9,5 +9,6 @@
   "resetLayout": "重设布局",
   "resetKey": "单键重设",
   "hint": "提示",
-  "hintUpload": "您可以透过将设定文件拖拽至页面任意区域读取既有设定"
+  "hintUpload": "您可以透过将设定文件拖拽至页面任意区域读取既有设定",
+  "firmwareInstall": "安装固件"
 }
