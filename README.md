@@ -15,6 +15,7 @@ This is a web based key configuration tool for [this](https://github.com/DriftKi
 - [ ] Editable key label
 - [x] Upload existing config file
 - [x] Reset single key
+- [x] Flash firmware through web ui
 
 ## Project setup
 
