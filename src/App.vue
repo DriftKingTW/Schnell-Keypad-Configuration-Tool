@@ -117,7 +117,7 @@ const darkMode = computed(() => {
 });
 
 const manifestLatest = computed(() => {
-  return "../public/firmware/manifest.json";
+  return "/firmware/manifest.json";
 });
 
 // Functions
