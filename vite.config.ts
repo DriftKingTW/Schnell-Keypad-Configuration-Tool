@@ -18,4 +18,9 @@ export default defineConfig({
     }),
   ],
   base: "/TinyPICO-BLE-Keypad-Key-Configuration-Tool/",
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
 });
