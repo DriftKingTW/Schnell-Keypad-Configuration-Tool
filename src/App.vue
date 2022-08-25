@@ -108,9 +108,7 @@ if (savedData) {
 
 // Computed
 
-const outputJsonObject = computed(() => {
-  return [...configJsonArray];
-});
+const outputJsonObject = computed(() => JSON.parse(outputJsonString.value));
 
 const darkMode = computed(() => {
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -260,9 +258,33 @@ const updateOutputData = () => {
   configJsonObject.keyInfo = [...keyInfo];
 
   configJsonArray[currentLayoutIndex.value] = { ...configJsonObject };
-  outputJsonString.value = JSON.stringify(configJsonArray);
+  const filteredConfigJsonArray = configJsonArray.filter(
+    (layout: ConfigJSONObject) => !isLayoutEmpty(layout)
+  );
 
+  outputJsonString.value = JSON.stringify(filteredConfigJsonArray);
   localStorage.setItem("keyconfig", outputJsonString.value);
+};
+
+/**
+ * Check if layout is empty
+ *
+ */
+const isLayoutEmpty = (layout: ConfigJSONObject) => {
+  if (layout.title !== "") {
+    return false;
+  }
+  for (const keyRow of layout.keymap) {
+    for (const key of keyRow) {
+      if (key !== 0) return false;
+    }
+  }
+  for (const keyRow of layout.keyInfo) {
+    for (const key of keyRow) {
+      if (key !== " ") return false;
+    }
+  }
+  return true;
 };
 
 /**
