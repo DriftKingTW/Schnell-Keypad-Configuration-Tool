@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { readonly, shallowReadonly, ref, reactive, computed } from "vue";
+import {
+  readonly,
+  shallowReadonly,
+  ref,
+  reactive,
+  computed,
+  nextTick,
+} from "vue";
 import { JsonViewer } from "vue3-json-viewer";
 import { useI18n } from "vue-i18n";
 import "esp-web-tools/dist/web/install-button";
@@ -107,6 +114,9 @@ let floatingEditor = reactive({
 });
 let editInfoText = ref("");
 let isEditingKeyInfo = ref(false);
+
+// Refs declaration
+const floatingEditorInput = ref<HTMLInputElement | null>(null);
 
 // Load saved data in localStorage
 const savedData = localStorage.getItem("keyconfig");
@@ -217,14 +227,16 @@ const updateKey = (e: any) => {
  * Show key info input field on where user right clicked
  *
  */
-const updateKeyInfo = (e: any, row: number, col: number) => {
+const updateKeyInfo = async (e: any, row: number, col: number) => {
   e.preventDefault();
+  isEditingKeyInfo.value = true;
   floatingEditor.x = e.pageX;
   floatingEditor.y = e.pageY;
   floatingEditor.row = row;
   floatingEditor.col = col;
   editInfoText.value = layout[row][col].keyInfo;
-  isEditingKeyInfo.value = true;
+  await nextTick();
+  floatingEditorInput.value?.focus();
 };
 
 /**
@@ -544,7 +556,8 @@ initializeLayout();
         >
           <input
             type="text"
-            name="edit-info"
+            ref="floatingEditorInput"
+            name="floatingEditorInput"
             v-model="editInfoText"
             id="floating-editor"
             @keyup.enter="saveKeyInfo"
