@@ -10,5 +10,6 @@
   "resetLayout": "重置佈局",
   "hint": "提示",
   "hintUpload": "您可以透過將設定檔拖曳至頁面任一處讀取既有設定",
-  "firmwareInstall": "安裝韌體"
+  "firmwareInstall": "安裝韌體",
+  "save": "儲存"
 }

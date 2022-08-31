@@ -10,5 +10,6 @@
   "resetKey": "Reset Key",
   "hint": "Hint",
   "hintUpload": "You can load existing config by dropping configuration file on the page!",
-  "firmwareInstall": "Firmware Install"
+  "firmwareInstall": "Firmware Install",
+  "save": "Save"
 }

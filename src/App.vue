@@ -529,16 +529,34 @@ initializeLayout();
           </template>
         </div>
       </div>
-      <input
-        v-show="isEditingKeyInfo"
-        type="text"
-        name="edit-info"
-        v-model="editInfoText"
-        id="floating-editor"
-        class="fixed"
-        :style="`left: ${floatingEditor.x}px; top: ${floatingEditor.y}px;`"
-        @keyup.enter="saveKeyInfo"
-      />
+      <transition
+        enter-active-class="duration-300 ease-out"
+        enter-from-class="transform opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="transform opacity-0"
+      >
+        <div
+          v-show="isEditingKeyInfo"
+          class="fixed"
+          :style="`left: ${floatingEditor.x}px; top: ${floatingEditor.y}px;`"
+        >
+          <input
+            type="text"
+            name="edit-info"
+            v-model="editInfoText"
+            id="floating-editor"
+            @keyup.enter="saveKeyInfo"
+          />
+          <input
+            type="button"
+            class="btn btn-export"
+            :value="$t('save')"
+            @click="saveKeyInfo"
+          />
+        </div>
+      </transition>
       <div id="output" class="flex justify-center mt-4">
         <div>
           <label for="">{{ $t("outputJsonConfig") }}</label>
