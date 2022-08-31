@@ -14,6 +14,9 @@ import "esp-web-tools/dist/web/install-button";
 import "vue3-json-viewer/dist/index.css";
 import CheckIcon from "vue-material-design-icons/Check.vue";
 import CloseIcon from "vue-material-design-icons/Close.vue";
+import TrayArrowDownIcon from "vue-material-design-icons/TrayArrowDown.vue";
+import ExportIcon from "vue-material-design-icons/Export.vue";
+import CodeJsonIcon from "vue-material-design-icons/CodeJson.vue";
 
 // Set page title
 const i18n = useI18n();
@@ -448,7 +451,9 @@ initializeLayout();
         <div>
           <div class="flex">
             <div>
-              <label for="title">{{ $t("layoutTitle") }}</label>
+              <label for="title">
+                {{ $t("layoutTitle") }}
+              </label>
               <input
                 v-if="configJsonArray[currentLayoutIndex]"
                 type="text"
@@ -475,30 +480,34 @@ initializeLayout();
       </div>
       <div class="flex justify-center mt-4">
         <div class="flex">
-          <input
-            type="button"
+          <button
             name="reset"
-            :value="$t('resetLayout')"
-            class="btn btn-reset grow"
+            class="btn btn-reset grow flex"
             @click="initializeLayout(true)"
-          />
-          <input
-            type="button"
+          >
+            <close-icon :size="18" class="self-center mr-2" />
+            {{ $t("resetLayout") }}
+          </button>
+          <button
             name="reset_key"
-            :value="$t('resetKey')"
-            class="btn btn-reset grow"
+            class="btn btn-reset grow flex"
             :class="resetKeyMode ? 'key-btn-active' : ''"
             @click="resetKey"
-          />
-          <input
-            type="button"
+          >
+            <close-icon :size="18" class="self-center mr-2" />
+            {{ $t("resetKey") }}
+          </button>
+          <button
             name="export"
-            :value="$t('export')"
-            class="btn btn-export"
+            class="btn btn-export flex"
             @click="exportJsonConfig"
-          />
+          >
+            <export-icon :size="18" class="self-center mr-2" />
+            {{ $t("export") }}
+          </button>
           <esp-web-install-button :manifest="manifestLatest">
-            <button slot="activate" type="button" class="btn btn-install">
+            <button slot="activate" type="button" class="btn btn-install flex">
+              <tray-arrow-down-icon :size="18" class="self-center mr-2" />
               {{ $t("firmwareInstall") }}
             </button>
             <span slot="unsupported">
@@ -583,7 +592,10 @@ initializeLayout();
       </transition>
       <div id="output" class="flex justify-center mt-4">
         <div>
-          <label for="">{{ $t("outputJsonConfig") }}</label>
+          <label for="" class="flex">
+            <code-json-icon :size="18" class="self-center mr-2" />
+            {{ $t("outputJsonConfig") }}
+          </label>
           <!-- <hr  /> -->
           <JsonViewer
             :value="outputJsonObject"
