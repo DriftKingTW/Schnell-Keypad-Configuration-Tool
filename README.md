@@ -8,16 +8,16 @@ This is a web based keyconfig generator and firmware install tool for [TinyPICO 
 
 - Flash generated config file to the keypad: [TinyPICO BLE Keypad Keyconfig Flash Tool](https://github.com/DriftKingTW/TinyPICO-BLE-Keypad/tree/master/tools/keyconfig-flash-tool)
 
-## TODOs
+## Features
 
 - [x] i18n multi-language support
 - [x] Dark/Light theme support
-- [ ] Vertical key cap layout ui
-- [ ] Customize keyboard layout
-- [ ] Editable key label
+- [x] Editable key label
 - [x] Upload existing config file
 - [x] Reset single key
 - [x] Flash firmware through web ui
+- [ ] Vertical key cap layout ui
+- [ ] Customize keyboard layout
 
 ## Project setup
 
