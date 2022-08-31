@@ -1,3 +1,5 @@
+<script setup></script>
+
 <template>
   <svg
     class="inline w-4 h-4 text-neutral-200 animate-spin dark:text-neutral-400 fill-white"
