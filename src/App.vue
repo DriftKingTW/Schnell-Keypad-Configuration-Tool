@@ -561,6 +561,7 @@ initializeLayout();
             v-model="editInfoText"
             id="floating-editor"
             @keyup.enter="saveKeyInfo"
+            @keydown.esc="isEditingKeyInfo = false"
           />
           <input
             type="button"
