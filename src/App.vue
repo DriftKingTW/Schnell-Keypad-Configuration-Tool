@@ -99,6 +99,14 @@ let configJsonObject: ConfigJSONObject = reactive({
 let configJsonArray: ConfigJSONArray = reactive([]);
 let resetKeyMode = ref(false);
 let showOverlay = ref(false);
+let floatingEditor = reactive({
+  x: 0,
+  y: 0,
+  row: 0,
+  col: 0,
+});
+let editInfoText = ref("");
+let isEditingKeyInfo = ref(false);
 
 // Load saved data in localStorage
 const savedData = localStorage.getItem("keyconfig");
@@ -203,6 +211,30 @@ const updateKey = (e: any) => {
   // Reset key location and keys' state
   currentKeyLocation = { ...defaultCoordinate };
   resetKeysState();
+};
+
+/**
+ * Show key info input field on where user right clicked
+ *
+ */
+const updateKeyInfo = (e: any, row: number, col: number) => {
+  e.preventDefault();
+  floatingEditor.x = e.pageX;
+  floatingEditor.y = e.pageY;
+  floatingEditor.row = row;
+  floatingEditor.col = col;
+  editInfoText.value = layout[row][col].keyInfo;
+  isEditingKeyInfo.value = true;
+};
+
+/**
+ * Save user input's key info
+ *
+ */
+const saveKeyInfo = () => {
+  layout[floatingEditor.row][floatingEditor.col].keyInfo = editInfoText.value;
+  isEditingKeyInfo.value = false;
+  updateOutputData();
 };
 
 /**
@@ -490,12 +522,23 @@ initializeLayout();
                   'key-h-2u': key.keySize === 'h-2u',
                 }"
                 @click="toggleActive(row, col)"
+                @contextmenu="updateKeyInfo($event, row, col)"
               />
             </template>
             <br />
           </template>
         </div>
       </div>
+      <input
+        v-show="isEditingKeyInfo"
+        type="text"
+        name="edit-info"
+        v-model="editInfoText"
+        id="floating-editor"
+        class="fixed"
+        :style="`left: ${floatingEditor.x}px; top: ${floatingEditor.y}px;`"
+        @keyup.enter="saveKeyInfo"
+      />
       <div id="output" class="flex justify-center mt-4">
         <div>
           <label for="">{{ $t("outputJsonConfig") }}</label>
@@ -554,6 +597,11 @@ select {
 
 #output > div {
   width: 50ch;
+}
+
+#floating-editor {
+  width: 10ch;
+  @apply text-input;
 }
 
 .label {
