@@ -12,6 +12,8 @@ import { useI18n } from "vue-i18n";
 import "esp-web-tools/dist/web/install-button";
 
 import "vue3-json-viewer/dist/index.css";
+import CheckIcon from "vue-material-design-icons/Check.vue";
+import CloseIcon from "vue-material-design-icons/Close.vue";
 
 // Set page title
 const i18n = useI18n();
@@ -551,7 +553,7 @@ initializeLayout();
       >
         <div
           v-show="isEditingKeyInfo"
-          class="fixed"
+          class="floating-editor"
           :style="`left: ${floatingEditor.x}px; top: ${floatingEditor.y}px;`"
         >
           <input
@@ -563,12 +565,20 @@ initializeLayout();
             @keyup.enter="saveKeyInfo"
             @keydown.esc="isEditingKeyInfo = false"
           />
-          <input
+          <button
             type="button"
-            class="btn btn-export"
-            :value="$t('save')"
+            class="btn btn-export flex"
             @click="saveKeyInfo"
-          />
+          >
+            <check-icon :size="18" class="self-center" />
+          </button>
+          <button
+            type="button"
+            class="btn btn-reset flex"
+            @click="isEditingKeyInfo = false"
+          >
+            <close-icon :size="18" class="self-center" />
+          </button>
         </div>
       </transition>
       <div id="output" class="flex justify-center mt-4">
@@ -636,6 +646,10 @@ select {
   @apply text-input;
 }
 
+.floating-editor {
+  @apply fixed flex justify-center backdrop-opacity-10 bg-black/60 rounded-lg;
+}
+
 .label {
   @apply bg-stone-600 px-2 py-1 rounded text-neutral-200 mr-1;
 }
@@ -655,13 +669,13 @@ select {
 }
 
 .text-input {
-  @apply rounded border-solid border-2 py-1 px-2 ml-2 m-1
+  @apply rounded border-solid border-2 py-1 px-2 ml-1 m-1
   focus:border-lime-600
   dark:bg-stone-800 dark:border-none dark:text-neutral-400;
 }
 
 .btn {
-  @apply rounded px-4 py-1 mx-1 cursor-pointer;
+  @apply rounded px-4 py-1 mx-1 m-1 cursor-pointer;
 }
 
 .btn-export {
