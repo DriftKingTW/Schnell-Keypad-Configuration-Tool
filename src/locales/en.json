@@ -4,13 +4,11 @@
   "outputJsonConfig": "Output JSON Config",
   "layout": "Layout",
   "newLayout": "New Layout",
-  "export": "Export JSON File",
+  "export": "Export",
   "copy": "Copy",
   "resetLayout": "Reset Layout",
   "resetKey": "Reset Key",
   "hint": "Hint",
   "hintUpload": "You can load existing config by dropping configuration file on the page!",
-  "firmwareInstall": "Firmware Install",
-  "updateConfig": "Update Config",
-  "updatingConfig": "Updating..."
+  "firmwareInstall": "Firmware Install"
 }

@@ -4,13 +4,11 @@
   "outputJsonConfig": "JSON 設定文本",
   "layout": "佈局",
   "newLayout": "新布局",
-  "export": "导出 JSON 文件",
+  "export": "导出",
   "copy": "拷贝",
   "resetLayout": "重设布局",
   "resetKey": "单键重设",
   "hint": "提示",
   "hintUpload": "您可以透过将设定文件拖拽至页面任意区域读取既有设定",
-  "firmwareInstall": "安装固件",
-  "updateConfig": "更新键位",
-  "updatingConfig": "更新中..."
+  "firmwareInstall": "安装固件"
 }

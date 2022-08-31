@@ -4,13 +4,11 @@
   "outputJsonConfig": "JSON 設定文件",
   "layout": "佈局",
   "newLayout": "新佈局",
-  "export": "輸出 JSON 檔案",
+  "export": "輸出",
   "copy": "複製",
   "resetKey": "單鍵重置",
   "resetLayout": "重置佈局",
   "hint": "提示",
   "hintUpload": "您可以透過將設定檔拖曳至頁面任一處讀取既有設定",
-  "firmwareInstall": "安裝韌體",
-  "updateConfig": "更新鍵位",
-  "updatingConfig": "更新中..."
+  "firmwareInstall": "安裝韌體"
 }

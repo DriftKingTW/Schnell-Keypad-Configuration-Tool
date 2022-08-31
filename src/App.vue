@@ -2,8 +2,6 @@
 import { readonly, shallowReadonly, ref, reactive, computed } from "vue";
 import { JsonViewer } from "vue3-json-viewer";
 import { useI18n } from "vue-i18n";
-import axios from "axios";
-import ButtonSpinner from "@/components/ButtonSpinner.vue";
 import "esp-web-tools/dist/web/install-button";
 
 import "vue3-json-viewer/dist/index.css";
@@ -101,11 +99,6 @@ let configJsonObject: ConfigJSONObject = reactive({
 let configJsonArray: ConfigJSONArray = reactive([]);
 let resetKeyMode = ref(false);
 let showOverlay = ref(false);
-let tinypicoUrl = ref("http://tp-keypad.local");
-
-// Status variables
-let isUpdatingConfig = ref(false);
-let isUpdateConfigSuccessful = ref(false);
 
 // Load saved data in localStorage
 const savedData = localStorage.getItem("keyconfig");
@@ -316,26 +309,6 @@ const exportJsonConfig = () => {
 };
 
 /**
- * Update keypad config via OTA update
- *
- */
-const updateConfig = async () => {
-  isUpdatingConfig.value = true;
-  try {
-    const res = await axios.put(
-      `${tinypicoUrl.value}/api/keyconfig`,
-      outputJsonObject.value
-    );
-    if (res.data.message === "success") {
-      console.log("Key configurations updated");
-    }
-  } catch (e) {
-    console.log(e);
-  }
-  isUpdatingConfig.value = false;
-};
-
-/**
  * Update page title after changing the language
  *
  */
@@ -454,52 +427,6 @@ initializeLayout();
           <div class="my-2"></div>
         </div>
       </div>
-      <div id="toolbar" class="flex justify-center">
-        <div>
-          <div class="flex">
-            <div>
-              <label for="title">Keypad Server URL</label>
-              <input
-                type="text"
-                name="url"
-                v-model="tinypicoUrl"
-                class="text-input"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="flex justify-center mt-4">
-        <div class="flex">
-          <button
-            name="export"
-            class="btn btn-export"
-            @click="exportJsonConfig"
-          >
-            {{ $t("export") }}
-          </button>
-          <button
-            class="btn btn-export"
-            @click="updateConfig"
-            :disabled="isUpdatingConfig"
-          >
-            <ButtonSpinner v-if="isUpdatingConfig" class="mr-2 mb-1" />
-            <span v-if="isUpdatingConfig">{{ $t("updatingConfig") }}</span>
-            <span v-else>{{ $t("updateConfig") }}</span>
-          </button>
-          <esp-web-install-button :manifest="manifestLatest">
-            <button slot="activate" type="button" class="btn btn-install">
-              {{ $t("firmwareInstall") }}
-            </button>
-            <span slot="unsupported">
-              Ah snap, your browser doesn't have Web Serial support!
-            </span>
-            <span slot="not-allowed">
-              Ah snap, you are not allowed to use this on HTTP!
-            </span>
-          </esp-web-install-button>
-        </div>
-      </div>
       <div class="flex justify-center mt-4">
         <div class="flex">
           <input
@@ -517,6 +444,24 @@ initializeLayout();
             :class="resetKeyMode ? 'key-btn-active' : ''"
             @click="resetKey"
           />
+          <input
+            type="button"
+            name="export"
+            :value="$t('export')"
+            class="btn btn-export"
+            @click="exportJsonConfig"
+          />
+          <esp-web-install-button :manifest="manifestLatest">
+            <button slot="activate" type="button" class="btn btn-install">
+              {{ $t("firmwareInstall") }}
+            </button>
+            <span slot="unsupported">
+              Ah snap, your browser doesn't have Web Serial support!
+            </span>
+            <span slot="not-allowed">
+              Ah snap, you are not allowed to use this on HTTP!
+            </span>
+          </esp-web-install-button>
         </div>
       </div>
       <div
