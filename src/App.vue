@@ -72,8 +72,8 @@ const KEYBOARD_LAYOUT: KeyboardLayout[] = [
   { row: 2, col: 0, size: "w-1.5u" },
   { row: 3, col: 0, size: "w-1.5u" },
   { row: 4, col: 0, size: "w-1.5u" },
-  // { row: 1, col: 6, size: "h-2u" },
-  // { row: 3, col: 6, size: "h-2u" },
+  { row: 1, col: 6, size: "h-2u" },
+  { row: 3, col: 6, size: "h-2u" },
   { row: 4, col: 4, size: "w-2u" },
   { row: 4, col: 1, size: "w-1.5u" },
   { row: 4, col: 2, size: "w-1.5u" },
@@ -249,7 +249,9 @@ const updateKeyInfo = async (e: any, row: number, col: number) => {
  *
  */
 const saveKeyInfo = () => {
-  layout[floatingEditor.row][floatingEditor.col].keyInfo = editInfoText.value;
+  if (editInfoText.value.length > 0) {
+    layout[floatingEditor.row][floatingEditor.col].keyInfo = editInfoText.value;
+  }
   isEditingKeyInfo.value = false;
   updateOutputData();
 };
@@ -521,18 +523,16 @@ initializeLayout();
       </div>
       <div
         id="keymap"
-        class="flex justify-center mt-4"
+        class="flex justify-center mt-4 outline-0"
+        tabindex="0"
         @keydown.prevent="updateKey($event)"
       >
         <div>
           <template v-for="(_, row) in layout">
             <template v-for="(key, col) in layout[row]">
-              <input
+              <span
                 v-if="!key.dummy"
-                type="button"
-                :value="key.dummy ? 'DUMMY' : key.keyInfo"
-                :disabled="key.dummy"
-                class="key-btn"
+                class="inline-block key-btn"
                 :class="{
                   'key-btn-active': key.active,
                   'key-btn-dummy': key.dummy,
@@ -546,7 +546,11 @@ initializeLayout();
                 }"
                 @click="toggleActive(row, col)"
                 @contextmenu="updateKeyInfo($event, row, col)"
-              />
+              >
+                <div class="truncate mx-2">
+                  {{ key.keyInfo === " " ? "∅" : key.keyInfo }}
+                </div>
+              </span>
             </template>
             <br />
           </template>
@@ -717,7 +721,7 @@ select {
 }
 
 .key-btn {
-  @apply rounded bg-slate-300 hover:bg-slate-400 text-slate-600 w-16 h-16 m-1 cursor-pointer
+  @apply rounded bg-slate-300 hover:bg-slate-400 text-slate-600 w-16 h-16 m-1 cursor-pointer 
   dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-slate-600;
 }
 
@@ -756,6 +760,18 @@ select {
 }
 
 .key-h-2u {
-  @apply h-32;
+  transform: translateY(-4.5rem);
+  &:before {
+    content: " ";
+    position: absolute;
+    transform: translateY(0.5rem);
+    z-index: -1;
+    background: inherit;
+    color: inherit;
+    @apply rounded w-16 h-32;
+  }
+  &:hover:before {
+    background: inherit;
+  }
 }
 </style>
