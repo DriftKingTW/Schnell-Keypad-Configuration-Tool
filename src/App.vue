@@ -452,13 +452,14 @@ initializeLayout();
       <span class="label">{{ $t("hint") }}</span>
       {{ $t("hintUpload") }}
     </p>
-    <div class="grid grid-cols-12 gap-4">
+    <div class="grid grid-cols-12 gap-4 pl-4">
       <MacrosEditor
-        class="col-start-3 col-span-8 justify-self-center lg:col-start-2 lg:col-span-5 lg:justify-self-end w-full mt-4"
+        class="col-start-1 col-span-12 justify-self-center lg:col-start-1 lg:col-span-5 xl:justify-self-end xl:col-start-2 w-full mt-4"
+        style="max-width: 600px"
       />
       <!-- Key Configurator -->
       <div
-        class="col-start-2 col-span-10 justify-self-center lg:col-span-6 lg:justify-self-start"
+        class="col-start-2 col-span-10 justify-self-center lg:col-start-6 lg:col-span-7 xl:col-start-7 xl:justify-self-start"
         style="min-width: 600px"
       >
         <div id="toolbar" class="flex justify-center mt-4">
