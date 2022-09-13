@@ -132,7 +132,7 @@ const checkSpecialKey = (key: number) => {
       result = "LAlt";
       break;
     case 131:
-      result = "LGUI";
+      result = "LMeta";
       break;
     case 132:
       result = "RCtrl";
@@ -144,7 +144,7 @@ const checkSpecialKey = (key: number) => {
       result = "RAlt";
       break;
     case 135:
-      result = "RGUI";
+      result = "RMeta";
       break;
     case 176:
       result = "Return";
@@ -191,7 +191,141 @@ const checkSpecialKey = (key: number) => {
     case 218:
       result = "UpArrow";
       break;
-    // TODO Numeric
+    case 219:
+      result = "NumLock";
+      break;
+    case 220:
+      result = "Keypad /";
+      break;
+    case 221:
+      result = "Keypad *";
+      break;
+    case 222:
+      result = "Keypad -";
+      break;
+    case 223:
+      result = "Keypad +";
+      break;
+    case 224:
+      result = "Keypad Enter";
+      break;
+    case 225:
+      result = "Keypad 1";
+      break;
+    case 226:
+      result = "Keypad 2";
+      break;
+    case 227:
+      result = "Keypad 3";
+      break;
+    case 228:
+      result = "Keypad 4";
+      break;
+    case 229:
+      result = "Keypad 5";
+      break;
+    case 230:
+      result = "Keypad 6";
+      break;
+    case 231:
+      result = "Keypad 7";
+      break;
+    case 232:
+      result = "Keypad 8";
+      break;
+    case 233:
+      result = "Keypad 9";
+      break;
+    case 234:
+      result = "Keypad 0";
+      break;
+    case 235:
+      result = "Keypad .";
+      break;
+    case 177:
+      result = "Escape";
+      break;
+    case 194:
+      result = "F1";
+      break;
+    case 195:
+      result = "F2";
+      break;
+    case 196:
+      result = "F3";
+      break;
+    case 197:
+      result = "F4";
+      break;
+    case 198:
+      result = "F5";
+      break;
+    case 199:
+      result = "F6";
+      break;
+    case 200:
+      result = "F7";
+      break;
+    case 201:
+      result = "F8";
+      break;
+    case 202:
+      result = "F9";
+      break;
+    case 203:
+      result = "F10";
+      break;
+    case 204:
+      result = "F11";
+      break;
+    case 205:
+      result = "F12";
+      break;
+    case 240:
+      result = "F13";
+      break;
+    case 241:
+      result = "F14";
+      break;
+    case 242:
+      result = "F15";
+      break;
+    case 243:
+      result = "F16";
+      break;
+    case 244:
+      result = "F17";
+      break;
+    case 245:
+      result = "F18";
+      break;
+    case 246:
+      result = "F19";
+      break;
+    case 247:
+      result = "F20";
+      break;
+    case 248:
+      result = "F21";
+      break;
+    case 249:
+      result = "F22";
+      break;
+    case 250:
+      result = "F23";
+      break;
+    case 251:
+      result = "F24";
+      break;
+    case 206:
+      result = "PrintScreen";
+      break;
+    case 207:
+      result = "ScrollLock";
+      break;
+    case 208:
+      result = "Pause";
+      break;
   }
 
   return result;
