@@ -450,7 +450,7 @@ initializeLayout();
     </p>
     <div class="grid grid-cols-12 gap-4">
       <MacrosEditor
-        class="col-start-3 col-span-8 justify-self-center lg:col-start-3 lg:col-span-4 lg:justify-self-end w-full mt-4"
+        class="col-start-3 col-span-8 justify-self-center lg:col-start-2 lg:col-span-5 lg:justify-self-end w-full mt-4"
       />
       <!-- Key Configurator -->
       <div
