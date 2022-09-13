@@ -19,7 +19,7 @@ import ExportIcon from "icons/Export.vue";
 import CodeJsonIcon from "icons/CodeJson.vue";
 import MacrosEditor from "@/components/MacrosEditor.vue";
 
-import { getSpecialKeyCode } from "@/utils/specialKeyHandler";
+import { getSpecialKeyCode } from "./utils/specialKeyHandler";
 
 // Set page title
 const i18n = useI18n();

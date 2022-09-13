@@ -8,7 +8,7 @@ import ExportIcon from "icons/Export.vue";
 import CodeJsonIcon from "icons/CodeJson.vue";
 import PlusIcon from "icons/Plus.vue";
 
-import { getSpecialKeyCode, checkSpecialKey } from "@/utils/SpecialKeyHandler";
+import { getSpecialKeyCode, checkSpecialKey } from "./../utils/SpecialKeyHandler";
 
 type Macro = {
   type: number;
@@ -219,3 +219,4 @@ initializeLayout();
   @apply bg-amber-300 hover:bg-amber-400
   dark:bg-amber-400 dark:hover:bg-amber-500 dark:text-neutral-900;
 }
+</style>
