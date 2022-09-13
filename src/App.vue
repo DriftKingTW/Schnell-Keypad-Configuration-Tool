@@ -17,7 +17,9 @@ import CloseIcon from "icons/Close.vue";
 import TrayArrowDownIcon from "icons/TrayArrowDown.vue";
 import ExportIcon from "icons/Export.vue";
 import CodeJsonIcon from "icons/CodeJson.vue";
-import MacrosEditor from "./components/MacrosEditor.vue";
+import MacrosEditor from "@/components/MacrosEditor.vue";
+
+import { getSpecialKeyCode } from "./utils/specialKeyHandler";
 
 // Set page title
 const i18n = useI18n();
@@ -217,9 +219,11 @@ const updateKey = (e: any) => {
   // Do nothing if there's no key activited
   if (!validateKeyLocation()) return;
 
+  const specialKeyCode = getSpecialKeyCode(e.code);
+
   // Update key's ASCII code and key information
   layout[currentKeyLocation.row][currentKeyLocation.col].keyStroke =
-    e.key.charCodeAt(0);
+    specialKeyCode === 0 ? e.key.charCodeAt(0) : specialKeyCode;
   layout[currentKeyLocation.row][currentKeyLocation.col].keyInfo = e.code;
 
   updateOutputData();

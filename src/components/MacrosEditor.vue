@@ -8,6 +8,8 @@ import ExportIcon from "icons/Export.vue";
 import CodeJsonIcon from "icons/CodeJson.vue";
 import PlusIcon from "icons/Plus.vue";
 
+import { getSpecialKeyCode, checkSpecialKey } from "./../utils/SpecialKeyHandler";
+
 type Macro = {
   type: number;
   name: string;
@@ -108,7 +110,11 @@ const updateKeyStorkes = (e: any) => {
   if (keyStrokes.length === 6) {
     return;
   }
-  keyStrokes = [...keyStrokes, e.key.charCodeAt(0)];
+  const specialKeyCode = getSpecialKeyCode(e.code);
+  keyStrokes = [
+    ...keyStrokes,
+    specialKeyCode === 0 ? e.key.charCodeAt(0) : specialKeyCode,
+  ];
   macros[activeMacroIndex.value].keyStrokes = [...keyStrokes];
   updateOuputData();
   console.log(keyStrokes);
@@ -116,219 +122,6 @@ const updateKeyStorkes = (e: any) => {
 
 const resetKeyStrokes = () => {
   keyStrokes = [];
-};
-
-const checkSpecialKey = (key: number) => {
-  let result: string = "";
-
-  switch (key) {
-    case 128:
-      result = "LCtrl";
-      break;
-    case 129:
-      result = "LShift";
-      break;
-    case 130:
-      result = "LAlt";
-      break;
-    case 131:
-      result = "LMeta";
-      break;
-    case 132:
-      result = "RCtrl";
-      break;
-    case 133:
-      result = "RShift";
-      break;
-    case 134:
-      result = "RAlt";
-      break;
-    case 135:
-      result = "RMeta";
-      break;
-    case 176:
-      result = "Return";
-      break;
-    case 179:
-      result = "Tab";
-      break;
-    case 178:
-      result = "Backspace";
-      break;
-    case 193:
-      result = "CapsLock";
-      break;
-    case 237:
-      result = "Menu";
-      break;
-    case 209:
-      result = "Insert";
-      break;
-    case 210:
-      result = "Home";
-      break;
-    case 211:
-      result = "PageUp";
-      break;
-    case 212:
-      result = "Delete";
-      break;
-    case 213:
-      result = "End";
-      break;
-    case 214:
-      result = "PageDown";
-      break;
-    case 215:
-      result = "RightArrow";
-      break;
-    case 216:
-      result = "LeftArrow";
-      break;
-    case 217:
-      result = "DownArrow";
-      break;
-    case 218:
-      result = "UpArrow";
-      break;
-    case 219:
-      result = "NumLock";
-      break;
-    case 220:
-      result = "Keypad /";
-      break;
-    case 221:
-      result = "Keypad *";
-      break;
-    case 222:
-      result = "Keypad -";
-      break;
-    case 223:
-      result = "Keypad +";
-      break;
-    case 224:
-      result = "Keypad Enter";
-      break;
-    case 225:
-      result = "Keypad 1";
-      break;
-    case 226:
-      result = "Keypad 2";
-      break;
-    case 227:
-      result = "Keypad 3";
-      break;
-    case 228:
-      result = "Keypad 4";
-      break;
-    case 229:
-      result = "Keypad 5";
-      break;
-    case 230:
-      result = "Keypad 6";
-      break;
-    case 231:
-      result = "Keypad 7";
-      break;
-    case 232:
-      result = "Keypad 8";
-      break;
-    case 233:
-      result = "Keypad 9";
-      break;
-    case 234:
-      result = "Keypad 0";
-      break;
-    case 235:
-      result = "Keypad .";
-      break;
-    case 177:
-      result = "Escape";
-      break;
-    case 194:
-      result = "F1";
-      break;
-    case 195:
-      result = "F2";
-      break;
-    case 196:
-      result = "F3";
-      break;
-    case 197:
-      result = "F4";
-      break;
-    case 198:
-      result = "F5";
-      break;
-    case 199:
-      result = "F6";
-      break;
-    case 200:
-      result = "F7";
-      break;
-    case 201:
-      result = "F8";
-      break;
-    case 202:
-      result = "F9";
-      break;
-    case 203:
-      result = "F10";
-      break;
-    case 204:
-      result = "F11";
-      break;
-    case 205:
-      result = "F12";
-      break;
-    case 240:
-      result = "F13";
-      break;
-    case 241:
-      result = "F14";
-      break;
-    case 242:
-      result = "F15";
-      break;
-    case 243:
-      result = "F16";
-      break;
-    case 244:
-      result = "F17";
-      break;
-    case 245:
-      result = "F18";
-      break;
-    case 246:
-      result = "F19";
-      break;
-    case 247:
-      result = "F20";
-      break;
-    case 248:
-      result = "F21";
-      break;
-    case 249:
-      result = "F22";
-      break;
-    case 250:
-      result = "F23";
-      break;
-    case 251:
-      result = "F24";
-      break;
-    case 206:
-      result = "PrintScreen";
-      break;
-    case 207:
-      result = "ScrollLock";
-      break;
-    case 208:
-      result = "Pause";
-      break;
-  }
-
-  return result;
 };
 
 initializeLayout();
