@@ -12,11 +12,11 @@ import { useI18n } from "vue-i18n";
 import "esp-web-tools/dist/web/install-button";
 
 import "vue3-json-viewer/dist/index.css";
-import CheckIcon from "vue-material-design-icons/Check.vue";
-import CloseIcon from "vue-material-design-icons/Close.vue";
-import TrayArrowDownIcon from "vue-material-design-icons/TrayArrowDown.vue";
-import ExportIcon from "vue-material-design-icons/Export.vue";
-import CodeJsonIcon from "vue-material-design-icons/CodeJson.vue";
+import CheckIcon from "icons/Check.vue";
+import CloseIcon from "icons/Close.vue";
+import TrayArrowDownIcon from "icons/TrayArrowDown.vue";
+import ExportIcon from "icons/Export.vue";
+import CodeJsonIcon from "icons/CodeJson.vue";
 import MacrosEditor from "./components/MacrosEditor.vue";
 
 // Set page title

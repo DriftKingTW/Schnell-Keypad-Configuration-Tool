@@ -2,9 +2,11 @@
 import { ref, reactive, computed } from "vue";
 import { JsonViewer } from "vue3-json-viewer";
 
-import ExportIcon from "vue-material-design-icons/Export.vue";
-import CodeJsonIcon from "vue-material-design-icons/CodeJson.vue";
-import PlusIcon from "vue-material-design-icons/plus.vue";
+import "vue3-json-viewer/dist/index.css";
+
+import ExportIcon from "icons/Export.vue";
+import CodeJsonIcon from "icons/CodeJson.vue";
+import PlusIcon from "icons/plus.vue";
 
 type Macro = {
   type: number;
