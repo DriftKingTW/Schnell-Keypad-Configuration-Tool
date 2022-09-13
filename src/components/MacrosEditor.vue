@@ -8,7 +8,7 @@ import ExportIcon from "icons/Export.vue";
 import CodeJsonIcon from "icons/CodeJson.vue";
 import PlusIcon from "icons/Plus.vue";
 
-import { getSpecialKeyCode, checkSpecialKey } from "./../utils/SpecialKeyHandler";
+import { getSpecialKeyCode, checkSpecialKey } from "../utils/specialKeyHandler";
 
 type Macro = {
   type: number;

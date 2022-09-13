@@ -1,2 +1,2 @@
-export const getSpecialKeyCode: (key: string) => number;
-export const checkSpecialKey: (key: number) => string;
+export declare function getSpecialKeyCode(key: string): number;
+export declare function checkSpecialKey(key: number): string;
