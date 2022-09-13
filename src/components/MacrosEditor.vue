@@ -6,7 +6,7 @@ import "vue3-json-viewer/dist/index.css";
 
 import ExportIcon from "icons/Export.vue";
 import CodeJsonIcon from "icons/CodeJson.vue";
-import PlusIcon from "icons/plus.vue";
+import PlusIcon from "icons/Plus.vue";
 
 type Macro = {
   type: number;
