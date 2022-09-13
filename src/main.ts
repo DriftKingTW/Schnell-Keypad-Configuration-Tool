@@ -4,7 +4,7 @@ import { createI18n } from "vue-i18n";
 import en from "./locales/en.json";
 import zhTW from "./locales/zh-tw.json";
 import zhCN from "./locales/zh-cn.json";
-import "./index.css";
+import "./index.scss";
 
 const i18n = createI18n({
   globalInjection: true,

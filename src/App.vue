@@ -17,6 +17,7 @@ import CloseIcon from "vue-material-design-icons/Close.vue";
 import TrayArrowDownIcon from "vue-material-design-icons/TrayArrowDown.vue";
 import ExportIcon from "vue-material-design-icons/Export.vue";
 import CodeJsonIcon from "vue-material-design-icons/CodeJson.vue";
+import MacrosEditor from "./components/MacrosEditor.vue";
 
 // Set page title
 const i18n = useI18n();
@@ -411,7 +412,7 @@ initializeLayout();
 
 <template>
   <div
-    class="w-screen h-screen"
+    class="w-screen h-screen dark:[color-scheme:dark]"
     @drop.prevent="uploadFile"
     @dragover.prevent="dragover"
   >
@@ -447,172 +448,184 @@ initializeLayout();
       <span class="label">{{ $t("hint") }}</span>
       {{ $t("hintUpload") }}
     </p>
-    <!-- Key Configurator -->
-    <div class="container mx-auto" style="min-width: 600px">
-      <div id="toolbar" class="flex justify-center mt-4">
-        <div>
-          <div class="flex">
-            <div>
-              <label for="title">
-                {{ $t("layoutTitle") }}
-              </label>
-              <input
-                v-if="configJsonArray[currentLayoutIndex]"
-                type="text"
-                name="title"
-                :placeholder="$t('newLayout')"
-                v-model="configJsonArray[currentLayoutIndex].title"
-                class="text-input"
-                @input="updateOutputData"
-              />
-              <select
-                name="add_layout"
-                v-model="currentLayoutIndex"
-                @change="initializeLayout()"
-                class="btn"
-              >
-                <option v-for="(_, i) in 10" :value="i">
-                  {{ $t("layout") }} {{ i + 1 }}
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="my-2"></div>
-        </div>
-      </div>
-      <div class="flex justify-center mt-4">
-        <div class="flex">
-          <button
-            name="reset"
-            class="btn btn-reset grow flex"
-            @click="initializeLayout(true)"
-          >
-            <close-icon :size="18" class="self-center mr-2" />
-            {{ $t("resetLayout") }}
-          </button>
-          <button
-            name="reset_key"
-            class="btn btn-reset grow flex"
-            :class="resetKeyMode ? 'key-btn-active' : ''"
-            @click="resetKey"
-          >
-            <close-icon :size="18" class="self-center mr-2" />
-            {{ $t("resetKey") }}
-          </button>
-          <button
-            name="export"
-            class="btn btn-export flex"
-            @click="exportJsonConfig"
-          >
-            <export-icon :size="18" class="self-center mr-2" />
-            {{ $t("export") }}
-          </button>
-          <esp-web-install-button :manifest="manifestLatest">
-            <button slot="activate" type="button" class="btn btn-install flex">
-              <tray-arrow-down-icon :size="18" class="self-center mr-2" />
-              {{ $t("firmwareInstall") }}
-            </button>
-            <span slot="unsupported">
-              Ah snap, your browser doesn't have Web Serial support!
-            </span>
-            <span slot="not-allowed">
-              Ah snap, you are not allowed to use this on HTTP!
-            </span>
-          </esp-web-install-button>
-        </div>
-      </div>
+    <div class="grid grid-cols-12 gap-4">
+      <MacrosEditor
+        class="col-start-3 col-span-8 justify-self-center lg:col-start-3 lg:col-span-4 lg:justify-self-end w-full mt-4"
+      />
+      <!-- Key Configurator -->
       <div
-        id="keymap"
-        class="flex justify-center mt-4 outline-0"
-        tabindex="0"
-        @keydown.prevent="updateKey($event)"
+        class="col-start-2 col-span-10 justify-self-center lg:col-span-6 lg:justify-self-start"
+        style="min-width: 600px"
       >
-        <div>
-          <template v-for="(_, row) in layout">
-            <template v-for="(key, col) in layout[row]">
-              <span
-                v-if="!key.dummy"
-                class="inline-block key-btn"
-                :class="{
-                  'key-btn-active': key.active,
-                  'key-btn-dummy': key.dummy,
-                  'key-1u': key.keySize === '1u',
-                  'key-w-1-25u': key.keySize === 'w-1.25u',
-                  'key-w-1-5u': key.keySize === 'w-1.5u',
-                  'key-w-2u': key.keySize === 'w-2u',
-                  'key-h-1-25u': key.keySize === 'h-1.25u',
-                  'key-h-1-5u': key.keySize === 'h-1.5u',
-                  'key-h-2u': key.keySize === 'h-2u',
-                }"
-                @click="toggleActive(row, col)"
-                @contextmenu="updateKeyInfo($event, row, col)"
+        <div id="toolbar" class="flex justify-center mt-4">
+          <div>
+            <div class="flex">
+              <div>
+                <label for="title">
+                  {{ $t("layoutTitle") }}
+                </label>
+                <input
+                  v-if="configJsonArray[currentLayoutIndex]"
+                  type="text"
+                  name="title"
+                  :placeholder="$t('newLayout')"
+                  v-model="configJsonArray[currentLayoutIndex].title"
+                  class="text-input"
+                  @input="updateOutputData"
+                />
+                <select
+                  name="add_layout"
+                  v-model="currentLayoutIndex"
+                  @change="initializeLayout()"
+                  class="btn"
+                >
+                  <option v-for="(_, i) in 10" :value="i">
+                    {{ $t("layout") }} {{ i + 1 }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="my-2"></div>
+          </div>
+        </div>
+        <div class="flex justify-center mt-4">
+          <div class="flex">
+            <button
+              name="reset"
+              class="btn btn-reset grow flex"
+              @click="initializeLayout(true)"
+            >
+              <close-icon :size="18" class="self-center mr-2" />
+              {{ $t("resetLayout") }}
+            </button>
+            <button
+              name="reset_key"
+              class="btn btn-reset grow flex"
+              :class="resetKeyMode ? 'key-btn-active' : ''"
+              @click="resetKey"
+            >
+              <close-icon :size="18" class="self-center mr-2" />
+              {{ $t("resetKey") }}
+            </button>
+            <esp-web-install-button :manifest="manifestLatest">
+              <button
+                slot="activate"
+                type="button"
+                class="btn btn-install flex"
               >
-                <div class="truncate mx-2">
-                  {{ key.keyInfo === " " ? "∅" : key.keyInfo }}
-                </div>
+                <tray-arrow-down-icon :size="18" class="self-center mr-2" />
+                {{ $t("firmwareInstall") }}
+              </button>
+              <span slot="unsupported">
+                Ah snap, your browser doesn't have Web Serial support!
               </span>
-            </template>
-            <br />
-          </template>
+              <span slot="not-allowed">
+                Ah snap, you are not allowed to use this on HTTP!
+              </span>
+            </esp-web-install-button>
+            <button
+              name="export"
+              class="btn btn-export flex"
+              @click="exportJsonConfig"
+            >
+              <export-icon :size="18" class="self-center mr-2" />
+              {{ $t("export") }}
+            </button>
+          </div>
         </div>
-      </div>
-      <transition
-        enter-active-class="duration-300 ease-out"
-        enter-from-class="transform opacity-0"
-        enter-to-class="opacity-100"
-        leave-active-class="duration-200 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="transform opacity-0"
-      >
         <div
-          v-show="isEditingKeyInfo"
-          class="floating-editor"
-          :style="`left: ${floatingEditor.x}px; top: ${floatingEditor.y}px;`"
+          id="keymap"
+          class="flex justify-center mt-4 outline-0"
+          tabindex="0"
+          @keydown.prevent="updateKey($event)"
         >
-          <input
-            type="text"
-            ref="floatingEditorInput"
-            name="floatingEditorInput"
-            v-model="editInfoText"
-            id="floating-editor"
-            @keyup.enter="saveKeyInfo"
-            @keydown.esc="isEditingKeyInfo = false"
-          />
-          <button
-            type="button"
-            class="btn btn-export flex"
-            @click="saveKeyInfo"
-          >
-            <check-icon :size="18" class="self-center" />
-          </button>
-          <button
-            type="button"
-            class="btn btn-reset flex"
-            @click="isEditingKeyInfo = false"
-          >
-            <close-icon :size="18" class="self-center" />
-          </button>
+          <div>
+            <template v-for="(_, row) in layout">
+              <template v-for="(key, col) in layout[row]">
+                <span
+                  v-if="!key.dummy"
+                  class="inline-block key-btn"
+                  :class="{
+                    'key-btn-active': key.active,
+                    'key-btn-dummy': key.dummy,
+                    'key-1u': key.keySize === '1u',
+                    'key-w-1-25u': key.keySize === 'w-1.25u',
+                    'key-w-1-5u': key.keySize === 'w-1.5u',
+                    'key-w-2u': key.keySize === 'w-2u',
+                    'key-h-1-25u': key.keySize === 'h-1.25u',
+                    'key-h-1-5u': key.keySize === 'h-1.5u',
+                    'key-h-2u': key.keySize === 'h-2u',
+                  }"
+                  @click="toggleActive(row, col)"
+                  @contextmenu="updateKeyInfo($event, row, col)"
+                >
+                  <div class="truncate mx-2">
+                    {{ key.keyInfo === " " ? "∅" : key.keyInfo }}
+                  </div>
+                </span>
+              </template>
+              <br />
+            </template>
+          </div>
         </div>
-      </transition>
-      <div id="output" class="flex justify-center mt-4">
-        <div>
-          <label for="" class="flex">
-            <code-json-icon :size="18" class="self-center mr-2" />
-            {{ $t("outputJsonConfig") }}
-          </label>
-          <!-- <hr  /> -->
-          <JsonViewer
-            :value="outputJsonObject"
-            class="mt-4"
-            copyable
-            boxed
-            sort
-            :expanded="false"
-            :expand-depth="0"
-            :theme="darkMode ? 'dark' : 'light'"
+        <transition
+          enter-active-class="duration-300 ease-out"
+          enter-from-class="transform opacity-0"
+          enter-to-class="opacity-100"
+          leave-active-class="duration-200 ease-in"
+          leave-from-class="opacity-100"
+          leave-to-class="transform opacity-0"
+        >
+          <div
+            v-show="isEditingKeyInfo"
+            class="floating-editor"
+            :style="`left: ${floatingEditor.x}px; top: ${floatingEditor.y}px;`"
           >
-            <template v-slot:copy>{{ $t("copy") }}</template>
-          </JsonViewer>
+            <input
+              type="text"
+              ref="floatingEditorInput"
+              name="floatingEditorInput"
+              v-model="editInfoText"
+              id="floating-editor"
+              @keyup.enter="saveKeyInfo"
+              @keydown.esc="isEditingKeyInfo = false"
+            />
+            <button
+              type="button"
+              class="btn btn-export flex"
+              @click="saveKeyInfo"
+            >
+              <check-icon :size="18" class="self-center" />
+            </button>
+            <button
+              type="button"
+              class="btn btn-reset flex"
+              @click="isEditingKeyInfo = false"
+            >
+              <close-icon :size="18" class="self-center" />
+            </button>
+          </div>
+        </transition>
+        <div id="output" class="flex justify-center my-4">
+          <div>
+            <label for="" class="flex">
+              <code-json-icon :size="18" class="self-center mr-2" />
+              {{ $t("outputJsonConfig") }}
+            </label>
+            <!-- <hr  /> -->
+            <JsonViewer
+              :value="outputJsonObject"
+              class="mt-4"
+              copyable
+              boxed
+              sort
+              :expanded="false"
+              :expand-depth="0"
+              :theme="darkMode ? 'dark' : 'light'"
+            >
+              <template v-slot:copy>{{ $t("copy") }}</template>
+            </JsonViewer>
+          </div>
         </div>
       </div>
     </div>
@@ -620,101 +633,6 @@ initializeLayout();
 </template>
 
 <style scoped lang="scss">
-.break {
-  flex-basis: 100%;
-  height: 0;
-}
-
-.jv-dark {
-  @apply border-neutral-700 bg-neutral-800;
-  :deep(.jv-ellipsis) {
-    @apply bg-neutral-700;
-  }
-}
-
-label {
-  @apply mx-4 text-slate-600
-  dark:text-stone-400;
-}
-
-input:focus {
-  outline: none;
-  box-shadow: none;
-}
-
-select:focus {
-  outline: none;
-  box-shadow: none;
-}
-
-select {
-  @apply rounded border-solid border-2 ml-2 m-1 cursor-pointer text-slate-600
-  focus:border-lime-600
-  dark:bg-stone-800 dark:border-none dark:text-neutral-400;
-}
-
-#output > div {
-  width: 50ch;
-}
-
-#floating-editor {
-  width: 10ch;
-  @apply text-input;
-}
-
-.floating-editor {
-  @apply fixed flex justify-center backdrop-opacity-10 bg-black/60 rounded-lg;
-}
-
-.label {
-  @apply bg-stone-600 px-2 py-1 rounded text-neutral-200 mr-1;
-}
-
-.drag-overlay {
-  @apply fixed top-0 left-0 right-0 bottom-0
-  h-screen w-full z-50
-  overflow-hidden
-  bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500
-  flex flex-col items-center justify-center
-  opacity-75
-  animate-pulse;
-}
-
-.language-selector {
-  @apply bg-stone-700 text-white border-none;
-}
-
-.text-input {
-  @apply rounded border-solid border-2 py-1 px-2 ml-1 m-1
-  focus:border-lime-600
-  dark:bg-stone-800 dark:border-none dark:text-neutral-400;
-}
-
-.btn {
-  @apply rounded px-4 py-1 mx-1 m-1 cursor-pointer;
-}
-
-.btn-export {
-  @apply bg-lime-600 text-white
-  hover:bg-lime-700
-  active:bg-lime-800
-  dark:bg-lime-700 dark:hover:bg-lime-800 dark:active:bg-lime-900;
-}
-
-.btn-install {
-  @apply bg-cyan-600 text-white
-  hover:bg-cyan-700
-  active:bg-cyan-800
-  dark:bg-cyan-700 dark:hover:bg-cyan-800 dark:active:bg-cyan-900;
-}
-
-.btn-reset {
-  @apply bg-gray-200 text-slate-400
-  hover:bg-gray-300
-  active:bg-gray-400
-  dark:bg-neutral-700 dark:hover:bg-neutral-800 dark:active:bg-neutral-900 dark:text-neutral-400;
-}
-
 .key-btn:focus {
   outline: none;
   box-shadow: none;
