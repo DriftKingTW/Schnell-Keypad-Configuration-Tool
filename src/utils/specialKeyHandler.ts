@@ -1,3 +1,5 @@
+// Reference: https://www.arduino.cc/reference/en/language/functions/usb/keyboard/keyboardmodifiers/
+
 const getSpecialKeyCode = (key: string) => {
   let result: number = 0;
 
