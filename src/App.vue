@@ -123,6 +123,9 @@ let floatingEditor = reactive({
 let editInfoText = ref("");
 let isEditingKeyInfo = ref(false);
 
+const macros: any = reactive([]);
+const macroComponentKey = ref(0);
+
 // Refs declaration
 const floatingEditorInput = ref<HTMLInputElement | null>(null);
 
@@ -379,8 +382,16 @@ const updatePageTitle = () => {
 const uploadFile = (event: any) => {
   const file: File = event.dataTransfer.files[0];
   let reader = new FileReader();
-  reader.onload = loadConfigFile;
-  reader.readAsText(file);
+  const filename = event.dataTransfer.files[0].name;
+
+  if (filename === "keyconfig.json") {
+    reader.onload = loadKeyConfigFile;
+    reader.readAsText(file);
+  } else if (filename === "macros.json") {
+    reader.onload = loadMacrosConfigFile;
+    reader.readAsText(file);
+  }
+
   showOverlay.value = false;
 };
 
@@ -388,11 +399,22 @@ const uploadFile = (event: any) => {
  * Log the uploaded file to the console
  * @param {event} Event The file loaded event
  */
-const loadConfigFile = (event: any) => {
+const loadKeyConfigFile = (event: any) => {
   let str: string = event.target.result;
   let json: ConfigJSONObject[] = JSON.parse(str);
   configJsonArray = [...json];
   initializeLayout();
+};
+
+/**
+ * Log the uploaded file to the console
+ * @param {event} Event The file loaded event
+ */
+const loadMacrosConfigFile = (event: any) => {
+  let str: string = event.target.result;
+  let json: any[] = JSON.parse(str);
+  macros.push(...json);
+  macroComponentKey.value++;
 };
 
 /**
@@ -454,6 +476,8 @@ initializeLayout();
     </p>
     <div class="grid grid-cols-12 gap-4 pl-4">
       <MacrosEditor
+        :macros="macros"
+        :key="macroComponentKey"
         class="col-start-1 col-span-12 justify-self-center lg:col-start-1 lg:col-span-5 xl:justify-self-end xl:col-start-2 w-full mt-4"
         style="max-width: 600px"
       />

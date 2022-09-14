@@ -10,6 +10,12 @@ import PlusIcon from "icons/Plus.vue";
 
 import { getSpecialKeyCode, checkSpecialKey } from "../utils/specialKeyHandler";
 
+interface Props {
+  macros: Macro[];
+}
+
+const props = defineProps<Props>();
+
 type Macro = {
   type: number;
   name: string;
@@ -32,23 +38,32 @@ const configJsonArray = computed(() => JSON.parse(outputJsonString.value));
 /**
  * Initialize current layout's data
  *
- * @param {boolean} reset - Resets current layout, false for default
  */
 const initializeLayout = () => {
   // Load saved data in localStorage
-  const savedData = localStorage.getItem("macros");
-  if (savedData) {
-    const savedDataArray = JSON.parse(savedData);
-    savedDataArray.forEach((macro: Macro) => {
-      macros.push(macro);
-    });
+  const loadData = localStorage.getItem("macros");
+
+  if (props.macros.length > 0) {
+    // If prop data is available
+    macros.push(...props.macros);
+  } else if (loadData) {
+    // If localStorage data is available
+    const loadDataArray = JSON.parse(loadData);
+    macros.push(...loadDataArray);
   }
+
   updateOuputData();
+
+  // If no data is available, create a new macro
   if (macros.length === 0) {
     addMacro();
   }
 };
 
+/**
+ * Add a new macro
+ *
+ */
 const addMacro = () => {
   macros.push({
     type: 0,
@@ -58,6 +73,10 @@ const addMacro = () => {
   });
 };
 
+/**
+ * Remove empty macro config from the macros array
+ *
+ */
 const removeEmptyMacros = () => {
   macros.forEach((macro: Macro, index: number) => {
     if (macro.name === "") {
@@ -73,6 +92,10 @@ const removeEmptyMacros = () => {
   });
 };
 
+/**
+ * Update JSON output data
+ *
+ */
 const updateOuputData = () => {
   removeEmptyMacros();
   outputJsonString.value = JSON.stringify(macros);
@@ -81,6 +104,10 @@ const updateOuputData = () => {
   localStorage.setItem("macros", outputJsonString.value);
 };
 
+/**
+ * Export macros as JSON config file
+ *
+ */
 const exportMacros = () => {
   updateOuputData();
   const data = JSON.stringify(macros);
@@ -92,6 +119,10 @@ const exportMacros = () => {
   link.click();
 };
 
+/**
+ * Toggle current active macro (for key strokes input)
+ *
+ */
 const toggleActive = (macroIndex: number) => {
   if (activeMacroIndex.value === macroIndex) {
     resetActiveMacro();
@@ -100,11 +131,19 @@ const toggleActive = (macroIndex: number) => {
   }
 };
 
+/**
+ * Resets active macro
+ *
+ */
 const resetActiveMacro = () => {
   activeMacroIndex.value = -1;
   resetKeyStrokes();
 };
 
+/**
+ * Update key strokes for macro
+ *
+ */
 const updateKeyStorkes = (e: any) => {
   // Max 6 key press allowed
   if (keyStrokes.length === 6) {
@@ -120,6 +159,10 @@ const updateKeyStorkes = (e: any) => {
   console.log(keyStrokes);
 };
 
+/**
+ * Reset key strokes
+ *
+ */
 const resetKeyStrokes = () => {
   keyStrokes = [];
 };
