@@ -413,6 +413,7 @@ const loadKeyConfigFile = (event: any) => {
 const loadMacrosConfigFile = (event: any) => {
   let str: string = event.target.result;
   let json: any[] = JSON.parse(str);
+  macros.length = 0;
   macros.push(...json);
   macroComponentKey.value++;
 };
