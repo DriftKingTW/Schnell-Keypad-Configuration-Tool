@@ -16,7 +16,7 @@ This is a web based keyconfig generator and firmware install tool for [TinyPICO 
 - [x] Upload existing config file
 - [x] Reset single key
 - [x] Flash firmware through web ui
-- [ ] Vertical key cap layout ui
+- [x] Vertical key cap layout ui
 - [ ] Customize keyboard layout
 
 ## Project setup
