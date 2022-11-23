@@ -175,7 +175,7 @@ initializeLayout();
     <div class="flex">
       <button class="btn btn-install flex" @click="addMacro">
         <plus-icon :size="18" class="self-center mr-2" />
-        Add Macro
+        {{ $t("addMacro") }}
       </button>
 
       <button class="btn btn-export flex" @click="exportMacros">
