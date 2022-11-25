@@ -101,7 +101,6 @@ const removeEmptyMacros = () => {
  *
  */
 const updateOuputData = () => {
-  removeEmptyMacros();
   outputJsonString.value = JSON.stringify(macros);
 
   //save to localStorage
@@ -113,6 +112,7 @@ const updateOuputData = () => {
  *
  */
 const exportMacros = () => {
+  removeEmptyMacros();
   updateOuputData();
   const data = JSON.stringify(macros);
   const blob = new Blob([data], { type: "application/json" });
@@ -174,6 +174,13 @@ const resetKeyStrokes = () => {
   keyStrokes = [];
 };
 
+const updateMacroType = (i: number, e: any) => {
+  const element = e.currentTarget as HTMLInputElement;
+  const value = element.value;
+  macros[i].type = Number(value);
+  updateOuputData();
+};
+
 initializeLayout();
 </script>
 
@@ -216,8 +223,12 @@ initializeLayout();
             class="arrow self-center ml-2"
           />
         </span>
-        <select class="col-span-5 btn" v-model="typeList[macro.type]">
-          <option v-for="(type, j) in typeList" :key="type + i + j">
+        <select
+          class="col-span-5 btn"
+          :value="macro.type"
+          @change="updateMacroType(i, $event)"
+        >
+          <option v-for="(type, j) in typeList" :key="type + i + j" :value="j">
             {{ type }}
           </option>
         </select>
