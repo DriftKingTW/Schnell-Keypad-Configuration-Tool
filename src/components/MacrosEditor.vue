@@ -7,11 +7,15 @@ import "vue3-json-viewer/dist/index.css";
 import ExportIcon from "icons/Export.vue";
 import CodeJsonIcon from "icons/CodeJson.vue";
 import PlusIcon from "icons/Plus.vue";
+import MenuRightIcon from "icons/MenuRight.vue";
+import MenuLeftIcon from "icons/MenuLeft.vue";
 
 import { getSpecialKeyCode, checkSpecialKey } from "../utils/specialKeyHandler";
 
 interface Props {
   macros: Macro[];
+  modelValue: Number;
+  isSelectingMacro: boolean;
 }
 
 const props = defineProps<Props>();
@@ -124,6 +128,9 @@ const exportMacros = () => {
  *
  */
 const toggleActive = (macroIndex: number) => {
+  if (props.isSelectingMacro) {
+    return;
+  }
   if (activeMacroIndex.value === macroIndex) {
     resetActiveMacro();
   } else {
@@ -191,7 +198,24 @@ initializeLayout();
         v-for="(macro, i) in macros"
         :key="`macro_${i}`"
       >
-        <span class="col-span-12 text ml-2">{{ `Macro ${i}` }}</span>
+        <span
+          :class="`col-span-12 text ml-2 flex ${
+            isSelectingMacro ? 'hover:text-amber-400 cursor-pointer' : ''
+          }`"
+          @click="$emit('update:modelValue', i)"
+        >
+          <menu-right-icon
+            v-if="isSelectingMacro"
+            :size="24"
+            class="arrow self-center mr-2"
+          />
+          {{ `Macro ${i}` }}
+          <menu-left-icon
+            v-if="isSelectingMacro"
+            :size="24"
+            class="arrow self-center ml-2"
+          />
+        </span>
         <select class="col-span-5 btn" v-model="typeList[macro.type]">
           <option v-for="(type, j) in typeList" :key="type + i + j">
             {{ type }}
@@ -261,5 +285,20 @@ initializeLayout();
 .macro-active {
   @apply bg-amber-300 hover:bg-amber-400
   dark:bg-amber-400 dark:hover:bg-amber-500 dark:text-neutral-900;
+}
+.arrow {
+  animation: flashing 1s infinite;
+}
+
+@keyframes flashing {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 </style>

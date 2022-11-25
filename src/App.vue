@@ -6,6 +6,7 @@ import {
   reactive,
   computed,
   nextTick,
+  watch,
 } from "vue";
 import { JsonViewer } from "vue3-json-viewer";
 import { useI18n } from "vue-i18n";
@@ -15,6 +16,7 @@ import "vue3-json-viewer/dist/index.css";
 import CheckIcon from "icons/Check.vue";
 import CloseIcon from "icons/Close.vue";
 import TrayArrowDownIcon from "icons/TrayArrowDown.vue";
+import AlphaMBoxIcon from "icons/AlphaMBox.vue";
 import ExportIcon from "icons/Export.vue";
 import CodeJsonIcon from "icons/CodeJson.vue";
 import MacrosEditor from "@/components/MacrosEditor.vue";
@@ -122,6 +124,8 @@ let floatingEditor = reactive({
 });
 let editInfoText = ref("");
 let isEditingKeyInfo = ref(false);
+let isSelectingMacro = ref(false);
+let macroIndex = ref(-1);
 
 const macros: any = reactive([]);
 const macroComponentKey = ref(0);
@@ -145,6 +149,13 @@ const darkMode = computed(() => {
 
 const manifestLatest = computed(() => {
   return import.meta.env.BASE_URL + "/firmware/manifest.json";
+});
+
+// Watcher
+watch(macroIndex, async () => {
+  if (isSelectingMacro.value) {
+    assignMacro();
+  }
 });
 
 // Functions
@@ -262,6 +273,34 @@ const saveKeyInfo = () => {
   }
   isEditingKeyInfo.value = false;
   updateOutputData();
+};
+
+/**
+ * Assign macro to a key
+ *
+ */
+const assignMacro = () => {
+  if (!isSelectingMacro.value) {
+    isSelectingMacro.value = true;
+  } else {
+    if (macroIndex.value > -1 && isEditingKeyInfo.value) {
+      editInfoText.value = `MACRO_${macroIndex.value}`;
+      saveKeyInfo();
+      macroIndex.value = -1;
+    }
+    isSelectingMacro.value = false;
+    isEditingKeyInfo.value = false;
+  }
+};
+
+/**
+ * Close floating editor and reset editing status
+ *
+ */
+const resetKeyEditing = () => {
+  isEditingKeyInfo.value = false;
+  isSelectingMacro.value = false;
+  macroIndex.value = -1;
 };
 
 /**
@@ -477,8 +516,10 @@ initializeLayout();
     </p>
     <div class="grid grid-cols-12 gap-4 pl-4">
       <MacrosEditor
+        v-model="macroIndex"
         :macros="macros"
         :key="macroComponentKey"
+        :isSelectingMacro="isSelectingMacro"
         class="col-start-1 col-span-12 justify-self-center lg:col-start-1 lg:col-span-5 xl:justify-self-end xl:col-start-2 w-full mt-4"
         style="max-width: 600px"
       />
@@ -618,7 +659,7 @@ initializeLayout();
               v-model="editInfoText"
               id="floating-editor"
               @keyup.enter="saveKeyInfo"
-              @keydown.esc="isEditingKeyInfo = false"
+              @keydown.esc="resetKeyEditing"
             />
             <button
               type="button"
@@ -629,8 +670,18 @@ initializeLayout();
             </button>
             <button
               type="button"
+              :class="`btn btn-export flex ${
+                isSelectingMacro ? 'key-btn-active' : ''
+              }`"
+              @click="assignMacro"
+              @keydown.esc="resetKeyEditing"
+            >
+              <alpha-m-box-icon :size="18" class="self-center" />
+            </button>
+            <button
+              type="button"
               class="btn btn-reset flex"
-              @click="isEditingKeyInfo = false"
+              @click="resetKeyEditing"
             >
               <close-icon :size="18" class="self-center" />
             </button>
