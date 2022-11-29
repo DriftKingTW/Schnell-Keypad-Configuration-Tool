@@ -117,6 +117,7 @@ let configJsonArray: ConfigJSONArray = reactive([]);
 let resetKeyMode = ref(false);
 let showOverlay = ref(false);
 let floatingEditor = reactive({
+  floatLeft: false,
   x: 0,
   y: 0,
   row: 0,
@@ -254,11 +255,17 @@ const updateKey = (e: any) => {
 const updateKeyInfo = async (e: any, row: number, col: number) => {
   e.preventDefault();
   isEditingKeyInfo.value = true;
-  floatingEditor.x = e.pageX;
   floatingEditor.y = e.pageY;
   floatingEditor.row = row;
   floatingEditor.col = col;
   editInfoText.value = layout[row][col].keyInfo;
+  if (e.view.screen.width - e.pageX < 300) {
+    floatingEditor.floatLeft = true;
+    floatingEditor.x = e.view.screen.width - e.pageX;
+  } else {
+    floatingEditor.x = e.pageX;
+    floatingEditor.floatLeft = false;
+  }
   await nextTick();
   floatingEditorInput.value?.focus();
 };
@@ -650,7 +657,11 @@ initializeLayout();
           <div
             v-show="isEditingKeyInfo"
             class="floating-editor"
-            :style="`left: ${floatingEditor.x}px; top: ${floatingEditor.y}px;`"
+            :style="`${
+              floatingEditor.floatLeft
+                ? `right: ${floatingEditor.x}px;`
+                : `left: ${floatingEditor.x}px;`
+            } top: ${floatingEditor.y}px;`"
           >
             <input
               type="text"
