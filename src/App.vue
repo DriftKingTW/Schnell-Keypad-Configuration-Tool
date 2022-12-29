@@ -19,6 +19,7 @@ import TrayArrowDownIcon from "icons/TrayArrowDown.vue";
 import AlphaMBoxIcon from "icons/AlphaMBox.vue";
 import ExportIcon from "icons/Export.vue";
 import CodeJsonIcon from "icons/CodeJson.vue";
+import FunctionIcon from "icons/Function.vue";
 import MacrosEditor from "@/components/MacrosEditor.vue";
 
 import { getSpecialKeyCode } from "./utils/specialKeyHandler";
@@ -298,6 +299,18 @@ const assignMacro = () => {
     isSelectingMacro.value = false;
     isEditingKeyInfo.value = false;
   }
+};
+
+/**
+ * Assign FN key label to active key
+ *
+ */
+const assignFnKey = () => {
+  if (!validateKeyLocation()) return;
+  layout[currentKeyLocation.row][currentKeyLocation.col].keyInfo = "FN";
+  updateOutputData();
+  currentKeyLocation = { ...defaultCoordinate };
+  resetKeysState();
 };
 
 /**
@@ -597,6 +610,14 @@ initializeLayout();
             >
               <close-icon :size="18" class="self-center mr-2" />
               {{ $t("resetKey") }}
+            </button>
+            <button
+              name="assign_fn_key"
+              class="btn btn-install grow flex"
+              @click="assignFnKey"
+            >
+              <function-icon :size="18" class="self-center mr-2" />
+              {{ $t("assignFnKey") }}
             </button>
             <button
               name="export"

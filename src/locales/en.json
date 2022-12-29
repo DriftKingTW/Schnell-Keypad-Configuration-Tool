@@ -12,5 +12,6 @@
   "hintUpload": "You can load existing config by dropping configuration file on the page!",
   "firmwareInstall": "Firmware Install",
   "save": "Save",
-  "addMacro": "Add Macro"
+  "addMacro": "Add Macro",
+  "assignFnKey": "Assign FN Key"
 }

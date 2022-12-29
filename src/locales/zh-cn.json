@@ -12,5 +12,6 @@
   "hintUpload": "您可以透过将设定文件拖拽至页面任意区域读取既有设定",
   "firmwareInstall": "安装固件",
   "save": "存档",
-  "addMacro": "新宏键"
+  "addMacro": "新宏键",
+  "assignFnKey": "设置 FN 键"
 }
