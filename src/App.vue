@@ -514,6 +514,19 @@ initializeLayout();
           <option value="zh-TW">🇹🇼 中文（繁體）</option>
           <option value="zh-CN">🇨🇳 中文（简体）</option>
         </select>
+
+        <esp-web-install-button :manifest="manifestLatest">
+          <button slot="activate" type="button" class="btn btn-install flex">
+            <tray-arrow-down-icon :size="18" class="self-center mr-2" />
+            {{ $t("firmwareInstall") }}
+          </button>
+          <span slot="unsupported">
+            Ah snap, your browser doesn't have Web Serial support!
+          </span>
+          <span slot="not-allowed">
+            Ah snap, you are not allowed to use this on HTTP!
+          </span>
+        </esp-web-install-button>
       </div>
     </div>
     <!-- Hint -->
@@ -585,22 +598,6 @@ initializeLayout();
               <close-icon :size="18" class="self-center mr-2" />
               {{ $t("resetKey") }}
             </button>
-            <esp-web-install-button :manifest="manifestLatest">
-              <button
-                slot="activate"
-                type="button"
-                class="btn btn-install flex"
-              >
-                <tray-arrow-down-icon :size="18" class="self-center mr-2" />
-                {{ $t("firmwareInstall") }}
-              </button>
-              <span slot="unsupported">
-                Ah snap, your browser doesn't have Web Serial support!
-              </span>
-              <span slot="not-allowed">
-                Ah snap, you are not allowed to use this on HTTP!
-              </span>
-            </esp-web-install-button>
             <button
               name="export"
               class="btn btn-export flex"
