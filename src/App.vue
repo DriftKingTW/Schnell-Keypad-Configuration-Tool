@@ -20,6 +20,7 @@ import AlphaMBoxIcon from "icons/AlphaMBox.vue";
 import ExportIcon from "icons/Export.vue";
 import CodeJsonIcon from "icons/CodeJson.vue";
 import FunctionIcon from "icons/Function.vue";
+import CloudUploadIcon from "icons/CloudUpload.vue";
 import MacrosEditor from "@/components/MacrosEditor.vue";
 
 import { getSpecialKeyCode } from "./utils/specialKeyHandler";
@@ -116,7 +117,7 @@ let configJsonObject: ConfigJSONObject = reactive({
 });
 let configJsonArray: ConfigJSONArray = reactive([]);
 let resetKeyMode = ref(false);
-let showOverlay = ref(false);
+let isDragging = ref(false);
 let floatingEditor = reactive({
   floatLeft: false,
   x: 0,
@@ -451,7 +452,7 @@ const uploadFile = (event: any) => {
     reader.readAsText(file);
   }
 
-  showOverlay.value = false;
+  isDragging.value = false;
 };
 
 /**
@@ -482,7 +483,7 @@ const loadMacrosConfigFile = (event: any) => {
  *
  */
 const dragover = () => {
-  showOverlay.value = true;
+  isDragging.value = true;
 };
 
 /**
@@ -490,26 +491,14 @@ const dragover = () => {
  *
  */
 const dragleave = () => {
-  showOverlay.value = false;
+  isDragging.value = false;
 };
 
 initializeLayout();
 </script>
 
 <template>
-  <div
-    class="w-screen h-screen dark:[color-scheme:dark]"
-    @drop.prevent="uploadFile"
-    @dragover.prevent="dragover"
-  >
-    <!-- Drag'n Drop Overlay -->
-    <div v-if="showOverlay" @dragleave="dragleave">
-      <div ref="dragOverlay" class="drag-overlay">
-        <h2 class="text-center text-white text-5xl font-bold animate-bounce">
-          Drop it!
-        </h2>
-      </div>
-    </div>
+  <div class="w-screen h-screen dark:[color-scheme:dark]">
     <!-- Navbar -->
     <div
       id="nav"
@@ -542,8 +531,20 @@ initializeLayout();
         </esp-web-install-button>
       </div>
     </div>
+    <!-- File Upload Bar -->
+    <div
+      :class="`drag-drop-bar ${isDragging ? 'active' : ''}`"
+      @drop.prevent="uploadFile"
+      @dragover.prevent="dragover"
+      @dragleave="dragleave"
+    >
+      <div class="drag-drop-bar__text flex">
+        <cloud-upload-icon :size="24" class="mr-2" />
+        {{ $t("dragDrop") }}
+      </div>
+    </div>
     <!-- Hint -->
-    <p class="text-neutral-400 mt-4 text-center">
+    <p class="text-neutral-400 mt-4 text-center" style="padding-top: 48px">
       <span class="label">{{ $t("hint") }}</span>
       {{ $t("hintUpload") }}
     </p>

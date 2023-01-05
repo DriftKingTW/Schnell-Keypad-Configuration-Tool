@@ -52,7 +52,19 @@ select:focus {
 }
 
 .label {
-    @apply bg-stone-600 px-2 py-1 rounded text-neutral-200 mr-1;
+    @apply bg-stone-200 text-neutral-500 dark:bg-stone-700 px-2 py-1 rounded dark:text-neutral-200 mr-1;
+}
+
+// add transition
+.drag-drop-bar {
+    @apply bg-stone-200 dark:bg-stone-700 w-full h-12 flex flex-col items-center justify-center text-neutral-400 absolute
+    transition-all duration-300 ease-in-out;
+    &.active {
+        @apply bg-stone-600 h-24 text-neutral-200;
+        & > .drag-drop-bar__text {
+            @apply animate-bounce;
+        }
+    }
 }
 
 .drag-overlay {

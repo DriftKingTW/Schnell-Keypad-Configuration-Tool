@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from "vue";
 import { JsonViewer } from "vue3-json-viewer";
+import draggable from "vuedraggable";
 
 import "vue3-json-viewer/dist/index.css";
 
@@ -9,6 +10,7 @@ import CodeJsonIcon from "icons/CodeJson.vue";
 import PlusIcon from "icons/Plus.vue";
 import MenuRightIcon from "icons/MenuRight.vue";
 import MenuLeftIcon from "icons/MenuLeft.vue";
+import DragHorizontalVariantIcon from "icons/DragHorizontalVariant.vue";
 
 import { getSpecialKeyCode, checkSpecialKey } from "../utils/specialKeyHandler";
 
@@ -32,6 +34,7 @@ const outputJsonString = ref("");
 let keyStrokes: number[] = reactive([]);
 const typeList: string[] = ["Key Strokes", "String", "String w/ Enter"];
 const macros: Macro[] = reactive([]);
+const isDragging = ref(false);
 
 const darkMode = computed(() => {
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -71,7 +74,7 @@ const initializeLayout = () => {
 const addMacro = () => {
   macros.push({
     type: 0,
-    name: "New Macro",
+    name: `Macro ${macros.length}`,
     keyStrokes: [],
     stringContent: "",
   });
@@ -199,73 +202,89 @@ initializeLayout();
     </div>
 
     <div class="overflow-y-auto overflow-x-hidden" style="max-height: 26rem">
-      <div
-        class="grid grid-cols-12 w-full"
-        style="width: calc(100% - 12px)"
-        v-for="(macro, i) in macros"
-        :key="`macro_${i}`"
+      <draggable
+        :list="macros"
+        @start="isDragging = true"
+        @end="isDragging = false"
+        handle=".handle"
+        item-key="name"
       >
-        <span
-          :class="`col-span-12 text ml-2 flex ${
-            isSelectingMacro ? 'hover:text-amber-400 cursor-pointer' : ''
-          }`"
-          @click="$emit('update:modelValue', i)"
-        >
-          <menu-right-icon
-            v-if="isSelectingMacro"
-            :size="24"
-            class="arrow self-center mr-2"
-          />
-          {{ `Macro ${i}` }}
-          <menu-left-icon
-            v-if="isSelectingMacro"
-            :size="24"
-            class="arrow self-center ml-2"
-          />
-        </span>
-        <select
-          class="col-span-5 btn"
-          :value="macro.type"
-          @change="updateMacroType(i, $event)"
-        >
-          <option v-for="(type, j) in typeList" :key="type + i + j" :value="j">
-            {{ type }}
-          </option>
-        </select>
-        <input
-          type="text"
-          placeholder=""
-          class="col-span-7 w-full text-input"
-          v-model="macro.name"
-          @input="updateOuputData"
-        />
-        <input
-          v-if="macro.type === 1 || macro.type === 2"
-          type="text"
-          placeholder=""
-          class="col-span-12 w-full text-input"
-          v-model="macro.stringContent"
-          @input="updateOuputData"
-        />
-        <div
-          v-else
-          class="col-span-12 w-full text-input outline-0 h-8 cursor-pointer"
-          :class="activeMacroIndex === i ? 'macro-active' : ''"
-          @click="toggleActive(i)"
-          tabindex="0"
-          @keydown.prevent="updateKeyStorkes($event)"
-        >
-          <span v-for="key in macro.keyStrokes" class="label">
-            {{
-              checkSpecialKey(key) === ""
-                ? String.fromCharCode(key) === " "
-                  ? "Space"
-                  : String.fromCharCode(key)
-                : checkSpecialKey(key)
-            }}
-          </span>
-        </div>
-      </div>
+        <template #item="{ element: macro, index }">
+          <div
+            class="grid grid-cols-12 w-full"
+            style="width: calc(100% - 12px)"
+          >
+            <span
+              :class="`col-span-12 text ml-2 flex ${
+                isSelectingMacro ? 'hover:text-amber-400 cursor-pointer' : ''
+              }`"
+              @click="$emit('update:modelValue', index)"
+            >
+              <drag-horizontal-variant-icon
+                :size="24"
+                class="mr-2 handle cursor-grab active:cursor-grabbing"
+              />
+              <menu-right-icon
+                v-if="isSelectingMacro"
+                :size="24"
+                class="arrow self-center mr-2"
+              />
+              {{ `Macro ${index}` }}
+              <menu-left-icon
+                v-if="isSelectingMacro"
+                :size="24"
+                class="arrow self-center ml-2"
+              />
+            </span>
+            <select
+              class="col-span-5 btn"
+              :value="macro.type"
+              @change="updateMacroType(index, $event)"
+            >
+              <option
+                v-for="(type, j) in typeList"
+                :key="type + index + j"
+                :value="j"
+              >
+                {{ type }}
+              </option>
+            </select>
+            <input
+              type="text"
+              placeholder=""
+              class="col-span-7 w-full text-input"
+              v-model="macro.name"
+              @input="updateOuputData"
+            />
+            <input
+              v-if="macro.type === 1 || macro.type === 2"
+              type="text"
+              placeholder=""
+              class="col-span-12 w-full text-input"
+              v-model="macro.stringContent"
+              @input="updateOuputData"
+            />
+            <div
+              v-else
+              class="col-span-12 w-full text-input outline-0 cursor-pointer"
+              :class="activeMacroIndex === index ? 'macro-active' : ''"
+              @click="toggleActive(index)"
+              tabindex="0"
+              @keydown.prevent="updateKeyStorkes($event)"
+            >
+              <span v-for="key in macro.keyStrokes" class="label">
+                {{
+                  checkSpecialKey(key) === ""
+                    ? String.fromCharCode(key) === " "
+                      ? "Space"
+                      : String.fromCharCode(key)
+                    : checkSpecialKey(key)
+                }}
+              </span>
+            </div>
+          </div>
+        </template>
+      </draggable>
     </div>
 
     <div id="output" class="flex justify-center my-4">

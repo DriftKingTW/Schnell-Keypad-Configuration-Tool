@@ -13,5 +13,6 @@
   "firmwareInstall": "Firmware Install",
   "save": "Save",
   "addMacro": "Add Macro",
-  "assignFnKey": "Assign FN Key"
+  "assignFnKey": "Assign FN Key",
+  "dragDrop": "Drag and drop config file here"
 }

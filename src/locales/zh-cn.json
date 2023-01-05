@@ -13,5 +13,6 @@
   "firmwareInstall": "安装固件",
   "save": "存档",
   "addMacro": "新宏键",
-  "assignFnKey": "设置 FN 键"
+  "assignFnKey": "设置 FN 键",
+  "dragDrop": "拖曳设置档案至此"
 }

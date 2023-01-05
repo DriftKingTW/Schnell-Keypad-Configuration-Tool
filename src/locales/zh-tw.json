@@ -13,5 +13,6 @@
   "firmwareInstall": "安裝韌體",
   "save": "儲存",
   "addMacro": "新巨集",
-  "assignFnKey": "設定 FN 鍵"
+  "assignFnKey": "設定 FN 鍵",
+  "dragDrop": "拖曳設定檔案至此"
 }
