@@ -12,7 +12,8 @@
     "vue": "^3.2.37",
     "vue-i18n": "^9.1.10",
     "vue-material-design-icons": "^5.1.2",
-    "vue3-json-viewer": "^2.2.2"
+    "vue3-json-viewer": "^2.2.2",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^3.4.0",
