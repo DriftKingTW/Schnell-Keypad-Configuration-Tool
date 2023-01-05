@@ -28,7 +28,11 @@ const getSpecialKeyCode = (key: string) => {
     case "MetaRight":
       result = 135;
       break;
+    // Use key code 176 for both Enter and Return
     case "Return":
+      result = 176;
+      break;
+    case "Enter":
       result = 176;
       break;
     case "Tab":
