@@ -205,7 +205,7 @@ initializeLayout();
       <draggable
         :list="macros"
         @start="isDragging = true"
-        @end="isDragging = false"
+        @end="isDragging = false; updateOuputData()"
         handle=".handle"
         item-key="name"
       >
