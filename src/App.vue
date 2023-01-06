@@ -579,11 +579,11 @@ initializeLayout();
       </div>
     </div>
     <!-- Hint -->
-    <p class="text-neutral-400 mt-4 text-center" style="padding-top: 48px">
+    <p class="text-neutral-400 mt-4 text-center">
       <span class="label">{{ $t("hint") }}</span>
       {{ $t("hintUpload") }}
     </p>
-    <div class="grid grid-cols-12 gap-4 pl-4">
+    <div class="grid grid-cols-12 gap-4">
       <MacrosEditor
         v-model="macroIndex"
         :macros="macros"

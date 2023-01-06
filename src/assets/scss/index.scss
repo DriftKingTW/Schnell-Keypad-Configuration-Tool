@@ -57,7 +57,7 @@ select:focus {
 
 // add transition
 .drag-drop-bar {
-    @apply bg-stone-200 dark:bg-stone-700 w-full h-12 flex flex-col items-center justify-center text-neutral-400 absolute
+    @apply bg-stone-200 dark:bg-stone-700 w-full h-12 flex items-center justify-center text-neutral-400
     transition-all duration-300 ease-in-out;
     &.active {
         @apply bg-stone-600 h-24 text-neutral-200;

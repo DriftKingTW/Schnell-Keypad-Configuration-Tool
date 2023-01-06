@@ -1,12 +1,12 @@
-# TinyPICO BLE Keypad Key Configuration Tool
+# Schnell Keyboard Key Configuration Tool
 
 [![Build Status](https://app.travis-ci.com/DriftKingTW/TinyPICO-BLE-Keypad-Key-Configuration-Tool.svg?branch=master)](https://app.travis-ci.com/DriftKingTW/TinyPICO-BLE-Keypad-Key-Configuration-Tool)
 
-This is a web based keyconfig generator and firmware install tool for [TinyPICO BLE Keypad by DriftKingTW](https://github.com/DriftKingTW/TinyPICO-BLE-Keypad).
+This is a web based keyconfig generator and firmware install tool for [Schnell Keyboard by DriftKingTW](https://github.com/DriftKingTW/TinyPICO-BLE-Keypad).
 
 - [Web Demo](https://github.com/DriftKingTW/TinyPICO-BLE-Keypad-Key-Configuration-Tool)
 
-- Flash generated config file to the keypad: [TinyPICO BLE Keypad Keyconfig Flash Tool](https://github.com/DriftKingTW/TinyPICO-BLE-Keypad/tree/master/tools/keyconfig-flash-tool)
+- Flash generated config file to the keypad: [Schnell Keyboard Keyconfig Flash Tool](https://github.com/DriftKingTW/TinyPICO-BLE-Keypad/tree/master/tools/keyconfig-flash-tool)
 
 ## Features
 
