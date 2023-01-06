@@ -16,6 +16,8 @@
   "assignFnKey": "Assign FN Key",
   "dragDrop": "Drag and drop config file here",
   "toast": {
-    "uploadSuccess": "Config Loaded"
+    "uploadSuccess": "Config Loaded",
+    "uploadError": "Fail to Load: ",
+    "uploadErrorFilename": "Filename should be \"keyconfig.json\" or \"macros.json\""
   }
 }

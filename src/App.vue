@@ -457,25 +457,37 @@ const updatePageTitle = () => {
  * @param {event} Event The file upload event
  */
 const uploadFile = (event: any) => {
+  isDragging.value = false;
+
   const file: File = event.dataTransfer.files[0];
   let reader = new FileReader();
   const filename = event.dataTransfer.files[0].name;
 
-  if (filename === "keyconfig.json") {
-    reader.onload = loadKeyConfigFile;
-    reader.readAsText(file);
-  } else if (filename === "macros.json") {
-    reader.onload = loadMacrosConfigFile;
-    reader.readAsText(file);
+  if (filename === "keyconfig.json" || filename === "macros.json") {
+    if (filename === "keyconfig.json") {
+      reader.onload = loadKeyConfigFile;
+    } else if (filename === "macros.json") {
+      reader.onload = loadMacrosConfigFile;
+    }
+    try {
+      reader.readAsText(file);
+      // Show toast message
+      store.commit("showToast", {
+        message: `${i18n.t("toast.uploadSuccess")}: ${filename}`,
+        type: "success",
+      });
+    } catch (error) {
+      store.commit("showToast", {
+        message: `${i18n.t("toast.uploadError")}: ${filename}`,
+        type: "danger",
+      });
+    }
+  } else {
+    store.commit("showToast", {
+      message: `${i18n.t("toast.uploadErrorFilename")}`,
+      type: "danger",
+    });
   }
-
-  // Show toast message
-  store.commit("showToast", {
-    message: `${i18n.t("toast.uploadSuccess")}: ${filename}`,
-    type: "success",
-  });
-
-  isDragging.value = false;
 };
 
 /**

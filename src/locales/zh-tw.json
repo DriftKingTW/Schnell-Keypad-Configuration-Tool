@@ -16,6 +16,8 @@
   "assignFnKey": "設定 FN 鍵",
   "dragDrop": "拖曳設定檔案至此",
   "toast": {
-    "uploadSuccess": "成功讀取設定"
+    "uploadSuccess": "成功讀取設定",
+    "uploadError": "無法讀取設定：",
+    "uploadErrorFilename": "檔名應為 \"keyconfig.json\" 或 \"macros.json\""
   }
 }
