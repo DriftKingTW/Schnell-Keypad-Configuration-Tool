@@ -14,5 +14,8 @@
   "save": "存档",
   "addMacro": "新宏键",
   "assignFnKey": "设置 FN 键",
-  "dragDrop": "拖曳设置档案至此"
+  "dragDrop": "拖曳设置档案至此",
+  "toast": {
+    "uploadSuccess": "成功导入设置"
+  }
 }

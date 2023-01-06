@@ -9,11 +9,14 @@
   },
   "dependencies": {
     "esp-web-tools": "^9.0.3",
+    "flowbite": "^1.6.0",
+    "flowbite-vue": "^0.0.10",
     "vue": "^3.2.37",
     "vue-i18n": "^9.1.10",
     "vue-material-design-icons": "^5.1.2",
     "vue3-json-viewer": "^2.2.2",
-    "vuedraggable": "^4.1.0"
+    "vuedraggable": "^4.1.0",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^3.4.0",

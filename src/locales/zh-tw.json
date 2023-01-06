@@ -14,5 +14,8 @@
   "save": "儲存",
   "addMacro": "新巨集",
   "assignFnKey": "設定 FN 鍵",
-  "dragDrop": "拖曳設定檔案至此"
+  "dragDrop": "拖曳設定檔案至此",
+  "toast": {
+    "uploadSuccess": "成功讀取設定"
+  }
 }

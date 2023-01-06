@@ -14,5 +14,8 @@
   "save": "Save",
   "addMacro": "Add Macro",
   "assignFnKey": "Assign FN Key",
-  "dragDrop": "Drag and drop config file here"
+  "dragDrop": "Drag and drop config file here",
+  "toast": {
+    "uploadSuccess": "Config Loaded"
+  }
 }

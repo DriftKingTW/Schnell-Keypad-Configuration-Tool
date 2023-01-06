@@ -24,6 +24,11 @@ import CloudUploadIcon from "icons/CloudUpload.vue";
 import MacrosEditor from "@/components/MacrosEditor.vue";
 
 import { getSpecialKeyCode } from "./utils/specialKeyHandler";
+import { useStore } from "vuex";
+import { key } from "./store";
+import { Toast } from "flowbite-vue";
+
+const store = useStore(key);
 
 // Set page title
 const i18n = useI18n();
@@ -152,6 +157,18 @@ const darkMode = computed(() => {
 
 const manifestLatest = computed(() => {
   return import.meta.env.BASE_URL + "/firmware/manifest.json";
+});
+
+const showToast = computed(() => {
+  return store.state.showToast;
+});
+
+const toastMessage = computed(() => {
+  return store.state.toastMessage;
+});
+
+const toastType = computed(() => {
+  return store.state.toastType;
 });
 
 // Watcher
@@ -452,6 +469,12 @@ const uploadFile = (event: any) => {
     reader.readAsText(file);
   }
 
+  // Show toast message
+  store.commit("showToast", {
+    message: `${i18n.t("toast.uploadSuccess")}: ${filename}`,
+    type: "success",
+  });
+
   isDragging.value = false;
 };
 
@@ -741,6 +764,24 @@ initializeLayout();
       </div>
     </div>
   </div>
+
+  <transition
+    enter-active-class="duration-300 ease-out"
+    enter-from-class="transform opacity-0"
+    enter-to-class="opacity-100"
+    leave-active-class="duration-200 ease-in"
+    leave-from-class="opacity-100"
+    leave-to-class="transform opacity-0"
+  >
+    <Toast
+      v-show="showToast"
+      :type="toastType"
+      closable
+      class="fixed bottom-6 right-1/2 translate-x-1/2"
+    >
+      {{ toastMessage }}
+    </Toast>
+  </transition>
 </template>
 
 <style scoped lang="scss">
