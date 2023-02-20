@@ -21,6 +21,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const emit = defineEmits(["updateMacro"]);
 
 type Macro = {
   type: number;
@@ -108,6 +109,7 @@ const updateOuputData = () => {
 
   //save to localStorage
   localStorage.setItem("macros", outputJsonString.value);
+  emit('updateMacro', macros);
 };
 
 /**
@@ -205,7 +207,10 @@ initializeLayout();
       <draggable
         :list="macros"
         @start="isDragging = true"
-        @end="isDragging = false; updateOuputData()"
+        @end="
+          isDragging = false;
+          updateOuputData();
+        "
         handle=".handle"
         item-key="name"
       >

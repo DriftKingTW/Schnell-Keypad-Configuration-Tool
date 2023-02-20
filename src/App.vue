@@ -138,6 +138,11 @@ let macroIndex = ref(-1);
 const macros: any = reactive([]);
 const macroComponentKey = ref(0);
 
+const combinedConfig = reactive({
+  keyConfig: [],
+  macros: [],
+});
+
 // Refs declaration
 const floatingEditorInput = ref<HTMLInputElement | null>(null);
 
@@ -400,6 +405,10 @@ const updateOutputData = () => {
 
   outputJsonString.value = JSON.stringify(filteredConfigJsonArray);
   localStorage.setItem("keyconfig", outputJsonString.value);
+
+  combinedConfig.keyConfig = JSON.parse(
+    JSON.stringify(filteredConfigJsonArray)
+  );
 };
 
 /**
@@ -529,6 +538,10 @@ const dragleave = () => {
   isDragging.value = false;
 };
 
+const updateMacro = (macros: any) => {
+  combinedConfig.macros = JSON.parse(JSON.stringify(macros));
+};
+
 initializeLayout();
 </script>
 
@@ -589,6 +602,7 @@ initializeLayout();
         :macros="macros"
         :key="macroComponentKey"
         :isSelectingMacro="isSelectingMacro"
+        @update-macro="updateMacro"
         class="col-start-1 col-span-12 justify-self-center lg:col-start-1 lg:col-span-5 xl:justify-self-end xl:col-start-2 w-full mt-4"
         style="max-width: 600px"
       />
