@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {
   readonly,
-  shallowReadonly,
   ref,
   reactive,
   computed,
   nextTick,
   watch,
+  isReactive,
 } from "vue";
 import { useI18n } from "vue-i18n";
 import "esp-web-tools/dist/web/install-button";
@@ -105,20 +105,11 @@ const defaultCoordinate: Coordinate = readonly({
   col: -1,
 });
 
-const defaultConfigJsonObject: ConfigJSONObject = shallowReadonly({
-  title: "",
-  keymap: [],
-  keyInfo: [],
-});
-
 // Reactive data
 let layout: Key[][] = reactive([]);
 let currentKeyLocation: Coordinate = reactive({ ...defaultCoordinate });
 let currentLayoutIndex = ref(0);
 let outputJsonString = ref("");
-let configJsonObject: ConfigJSONObject = reactive({
-  ...defaultConfigJsonObject,
-});
 let configJsonArray: ConfigJSONArray = reactive([]);
 let resetKeyMode = ref(false);
 let isDragging = ref(false);
@@ -148,7 +139,7 @@ const floatingEditorInput = ref<HTMLInputElement | null>(null);
 // Load saved data in localStorage
 const savedData = localStorage.getItem("keyconfig");
 if (savedData) {
-  configJsonArray = [...JSON.parse(savedData)];
+  configJsonArray.push(...JSON.parse(savedData));
 }
 
 // Computed
@@ -171,6 +162,10 @@ const toastMessage = computed(() => {
 
 const toastType = computed(() => {
   return store.state.toastType;
+});
+
+const keyMapTitles = computed(() => {
+  return configJsonArray.map((config) => config.title);
 });
 
 // Watcher
@@ -376,7 +371,7 @@ const validateKeyLocation = () => {
  *
  */
 const updateOutputData = () => {
-  configJsonObject = {
+  const targetLayerConfig: ConfigJSONObject = {
     title: configJsonArray[currentLayoutIndex.value]
       ? configJsonArray[currentLayoutIndex.value].title
       : "",
@@ -392,10 +387,13 @@ const updateOutputData = () => {
     return col.map((key) => key.keyInfo);
   });
 
-  configJsonObject.keymap = [...keymap];
-  configJsonObject.keyInfo = [...keyInfo];
+  targetLayerConfig.keymap = [...keymap];
+  targetLayerConfig.keyInfo = [...keyInfo];
 
-  configJsonArray[currentLayoutIndex.value] = { ...configJsonObject };
+  configJsonArray[currentLayoutIndex.value] = JSON.parse(
+    JSON.stringify(targetLayerConfig)
+  );
+
   const filteredConfigJsonArray = configJsonArray.filter(
     (layout: ConfigJSONObject) => !isLayoutEmpty(layout)
   );
