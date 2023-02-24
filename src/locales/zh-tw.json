@@ -18,6 +18,9 @@
   "toast": {
     "uploadSuccess": "成功讀取設定",
     "uploadError": "無法讀取設定：",
-    "uploadErrorFilename": "檔名應為 \"keyconfig.json\" 或 \"macros.json\""
-  }
+    "uploadErrorFilename": "檔名應為 \"keyconfig.json\" 或 \"macros.json\"",
+    "copySuccess": "複製成功！"
+  },
+  "copyCombinedJSONConfig": "複製 JSON 設定內容",
+  "exportCombinedJSONConfig": "導出 JSON 設定檔案"
 }

@@ -8,7 +8,6 @@ import {
   nextTick,
   watch,
 } from "vue";
-import { JsonViewer } from "vue3-json-viewer";
 import { useI18n } from "vue-i18n";
 import "esp-web-tools/dist/web/install-button";
 
@@ -18,9 +17,9 @@ import CloseIcon from "icons/Close.vue";
 import TrayArrowDownIcon from "icons/TrayArrowDown.vue";
 import AlphaMBoxIcon from "icons/AlphaMBox.vue";
 import ExportIcon from "icons/Export.vue";
-import CodeJsonIcon from "icons/CodeJson.vue";
 import FunctionIcon from "icons/Function.vue";
 import CloudUploadIcon from "icons/CloudUpload.vue";
+import ContentCopyIcon from "icons/ContentCopy.vue";
 import MacrosEditor from "@/components/MacrosEditor.vue";
 
 import { getSpecialKeyCode } from "./utils/specialKeyHandler";
@@ -153,8 +152,6 @@ if (savedData) {
 }
 
 // Computed
-
-const outputJsonObject = computed(() => JSON.parse(outputJsonString.value));
 
 const darkMode = computed(() => {
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -436,12 +433,12 @@ const isLayoutEmpty = (layout: ConfigJSONObject) => {
  * Export and download JSON config file
  *
  */
-const exportJsonConfig = () => {
+const exportCombinedConfig = () => {
   const element = document.createElement("a");
   element.setAttribute(
     "href",
     "data:text/plain;charset=utf-8," +
-      encodeURIComponent(JSON.stringify(configJsonArray))
+      encodeURIComponent(JSON.stringify(combinedConfig))
   );
   element.setAttribute("download", "keyconfig.json");
 
@@ -542,6 +539,14 @@ const updateMacro = (macros: any) => {
   combinedConfig.macros = JSON.parse(JSON.stringify(macros));
 };
 
+const copyCombinedConfig = () => {
+  navigator.clipboard.writeText(JSON.stringify(combinedConfig));
+  store.commit("showToast", {
+    message: `${i18n.t("toast.copySuccess")}`,
+    type: "success",
+  });
+};
+
 initializeLayout();
 </script>
 
@@ -596,6 +601,26 @@ initializeLayout();
       <span class="label">{{ $t("hint") }}</span>
       {{ $t("hintUpload") }}
     </p>
+    <div class="flex justify-center mt-4">
+      <div class="flex">
+        <button
+          name="copy"
+          class="btn btn-export grow flex"
+          @click="copyCombinedConfig"
+        >
+          <content-copy-icon :size="18" class="self-center mr-2" />
+          {{ $t("copyCombinedJSONConfig") }}
+        </button>
+        <button
+          name="export"
+          class="btn btn-export grow flex"
+          @click="exportCombinedConfig"
+        >
+          <export-icon :size="18" class="self-center mr-2" />
+          {{ $t("exportCombinedJSONConfig") }}
+        </button>
+      </div>
+    </div>
     <div class="grid grid-cols-12 gap-4">
       <MacrosEditor
         v-model="macroIndex"
@@ -668,14 +693,6 @@ initializeLayout();
             >
               <function-icon :size="18" class="self-center mr-2" />
               {{ $t("assignFnKey") }}
-            </button>
-            <button
-              name="export"
-              class="btn btn-export flex"
-              @click="exportJsonConfig"
-            >
-              <export-icon :size="18" class="self-center mr-2" />
-              {{ $t("export") }}
             </button>
           </div>
         </div>
@@ -766,27 +783,6 @@ initializeLayout();
             </button>
           </div>
         </transition>
-        <div id="output" class="flex justify-center my-4">
-          <div>
-            <label for="" class="flex">
-              <code-json-icon :size="18" class="self-center mr-2" />
-              {{ $t("outputJsonConfig") }}
-            </label>
-            <!-- <hr  /> -->
-            <JsonViewer
-              :value="outputJsonObject"
-              class="mt-4"
-              copyable
-              boxed
-              sort
-              :expanded="false"
-              :expand-depth="0"
-              :theme="darkMode ? 'dark' : 'light'"
-            >
-              <template v-slot:copy>{{ $t("copy") }}</template>
-            </JsonViewer>
-          </div>
-        </div>
       </div>
     </div>
   </div>

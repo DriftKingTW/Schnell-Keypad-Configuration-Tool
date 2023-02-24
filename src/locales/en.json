@@ -18,6 +18,9 @@
   "toast": {
     "uploadSuccess": "Config Loaded",
     "uploadError": "Fail to Load: ",
-    "uploadErrorFilename": "Filename should be \"keyconfig.json\" or \"macros.json\""
-  }
+    "uploadErrorFilename": "Filename should be \"keyconfig.json\" or \"macros.json\"",
+    "copySuccess": "Successfully Copied!"
+  },
+  "copyCombinedJSONConfig": "Copy Configuration JSON",
+  "exportCombinedJSONConfig": "Export Configuration JSON File"
 }
