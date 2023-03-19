@@ -22,5 +22,6 @@
     "copySuccess": "Successfully Copied!"
   },
   "copyCombinedJSONConfig": "Copy Configuration JSON",
-  "exportCombinedJSONConfig": "Export Configuration JSON File"
+  "exportCombinedJSONConfig": "Export Configuration JSON File",
+  "rotaryExtensionConfiguratorTitle": "Rotary Extension Configurator"
 }

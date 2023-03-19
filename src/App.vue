@@ -21,6 +21,7 @@ import FunctionIcon from "icons/Function.vue";
 import CloudUploadIcon from "icons/CloudUpload.vue";
 import ContentCopyIcon from "icons/ContentCopy.vue";
 import MacrosEditor from "@/components/MacrosEditor.vue";
+import RotaryExtensionEditor from "@/components/RotaryExtensionEditor.vue";
 
 import { getSpecialKeyCode } from "./utils/specialKeyHandler";
 import { useStore } from "vuex";
@@ -128,9 +129,13 @@ let macroIndex = ref(-1);
 const macros: any = reactive([]);
 const macroComponentKey = ref(0);
 
+const rotaryExtension: any = reactive([]);
+const rotaryExtensionComponentKey = ref(0);
+
 const combinedConfig = reactive({
   keyConfig: [],
   macros: [],
+  rotaryExtension: [],
 });
 
 // Refs declaration
@@ -500,8 +505,17 @@ const uploadFile = (event: any) => {
  */
 const loadKeyConfigFile = (event: any) => {
   let str: string = event.target.result;
-  let json: ConfigJSONObject[] = JSON.parse(str);
-  configJsonArray = [...json];
+  let json = JSON.parse(str);
+  configJsonArray = [...json.keyConfig];
+
+  macros.length = 0;
+  macros.push(...json.macros);
+  macroComponentKey.value++;
+
+  rotaryExtension.length = 0;
+  rotaryExtension.push(...json.rotaryExtension);
+  rotaryExtensionComponentKey.value++;
+
   initializeLayout();
 };
 
@@ -537,8 +551,13 @@ const updateMacro = (macros: any) => {
   combinedConfig.macros = JSON.parse(JSON.stringify(macros));
 };
 
+const updateRotaryExtension = (rotaryExtension: any) => {
+  combinedConfig.rotaryExtension = JSON.parse(JSON.stringify(rotaryExtension));
+};
+
 const copyCombinedConfig = () => {
   navigator.clipboard.writeText(JSON.stringify(combinedConfig));
+
   store.commit("showToast", {
     message: `${i18n.t("toast.copySuccess")}`,
     type: "success",
@@ -601,6 +620,12 @@ initializeLayout();
     </p>
     <div class="flex justify-center mt-4">
       <div class="flex">
+        <RotaryExtensionEditor
+          :configTitles="keyMapTitles"
+          :rotaryExtension="rotaryExtension"
+          :key="rotaryExtensionComponentKey"
+          @update-rotary-extension="updateRotaryExtension"
+        />
         <button
           name="copy"
           class="btn btn-export grow flex"
