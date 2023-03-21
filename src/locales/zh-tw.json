@@ -23,5 +23,7 @@
   },
   "copyCombinedJSONConfig": "複製 JSON 設定內容",
   "exportCombinedJSONConfig": "導出 JSON 設定檔案",
-  "rotaryExtensionConfiguratorTitle": "旋鈕擴充板鍵位設定"
+  "rotaryExtensionConfiguratorTitle": "旋鈕擴充板鍵位設定",
+  "assignTTKey": "設定 TT 鍵",
+  "ttLayout": "TT 層"
 }

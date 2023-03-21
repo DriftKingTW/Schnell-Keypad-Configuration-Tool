@@ -125,6 +125,7 @@ let editInfoText = ref("");
 let isEditingKeyInfo = ref(false);
 let isSelectingMacro = ref(false);
 let macroIndex = ref(-1);
+let ttLayoutIndex = ref(1);
 
 const macros: any = reactive([]);
 const macroComponentKey = ref(0);
@@ -328,6 +329,20 @@ const assignMacro = () => {
 const assignFnKey = () => {
   if (!validateKeyLocation()) return;
   layout[currentKeyLocation.row][currentKeyLocation.col].keyInfo = "FN";
+  updateOutputData();
+  currentKeyLocation = { ...defaultCoordinate };
+  resetKeysState();
+};
+
+/**
+ * Assign FN key label to active key
+ *
+ */
+const assignTTKey = () => {
+  if (!validateKeyLocation()) return;
+  layout[currentKeyLocation.row][
+    currentKeyLocation.col
+  ].keyInfo = `TT_${ttLayoutIndex.value}`;
   updateOutputData();
   currentKeyLocation = { ...defaultCoordinate };
   resetKeysState();
@@ -682,7 +697,7 @@ initializeLayout();
                   class="btn"
                 >
                   <option v-for="(_, i) in 10" :value="i">
-                    {{ $t("layout") }} {{ i + 1 }}
+                    {{ $t("layout") }} {{ i }}
                   </option>
                 </select>
               </div>
@@ -690,25 +705,9 @@ initializeLayout();
             <div class="my-2"></div>
           </div>
         </div>
-        <div class="flex justify-center mt-4">
+
+        <div class="flex justify-center mt-2">
           <div class="flex">
-            <button
-              name="reset"
-              class="btn btn-reset grow flex"
-              @click="initializeLayout(true)"
-            >
-              <close-icon :size="18" class="self-center mr-2" />
-              {{ $t("resetLayout") }}
-            </button>
-            <button
-              name="reset_key"
-              class="btn btn-reset grow flex"
-              :class="resetKeyMode ? 'key-btn-active' : ''"
-              @click="resetKey"
-            >
-              <close-icon :size="18" class="self-center mr-2" />
-              {{ $t("resetKey") }}
-            </button>
             <button
               name="assign_fn_key"
               class="btn btn-install grow flex"
@@ -717,8 +716,25 @@ initializeLayout();
               <function-icon :size="18" class="self-center mr-2" />
               {{ $t("assignFnKey") }}
             </button>
+            <button
+              name="assign_tt_key"
+              class="btn btn-install grow flex"
+              @click="assignTTKey"
+            >
+              <function-icon :size="18" class="self-center mr-2" />
+              {{ $t("assignTTKey") }}
+            </button>
+            <div>
+              <label for="set_tt_layout">{{ $t("ttLayout") }}:</label>
+              <select name="set_tt_layout" v-model="ttLayoutIndex" class="btn">
+                <option v-for="(_, i) in 10" :value="i">
+                  {{ $t("layout") }} {{ i }}
+                </option>
+              </select>
+            </div>
           </div>
         </div>
+
         <div
           id="keymap"
           class="flex justify-center mt-4 outline-0"
@@ -754,6 +770,29 @@ initializeLayout();
             </template>
           </div>
         </div>
+
+        <div class="flex justify-center my-4">
+          <div class="flex">
+            <button
+              name="reset"
+              class="btn btn-reset grow flex"
+              @click="initializeLayout(true)"
+            >
+              <close-icon :size="18" class="self-center mr-2" />
+              {{ $t("resetLayout") }}
+            </button>
+            <button
+              name="reset_key"
+              class="btn btn-reset grow flex"
+              :class="resetKeyMode ? 'key-btn-active' : ''"
+              @click="resetKey"
+            >
+              <close-icon :size="18" class="self-center mr-2" />
+              {{ $t("resetKey") }}
+            </button>
+          </div>
+        </div>
+
         <transition
           enter-active-class="duration-300 ease-out"
           enter-from-class="transform opacity-0"

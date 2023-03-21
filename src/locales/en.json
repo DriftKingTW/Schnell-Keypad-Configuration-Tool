@@ -13,7 +13,7 @@
   "firmwareInstall": "Firmware Install",
   "save": "Save",
   "addMacro": "Add Macro",
-  "assignFnKey": "Assign FN Key",
+  "assignFnKey": "Assign FN",
   "dragDrop": "Drag and drop config file here",
   "toast": {
     "uploadSuccess": "Config Loaded",
@@ -23,5 +23,7 @@
   },
   "copyCombinedJSONConfig": "Copy Configuration JSON",
   "exportCombinedJSONConfig": "Export Configuration JSON File",
-  "rotaryExtensionConfiguratorTitle": "Rotary Extension Configurator"
+  "rotaryExtensionConfiguratorTitle": "Rotary Extension Configurator",
+  "assignTTKey": "Assign TT",
+  "ttLayout": "TT Layout"
 }
