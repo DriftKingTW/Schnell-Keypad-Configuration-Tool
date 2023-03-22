@@ -25,5 +25,6 @@
   "exportCombinedJSONConfig": "Export Configuration JSON File",
   "rotaryExtensionConfiguratorTitle": "Rotary Extension Configurator",
   "assignTTKey": "Assign TT",
-  "ttLayout": "TT Layout"
+  "ttLayout": "Choose target TT layout",
+  "isGlobalTTKey": "Global TT"
 }

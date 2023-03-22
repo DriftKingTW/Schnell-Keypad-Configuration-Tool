@@ -27,6 +27,7 @@ import { getSpecialKeyCode } from "./utils/specialKeyHandler";
 import { useStore } from "vuex";
 import { key } from "./store";
 import { Toast } from "flowbite-vue";
+import ToggleCheckbox from "@/components/ToggleCheckbox.vue";
 
 const store = useStore(key);
 
@@ -126,6 +127,7 @@ let isEditingKeyInfo = ref(false);
 let isSelectingMacro = ref(false);
 let macroIndex = ref(-1);
 let ttLayoutIndex = ref(1);
+let isGlobalTTKey = ref(false);
 
 const macros: any = reactive([]);
 const macroComponentKey = ref(0);
@@ -343,6 +345,19 @@ const assignTTKey = () => {
   layout[currentKeyLocation.row][
     currentKeyLocation.col
   ].keyInfo = `TT_${ttLayoutIndex.value}`;
+
+  if (isGlobalTTKey.value) {
+    configJsonArray.map((layer) => {
+      layer.keyInfo[currentKeyLocation.row][
+        currentKeyLocation.col
+      ] = `TT_${ttLayoutIndex.value}`;
+    });
+  } else {
+    configJsonArray[ttLayoutIndex.value].keyInfo[currentKeyLocation.row][
+      currentKeyLocation.col
+    ] = `TT_${ttLayoutIndex.value}`;
+  }
+
   updateOutputData();
   currentKeyLocation = { ...defaultCoordinate };
   resetKeysState();
@@ -709,6 +724,23 @@ initializeLayout();
         <div class="flex justify-center mt-2">
           <div class="flex">
             <button
+              name="reset"
+              class="btn btn-reset grow flex"
+              @click="initializeLayout(true)"
+            >
+              <close-icon :size="18" class="self-center mr-2" />
+              {{ $t("resetLayout") }}
+            </button>
+            <button
+              name="reset_key"
+              class="btn btn-reset grow flex"
+              :class="resetKeyMode ? 'key-btn-active' : ''"
+              @click="resetKey"
+            >
+              <close-icon :size="18" class="self-center mr-2" />
+              {{ $t("resetKey") }}
+            </button>
+            <button
               name="assign_fn_key"
               class="btn btn-install grow flex"
               @click="assignFnKey"
@@ -724,14 +756,28 @@ initializeLayout();
               <function-icon :size="18" class="self-center mr-2" />
               {{ $t("assignTTKey") }}
             </button>
-            <div>
-              <label for="set_tt_layout">{{ $t("ttLayout") }}:</label>
-              <select name="set_tt_layout" v-model="ttLayoutIndex" class="btn">
-                <option v-for="(_, i) in 10" :value="i">
-                  {{ $t("layout") }} {{ i }}
-                </option>
-              </select>
-            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-center mt-2">
+          <div>
+            <label for="set_tt_layout">{{ $t("ttLayout") }}:</label>
+            <select name="set_tt_layout" v-model="ttLayoutIndex" class="btn">
+              <option v-for="(_, i) in 10" :value="i">
+                {{ $t("layout") }} {{ i }} :
+                {{
+                  configJsonArray[i] ? configJsonArray[i].title : "No Layout"
+                }}
+              </option>
+            </select>
+          </div>
+          <!-- a switch for isGlobalTTKey -->
+          <div class="flex items-center">
+            <ToggleCheckbox
+              :label="$t('isGlobalTTKey')"
+              v-model="isGlobalTTKey"
+              @change="updateOutputData"
+            />
           </div>
         </div>
 
@@ -768,28 +814,6 @@ initializeLayout();
               </template>
               <br />
             </template>
-          </div>
-        </div>
-
-        <div class="flex justify-center my-4">
-          <div class="flex">
-            <button
-              name="reset"
-              class="btn btn-reset grow flex"
-              @click="initializeLayout(true)"
-            >
-              <close-icon :size="18" class="self-center mr-2" />
-              {{ $t("resetLayout") }}
-            </button>
-            <button
-              name="reset_key"
-              class="btn btn-reset grow flex"
-              :class="resetKeyMode ? 'key-btn-active' : ''"
-              @click="resetKey"
-            >
-              <close-icon :size="18" class="self-center mr-2" />
-              {{ $t("resetKey") }}
-            </button>
           </div>
         </div>
 
