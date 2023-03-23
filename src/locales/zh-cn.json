@@ -26,5 +26,6 @@
   "rotaryExtensionConfiguratorTitle": "旋钮拓展板键位设置",
   "assignTTKey": "设置 TT 键",
   "ttLayout": "选择目标 TT 布局",
-  "isGlobalTTKey": "全局 TT"
+  "isGlobalTTKey": "全局 TT",
+  "version": "版本"
 }

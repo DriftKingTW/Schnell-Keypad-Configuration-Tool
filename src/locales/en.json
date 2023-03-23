@@ -26,5 +26,6 @@
   "rotaryExtensionConfiguratorTitle": "Rotary Extension Configurator",
   "assignTTKey": "Assign TT",
   "ttLayout": "Choose target TT layout",
-  "isGlobalTTKey": "Global TT"
+  "isGlobalTTKey": "Global TT",
+  "version": "Version"
 }
