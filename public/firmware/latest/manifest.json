@@ -1,0 +1,33 @@
+{
+  "name": "Schnell Keyboard Firmware",
+  "version": "[Latest] v0.1.0",
+  "new_install_prompt_erase": true,
+  "start_url": "/TinyPICO-BLE-Keypad-Key-Configuration-Tool/",
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        {
+          "path": "bootloader_dio_40m.bin",
+          "offset": 4096
+        },
+        {
+          "path": "partitions.bin",
+          "offset": 32768
+        },
+        {
+          "path": "boot_app0.bin",
+          "offset": 57344
+        },
+        {
+          "path": "firmware.bin",
+          "offset": 65536
+        },
+        {
+          "path": "spiffs.bin",
+          "offset": 2686976
+        }
+      ]
+    }
+  ]
+}

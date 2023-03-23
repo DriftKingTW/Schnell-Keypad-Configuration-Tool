@@ -128,6 +128,8 @@ let isSelectingMacro = ref(false);
 let macroIndex = ref(-1);
 let ttLayoutIndex = ref(1);
 let isGlobalTTKey = ref(false);
+let firmwareVersion = ref("Latest");
+let firmwareVersions = ref<string[]>(["Latest", "Beta"]);
 
 const macros: any = reactive([]);
 const macroComponentKey = ref(0);
@@ -156,8 +158,11 @@ const darkMode = computed(() => {
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
 });
 
-const manifestLatest = computed(() => {
-  return import.meta.env.BASE_URL + "/firmware/manifest.json";
+const manifestJSON = computed(() => {
+  return (
+    import.meta.env.BASE_URL +
+    `/firmware/${firmwareVersion.value.toLowerCase()}/manifest.json`
+  );
 });
 
 const showToast = computed(() => {
@@ -617,7 +622,16 @@ initializeLayout();
           <option value="zh-CN">🇨🇳 中文（简体）</option>
         </select>
 
-        <esp-web-install-button :manifest="manifestLatest">
+        <!-- Firmware version selector -->
+        <div class="flex items-center">
+          <select v-model="firmwareVersion" class="btn language-selector">
+            <option v-for="version in firmwareVersions" :value="version">
+              {{ $t("version") }} : {{ version }}
+            </option>
+          </select>
+        </div>
+
+        <esp-web-install-button :manifest="manifestJSON">
           <button slot="activate" type="button" class="btn btn-install flex">
             <tray-arrow-down-icon :size="18" class="self-center mr-2" />
             {{ $t("firmwareInstall") }}
