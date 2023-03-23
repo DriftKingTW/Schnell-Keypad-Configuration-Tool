@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import {
   readonly,
-  shallowReadonly,
   ref,
   reactive,
   computed,
   nextTick,
   watch,
+  isReactive,
 } from "vue";
-import { JsonViewer } from "vue3-json-viewer";
 import { useI18n } from "vue-i18n";
 import "esp-web-tools/dist/web/install-button";
 
@@ -18,15 +17,17 @@ import CloseIcon from "icons/Close.vue";
 import TrayArrowDownIcon from "icons/TrayArrowDown.vue";
 import AlphaMBoxIcon from "icons/AlphaMBox.vue";
 import ExportIcon from "icons/Export.vue";
-import CodeJsonIcon from "icons/CodeJson.vue";
 import FunctionIcon from "icons/Function.vue";
 import CloudUploadIcon from "icons/CloudUpload.vue";
+import ContentCopyIcon from "icons/ContentCopy.vue";
 import MacrosEditor from "@/components/MacrosEditor.vue";
+import RotaryExtensionEditor from "@/components/RotaryExtensionEditor.vue";
 
 import { getSpecialKeyCode } from "./utils/specialKeyHandler";
 import { useStore } from "vuex";
 import { key } from "./store";
 import { Toast } from "flowbite-vue";
+import ToggleCheckbox from "@/components/ToggleCheckbox.vue";
 
 const store = useStore(key);
 
@@ -106,20 +107,11 @@ const defaultCoordinate: Coordinate = readonly({
   col: -1,
 });
 
-const defaultConfigJsonObject: ConfigJSONObject = shallowReadonly({
-  title: "",
-  keymap: [],
-  keyInfo: [],
-});
-
 // Reactive data
 let layout: Key[][] = reactive([]);
 let currentKeyLocation: Coordinate = reactive({ ...defaultCoordinate });
 let currentLayoutIndex = ref(0);
 let outputJsonString = ref("");
-let configJsonObject: ConfigJSONObject = reactive({
-  ...defaultConfigJsonObject,
-});
 let configJsonArray: ConfigJSONArray = reactive([]);
 let resetKeyMode = ref(false);
 let isDragging = ref(false);
@@ -134,9 +126,20 @@ let editInfoText = ref("");
 let isEditingKeyInfo = ref(false);
 let isSelectingMacro = ref(false);
 let macroIndex = ref(-1);
+let ttLayoutIndex = ref(1);
+let isGlobalTTKey = ref(false);
 
 const macros: any = reactive([]);
 const macroComponentKey = ref(0);
+
+const rotaryExtension: any = reactive([]);
+const rotaryExtensionComponentKey = ref(0);
+
+const combinedConfig = reactive({
+  keyConfig: [],
+  macros: [],
+  rotaryExtension: [],
+});
 
 // Refs declaration
 const floatingEditorInput = ref<HTMLInputElement | null>(null);
@@ -144,12 +147,10 @@ const floatingEditorInput = ref<HTMLInputElement | null>(null);
 // Load saved data in localStorage
 const savedData = localStorage.getItem("keyconfig");
 if (savedData) {
-  configJsonArray = [...JSON.parse(savedData)];
+  configJsonArray.push(...JSON.parse(savedData));
 }
 
 // Computed
-
-const outputJsonObject = computed(() => JSON.parse(outputJsonString.value));
 
 const darkMode = computed(() => {
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -169,6 +170,10 @@ const toastMessage = computed(() => {
 
 const toastType = computed(() => {
   return store.state.toastType;
+});
+
+const keyMapTitles = computed(() => {
+  return configJsonArray.map((config) => config.title);
 });
 
 // Watcher
@@ -332,6 +337,33 @@ const assignFnKey = () => {
 };
 
 /**
+ * Assign FN key label to active key
+ *
+ */
+const assignTTKey = () => {
+  if (!validateKeyLocation()) return;
+  layout[currentKeyLocation.row][
+    currentKeyLocation.col
+  ].keyInfo = `TT_${ttLayoutIndex.value}`;
+
+  if (isGlobalTTKey.value) {
+    configJsonArray.map((layer) => {
+      layer.keyInfo[currentKeyLocation.row][
+        currentKeyLocation.col
+      ] = `TT_${ttLayoutIndex.value}`;
+    });
+  } else {
+    configJsonArray[ttLayoutIndex.value].keyInfo[currentKeyLocation.row][
+      currentKeyLocation.col
+    ] = `TT_${ttLayoutIndex.value}`;
+  }
+
+  updateOutputData();
+  currentKeyLocation = { ...defaultCoordinate };
+  resetKeysState();
+};
+
+/**
  * Close floating editor and reset editing status
  *
  */
@@ -374,7 +406,7 @@ const validateKeyLocation = () => {
  *
  */
 const updateOutputData = () => {
-  configJsonObject = {
+  const targetLayerConfig: ConfigJSONObject = {
     title: configJsonArray[currentLayoutIndex.value]
       ? configJsonArray[currentLayoutIndex.value].title
       : "",
@@ -390,16 +422,23 @@ const updateOutputData = () => {
     return col.map((key) => key.keyInfo);
   });
 
-  configJsonObject.keymap = [...keymap];
-  configJsonObject.keyInfo = [...keyInfo];
+  targetLayerConfig.keymap = [...keymap];
+  targetLayerConfig.keyInfo = [...keyInfo];
 
-  configJsonArray[currentLayoutIndex.value] = { ...configJsonObject };
+  configJsonArray[currentLayoutIndex.value] = JSON.parse(
+    JSON.stringify(targetLayerConfig)
+  );
+
   const filteredConfigJsonArray = configJsonArray.filter(
     (layout: ConfigJSONObject) => !isLayoutEmpty(layout)
   );
 
   outputJsonString.value = JSON.stringify(filteredConfigJsonArray);
   localStorage.setItem("keyconfig", outputJsonString.value);
+
+  combinedConfig.keyConfig = JSON.parse(
+    JSON.stringify(filteredConfigJsonArray)
+  );
 };
 
 /**
@@ -427,12 +466,12 @@ const isLayoutEmpty = (layout: ConfigJSONObject) => {
  * Export and download JSON config file
  *
  */
-const exportJsonConfig = () => {
+const exportCombinedConfig = () => {
   const element = document.createElement("a");
   element.setAttribute(
     "href",
     "data:text/plain;charset=utf-8," +
-      encodeURIComponent(JSON.stringify(configJsonArray))
+      encodeURIComponent(JSON.stringify(combinedConfig))
   );
   element.setAttribute("download", "keyconfig.json");
 
@@ -496,8 +535,17 @@ const uploadFile = (event: any) => {
  */
 const loadKeyConfigFile = (event: any) => {
   let str: string = event.target.result;
-  let json: ConfigJSONObject[] = JSON.parse(str);
-  configJsonArray = [...json];
+  let json = JSON.parse(str);
+  configJsonArray = [...json.keyConfig];
+
+  macros.length = 0;
+  macros.push(...json.macros);
+  macroComponentKey.value++;
+
+  rotaryExtension.length = 0;
+  rotaryExtension.push(...json.rotaryExtension);
+  rotaryExtensionComponentKey.value++;
+
   initializeLayout();
 };
 
@@ -527,6 +575,23 @@ const dragover = () => {
  */
 const dragleave = () => {
   isDragging.value = false;
+};
+
+const updateMacro = (macros: any) => {
+  combinedConfig.macros = JSON.parse(JSON.stringify(macros));
+};
+
+const updateRotaryExtension = (rotaryExtension: any) => {
+  combinedConfig.rotaryExtension = JSON.parse(JSON.stringify(rotaryExtension));
+};
+
+const copyCombinedConfig = () => {
+  navigator.clipboard.writeText(JSON.stringify(combinedConfig));
+
+  store.commit("showToast", {
+    message: `${i18n.t("toast.copySuccess")}`,
+    type: "success",
+  });
 };
 
 initializeLayout();
@@ -583,12 +648,39 @@ initializeLayout();
       <span class="label">{{ $t("hint") }}</span>
       {{ $t("hintUpload") }}
     </p>
+    <div class="flex justify-center mt-4">
+      <div class="flex">
+        <RotaryExtensionEditor
+          :configTitles="keyMapTitles"
+          :rotaryExtension="rotaryExtension"
+          :key="rotaryExtensionComponentKey"
+          @update-rotary-extension="updateRotaryExtension"
+        />
+        <button
+          name="copy"
+          class="btn btn-export grow flex"
+          @click="copyCombinedConfig"
+        >
+          <content-copy-icon :size="18" class="self-center mr-2" />
+          {{ $t("copyCombinedJSONConfig") }}
+        </button>
+        <button
+          name="export"
+          class="btn btn-export grow flex"
+          @click="exportCombinedConfig"
+        >
+          <export-icon :size="18" class="self-center mr-2" />
+          {{ $t("exportCombinedJSONConfig") }}
+        </button>
+      </div>
+    </div>
     <div class="grid grid-cols-12 gap-4">
       <MacrosEditor
         v-model="macroIndex"
         :macros="macros"
         :key="macroComponentKey"
         :isSelectingMacro="isSelectingMacro"
+        @update-macro="updateMacro"
         class="col-start-1 col-span-12 justify-self-center lg:col-start-1 lg:col-span-5 xl:justify-self-end xl:col-start-2 w-full mt-4"
         style="max-width: 600px"
       />
@@ -620,7 +712,7 @@ initializeLayout();
                   class="btn"
                 >
                   <option v-for="(_, i) in 10" :value="i">
-                    {{ $t("layout") }} {{ i + 1 }}
+                    {{ $t("layout") }} {{ i }}
                   </option>
                 </select>
               </div>
@@ -628,7 +720,8 @@ initializeLayout();
             <div class="my-2"></div>
           </div>
         </div>
-        <div class="flex justify-center mt-4">
+
+        <div class="flex justify-center mt-2">
           <div class="flex">
             <button
               name="reset"
@@ -656,15 +749,38 @@ initializeLayout();
               {{ $t("assignFnKey") }}
             </button>
             <button
-              name="export"
-              class="btn btn-export flex"
-              @click="exportJsonConfig"
+              name="assign_tt_key"
+              class="btn btn-install grow flex"
+              @click="assignTTKey"
             >
-              <export-icon :size="18" class="self-center mr-2" />
-              {{ $t("export") }}
+              <function-icon :size="18" class="self-center mr-2" />
+              {{ $t("assignTTKey") }}
             </button>
           </div>
         </div>
+
+        <div class="flex justify-center mt-2">
+          <div>
+            <label for="set_tt_layout">{{ $t("ttLayout") }}:</label>
+            <select name="set_tt_layout" v-model="ttLayoutIndex" class="btn">
+              <option v-for="(_, i) in 10" :value="i">
+                {{ $t("layout") }} {{ i }} :
+                {{
+                  configJsonArray[i] ? configJsonArray[i].title : "No Layout"
+                }}
+              </option>
+            </select>
+          </div>
+          <!-- a switch for isGlobalTTKey -->
+          <div class="flex items-center">
+            <ToggleCheckbox
+              :label="$t('isGlobalTTKey')"
+              v-model="isGlobalTTKey"
+              @change="updateOutputData"
+            />
+          </div>
+        </div>
+
         <div
           id="keymap"
           class="flex justify-center mt-4 outline-0"
@@ -700,6 +816,7 @@ initializeLayout();
             </template>
           </div>
         </div>
+
         <transition
           enter-active-class="duration-300 ease-out"
           enter-from-class="transform opacity-0"
@@ -752,27 +869,6 @@ initializeLayout();
             </button>
           </div>
         </transition>
-        <div id="output" class="flex justify-center my-4">
-          <div>
-            <label for="" class="flex">
-              <code-json-icon :size="18" class="self-center mr-2" />
-              {{ $t("outputJsonConfig") }}
-            </label>
-            <!-- <hr  /> -->
-            <JsonViewer
-              :value="outputJsonObject"
-              class="mt-4"
-              copyable
-              boxed
-              sort
-              :expanded="false"
-              :expand-depth="0"
-              :theme="darkMode ? 'dark' : 'light'"
-            >
-              <template v-slot:copy>{{ $t("copy") }}</template>
-            </JsonViewer>
-          </div>
-        </div>
       </div>
     </div>
   </div>

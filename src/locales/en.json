@@ -13,11 +13,19 @@
   "firmwareInstall": "Firmware Install",
   "save": "Save",
   "addMacro": "Add Macro",
-  "assignFnKey": "Assign FN Key",
+  "assignFnKey": "Assign FN",
   "dragDrop": "Drag and drop config file here",
   "toast": {
     "uploadSuccess": "Config Loaded",
     "uploadError": "Fail to Load: ",
-    "uploadErrorFilename": "Filename should be \"keyconfig.json\" or \"macros.json\""
-  }
+    "uploadErrorFilename": "Filename should be \"keyconfig.json\" or \"macros.json\"",
+    "copySuccess": "Successfully Copied!"
+  },
+  "copyCombinedJSONConfig": "Copy Configuration JSON",
+  "exportCombinedJSONConfig": "Export Configuration JSON File",
+  "rotaryExtensionConfiguratorTitle": "Rotary Extension Configurator",
+  "assignTTKey": "Assign TT",
+  "ttLayout": "Choose target TT layout",
+  "isGlobalTTKey": "Global TT",
+  "version": "Version"
 }

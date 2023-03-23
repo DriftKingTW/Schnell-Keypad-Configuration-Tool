@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from "vue";
-import { JsonViewer } from "vue3-json-viewer";
 import draggable from "vuedraggable";
 
 import "vue3-json-viewer/dist/index.css";
 
-import ExportIcon from "icons/Export.vue";
-import CodeJsonIcon from "icons/CodeJson.vue";
 import PlusIcon from "icons/Plus.vue";
 import MenuRightIcon from "icons/MenuRight.vue";
 import MenuLeftIcon from "icons/MenuLeft.vue";
@@ -21,6 +18,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const emit = defineEmits(["updateMacro"]);
 
 type Macro = {
   type: number;
@@ -39,8 +37,6 @@ const isDragging = ref(false);
 const darkMode = computed(() => {
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
 });
-
-const configJsonArray = computed(() => JSON.parse(outputJsonString.value));
 
 /**
  * Initialize current layout's data
@@ -108,22 +104,7 @@ const updateOuputData = () => {
 
   //save to localStorage
   localStorage.setItem("macros", outputJsonString.value);
-};
-
-/**
- * Export macros as JSON config file
- *
- */
-const exportMacros = () => {
-  removeEmptyMacros();
-  updateOuputData();
-  const data = JSON.stringify(macros);
-  const blob = new Blob([data], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.download = "macros.json";
-  link.href = url;
-  link.click();
+  emit('updateMacro', macros);
 };
 
 /**
@@ -189,23 +170,21 @@ initializeLayout();
 
 <template>
   <div>
-    <div class="flex">
+    <div class="flex mb-2">
       <button class="btn btn-install flex" @click="addMacro">
         <plus-icon :size="18" class="self-center mr-2" />
         {{ $t("addMacro") }}
       </button>
-
-      <button class="btn btn-export flex" @click="exportMacros">
-        <export-icon :size="18" class="self-center mr-2" />
-        {{ $t("export") }}
-      </button>
     </div>
 
-    <div class="overflow-y-auto overflow-x-hidden" style="max-height: 26rem">
+    <div class="overflow-y-auto overflow-x-hidden" style="max-height: 27rem">
       <draggable
         :list="macros"
         @start="isDragging = true"
-        @end="isDragging = false; updateOuputData()"
+        @end="
+          isDragging = false;
+          updateOuputData();
+        "
         handle=".handle"
         item-key="name"
       >
@@ -285,28 +264,6 @@ initializeLayout();
           </div>
         </template>
       </draggable>
-    </div>
-
-    <div id="output" class="flex justify-center my-4">
-      <div>
-        <label for="" class="flex">
-          <code-json-icon :size="18" class="self-center mr-2" />
-          {{ $t("outputJsonConfig") }}
-        </label>
-        <!-- <hr  /> -->
-        <JsonViewer
-          :value="configJsonArray"
-          class="mt-4"
-          copyable
-          boxed
-          sort
-          :expanded="false"
-          :expand-depth="0"
-          :theme="darkMode ? 'dark' : 'light'"
-        >
-          <template v-slot:copy>{{ $t("copy") }}</template>
-        </JsonViewer>
-      </div>
     </div>
   </div>
 </template>
