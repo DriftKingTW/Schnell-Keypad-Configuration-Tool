@@ -77,7 +77,7 @@ const DUMMY_KEYS: Coordinate[] = [
   { row: 2, col: 6 },
   { row: 0, col: 6 },
   { row: 4, col: 3 },
-  { row: 4, col: 5 },
+  { row: 4, col: 6 },
 ];
 const KEYBOARD_LAYOUT: KeyboardLayout[] = [
   { row: 0, col: 0, size: "w-1.5u" },
@@ -90,7 +90,7 @@ const KEYBOARD_LAYOUT: KeyboardLayout[] = [
   { row: 4, col: 4, size: "w-2u" },
   { row: 4, col: 1, size: "w-1.5u" },
   { row: 4, col: 2, size: "w-1.5u" },
-  { row: 4, col: 6, size: "w-1.25u" },
+  { row: 4, col: 5, size: "w-1.25u" },
 ];
 
 // Default objects
