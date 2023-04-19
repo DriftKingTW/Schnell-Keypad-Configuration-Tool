@@ -65,16 +65,16 @@ const getSpecialKeyCode = (key: string) => {
     case "PageDown":
       result = 214;
       break;
-    case "RightArrow":
+    case "ArrowRight":
       result = 215;
       break;
-    case "LeftArrow":
+    case "ArrowLeft":
       result = 216;
       break;
-    case "DownArrow":
+    case "ArrowDown":
       result = 217;
       break;
-    case "UpArrow":
+    case "ArrowUp":
       result = 218;
       break;
     case "NumLock":
@@ -279,16 +279,16 @@ const checkSpecialKey = (key: number) => {
       result = "PageDown";
       break;
     case 215:
-      result = "RightArrow";
+      result = "ArrowRight";
       break;
     case 216:
-      result = "LeftArrow";
+      result = "ArrowLeft";
       break;
     case 217:
-      result = "DownArrow";
+      result = "ArrowDown";
       break;
     case 218:
-      result = "UpArrow";
+      result = "ArrowUp";
       break;
     case 219:
       result = "NumLock";
