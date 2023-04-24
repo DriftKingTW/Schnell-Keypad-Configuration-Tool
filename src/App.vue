@@ -821,8 +821,13 @@ initializeLayout();
                   @click="toggleActive(row, col)"
                   @contextmenu="updateKeyInfo($event, row, col)"
                 >
-                  <div class="truncate mx-2">
-                    {{ key.keyInfo === " " ? "∅" : key.keyInfo }}
+                  <div class="mx-2 flex flex-col h-full justify-between">
+                    <div class="truncate">
+                      {{ key.keyInfo === " " ? "∅" : key.keyInfo }}
+                    </div>
+                    <div class="text-xs mb-1 self-end opacity-50">
+                      {{ key.keyStroke }}
+                    </div>
                   </div>
                 </span>
               </template>
