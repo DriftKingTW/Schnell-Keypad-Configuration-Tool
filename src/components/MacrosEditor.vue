@@ -104,7 +104,7 @@ const updateOuputData = () => {
 
   //save to localStorage
   localStorage.setItem("macros", outputJsonString.value);
-  emit('updateMacro', macros);
+  emit("updateMacro", macros);
 };
 
 /**
@@ -177,7 +177,7 @@ initializeLayout();
       </button>
     </div>
 
-    <div class="overflow-y-auto overflow-x-hidden" style="max-height: 27rem">
+    <div class="overflow-y-auto overflow-x-hidden" style="max-height: 30rem">
       <draggable
         :list="macros"
         @start="isDragging = true"
