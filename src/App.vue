@@ -20,6 +20,7 @@ import ExportIcon from "icons/Export.vue";
 import FunctionIcon from "icons/Function.vue";
 import CloudUploadIcon from "icons/CloudUpload.vue";
 import ContentCopyIcon from "icons/ContentCopy.vue";
+import HeartIcon from "icons/Heart.vue";
 import MacrosEditor from "@/components/MacrosEditor.vue";
 import RotaryExtensionEditor from "@/components/RotaryExtensionEditor.vue";
 
@@ -636,7 +637,7 @@ initializeLayout();
 </script>
 
 <template>
-  <div class="w-screen h-screen dark:[color-scheme:dark]">
+  <div class="w-screen h-screen dark:[color-scheme:dark] flex flex-col">
     <!-- Navbar -->
     <div
       id="nav"
@@ -721,7 +722,7 @@ initializeLayout();
         </button>
       </div>
     </div>
-    <div class="grid grid-cols-12 gap-4">
+    <div class="grid grid-cols-12 gap-4 grow">
       <MacrosEditor
         v-model="macroIndex"
         :macros="macros"
@@ -932,6 +933,26 @@ initializeLayout();
         </transition>
       </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="bg-stone-70 dark:bg-stone-800 mt-4 py-4">
+      <div class="container mx-auto px-4">
+        <div class="text-center text-white">
+          <p class="flex justify-center">
+            Made with
+            <heart-icon
+              size="1rem"
+              class="inline-block text-red-600 self-center mx-2"
+            />
+            by
+            <a href="https://driftking.tw" class="mx-2 font-semibold">
+              DriftKingTW
+            </a>
+            <small class="font-bold">(´ ‿｀)</small>
+          </p>
+        </div>
+      </div>
+    </footer>
   </div>
 
   <transition
