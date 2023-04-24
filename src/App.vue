@@ -261,7 +261,11 @@ const toggleActive = (row: number, col: number) => {
  */
 const updateKey = (e: any) => {
   // Do nothing if there's no key activated
-  if (!validateKeyLocation()) return;
+  if (
+    !validateKeyLocation() ||
+    !layout[currentKeyLocation.row][currentKeyLocation.col].active
+  )
+    return;
 
   const specialKeyCode = getSpecialKeyCode(e.code);
 
