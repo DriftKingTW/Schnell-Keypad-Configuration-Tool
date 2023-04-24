@@ -603,6 +603,35 @@ const copyCombinedConfig = () => {
   });
 };
 
+const checkSpecialKey = (keyInfo: string) => {
+  const result = {
+    isSpecialKey: false,
+    color: "",
+    specialKeyText: "",
+  };
+  if (keyInfo === "FN") {
+    result.isSpecialKey = true;
+    result.color = "text-lime-500";
+    result.specialKeyText = "FN";
+    return result;
+  }
+  if (keyInfo.startsWith("MACRO_")) {
+    const macroIndex: number = Number(keyInfo.slice(6));
+    const { name } = combinedConfig.macros[macroIndex];
+    result.isSpecialKey = true;
+    result.color = "text-sky-400";
+    result.specialKeyText = `${name}`;
+    return result;
+  }
+  if (keyInfo.startsWith("TT_")) {
+    result.isSpecialKey = true;
+    result.color = "text-orange-400";
+    result.specialKeyText = `TT ⇆ ${keyInfo.slice(3)}`;
+    return result;
+  }
+  return result;
+};
+
 initializeLayout();
 </script>
 
@@ -825,12 +854,21 @@ initializeLayout();
                   @click="toggleActive(row, col)"
                   @contextmenu="updateKeyInfo($event, row, col)"
                 >
-                  <div class="mx-2 flex flex-col h-full justify-between">
+                  <div
+                    class="truncate mx-2 flex flex-col h-full justify-between"
+                  >
                     <div class="truncate">
                       {{ key.keyInfo === " " ? "∅" : key.keyInfo }}
                     </div>
-                    <div class="text-xs mb-1 self-end opacity-50">
-                      {{ key.keyStroke }}
+                    <div
+                      class="text-xs mb-1 opacity-60"
+                      :class="checkSpecialKey(key.keyInfo).color"
+                    >
+                      {{
+                        checkSpecialKey(key.keyInfo).isSpecialKey !== false
+                          ? checkSpecialKey(key.keyInfo).specialKeyText
+                          : key.keyStroke
+                      }}
                     </div>
                   </div>
                 </span>
