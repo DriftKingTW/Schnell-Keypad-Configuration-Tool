@@ -147,7 +147,6 @@ const updateKeyStorkes = (e: any) => {
   ];
   macros[activeMacroIndex.value].keyStrokes = [...keyStrokes];
   updateOuputData();
-  console.log(keyStrokes);
 };
 
 /**
