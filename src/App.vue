@@ -632,7 +632,7 @@ const checkSpecialFunctionKey = (keyInfo: string) => {
   if (keyInfo.startsWith("TT_")) {
     result.isSpecialKey = true;
     result.color = "text-orange-400";
-    result.specialKeyText = `TT ⇆ ${keyInfo.slice(3)}`;
+    result.specialKeyText = `TT ⇆ L${keyInfo.slice(3)}`;
     return result;
   }
   return result;
