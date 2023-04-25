@@ -23,8 +23,13 @@ import ContentCopyIcon from "icons/ContentCopy.vue";
 import HeartIcon from "icons/Heart.vue";
 import MacrosEditor from "@/components/MacrosEditor.vue";
 import RotaryExtensionEditor from "@/components/RotaryExtensionEditor.vue";
+import Tooltip from "@/components/Tooltip.vue";
 
-import { getSpecialKeyCode } from "./utils/specialKeyHandler";
+import {
+  getSpecialKeyCode,
+  checkSpecialKey,
+  asciiToEventCode,
+} from "./utils/specialKeyHandler";
 import { useStore } from "vuex";
 import { key } from "./store";
 import { Toast } from "flowbite-vue";
@@ -604,7 +609,7 @@ const copyCombinedConfig = () => {
   });
 };
 
-const checkSpecialKey = (keyInfo: string) => {
+const checkSpecialFunctionKey = (keyInfo: string) => {
   const result = {
     isSpecialKey: false,
     color: "",
@@ -855,23 +860,34 @@ initializeLayout();
                   @click="toggleActive(row, col)"
                   @contextmenu="updateKeyInfo($event, row, col)"
                 >
-                  <div
-                    class="truncate mx-2 flex flex-col h-full justify-between"
+                  <Tooltip
+                    :tooltip-text="`${
+                      checkSpecialKey(key.keyStroke) ||
+                      asciiToEventCode(key.keyStroke) ||
+                      '∅'
+                    }`"
+                    class="h-full"
                   >
-                    <div class="truncate">
-                      {{ key.keyInfo === " " ? "∅" : key.keyInfo }}
-                    </div>
                     <div
-                      class="text-xs mb-1 opacity-60"
-                      :class="checkSpecialKey(key.keyInfo).color"
+                      class="truncate mx-2 flex flex-col h-full justify-between"
                     >
-                      {{
-                        checkSpecialKey(key.keyInfo).isSpecialKey !== false
-                          ? checkSpecialKey(key.keyInfo).specialKeyText
-                          : key.keyStroke
-                      }}
+                      <div class="truncate">
+                        {{ key.keyInfo === " " ? "∅" : key.keyInfo }}
+                      </div>
+                      <div
+                        class="text-xs mb-1 opacity-60"
+                        :class="checkSpecialFunctionKey(key.keyInfo).color"
+                      >
+                        {{
+                          checkSpecialFunctionKey(key.keyInfo).isSpecialKey !==
+                          false
+                            ? checkSpecialFunctionKey(key.keyInfo)
+                                .specialKeyText
+                            : key.keyStroke
+                        }}
+                      </div>
                     </div>
-                  </div>
+                  </Tooltip>
                 </span>
               </template>
               <br />

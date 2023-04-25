@@ -430,4 +430,39 @@ const checkSpecialKey = (key: number) => {
   return result;
 };
 
-export { getSpecialKeyCode, checkSpecialKey };
+const asciiToEventCode = (asciiKeyCode: number) => {
+  if (asciiKeyCode >= 65 && asciiKeyCode <= 90) {
+    // A-Z
+    return "Key" + String.fromCharCode(asciiKeyCode);
+  } else if (asciiKeyCode >= 97 && asciiKeyCode <= 122) {
+    // a-z
+    return "Key" + String.fromCharCode(asciiKeyCode - 32);
+  } else if (asciiKeyCode >= 48 && asciiKeyCode <= 57) {
+    // 0-9
+    return "Digit" + String.fromCharCode(asciiKeyCode);
+  } else {
+    switch (asciiKeyCode) {
+      case 32:
+        return "Space"; // Spacebar
+      case 13:
+        return "Enter"; // Enter key
+      case 27:
+        return "Escape"; // Escape key
+      case 9:
+        return "Tab"; // Tab key
+      case 8:
+        return "Backspace"; // Backspace key
+      case 16:
+        return "ShiftLeft"; // Left Shift key (you can't differentiate between left and right Shift using ASCII code alone)
+      case 17:
+        return "ControlLeft"; // Left Control key (you can't differentiate between left and right Control using ASCII code alone)
+      case 18:
+        return "AltLeft"; // Left Alt key (you can't differentiate between left and right Alt using ASCII code alone)
+      // Add more cases for other key codes as needed
+      default:
+        return "";
+    }
+  }
+};
+
+export { getSpecialKeyCode, checkSpecialKey, asciiToEventCode };
