@@ -113,12 +113,15 @@ const goToNextSlide = () => {
               id="showOnStart"
             />
             <span
-              class="w-5 h-5 inline-block mr-2 border-2 border-stone-400 rounded-sm peer-checked:bg-lime-600 peer-checked:border-lime-600 cursor-pointer peer-checked:text-white"
+              class="w-5 h-5 inline-block mr-2 border-2 border-stone-200 dark:border-stone-400 rounded-sm peer-checked:bg-lime-600 peer-checked:border-lime-600 cursor-pointer peer-checked:text-white"
               @click="showOnStart = !showOnStart"
             >
-              <check-icon :size="16" />
+              <check-icon v-show="showOnStart" :size="16" />
             </span>
-            <label for="showOnStart" class="text-stone-400 cursor-pointer">
+            <label
+              for="showOnStart"
+              class="text-stone-200 dark:text-stone-400 cursor-pointer"
+            >
               {{ $t("tutorial.showOnStart") }}
             </label>
           </div>
@@ -126,7 +129,7 @@ const goToNextSlide = () => {
           <button
             :disable="!isFirstSlide"
             @click="goToPrevSlide"
-            class="w-24 btn border-2 border-stone-400 text-stone-400 flex justify-center items-center"
+            class="w-24 btn border-2 border-stone-200 text-stone-200 dark:border-stone-400 dark:text-stone-400 flex justify-center items-center"
             :class="isFirstSlide ? 'opacity-50' : ''"
           >
             <chevron-left-icon :size="24" />
@@ -134,7 +137,7 @@ const goToNextSlide = () => {
           <button
             :disable="!isLastSlide"
             @click="goToNextSlide"
-            class="w-24 btn border-2 border-stone-400 text-stone-400 flex justify-center items-center"
+            class="w-24 btn border-2 border-stone-200 text-stone-200 dark:border-stone-400 dark:text-stone-400 flex justify-center items-center"
             :class="isLastSlide ? 'opacity-50' : ''"
           >
             <chevron-right-icon :size="24" />
@@ -173,7 +176,7 @@ const goToNextSlide = () => {
   width: 100vw;
   height: 100vh;
   content: "";
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
 }
 

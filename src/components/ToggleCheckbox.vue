@@ -21,7 +21,11 @@ const value: any = computed({
         <input type="checkbox" id="toggle" class="sr-only" v-model="value" />
         <div
           class="toggle__line w-12 h-6 rounded-full shadow-inner"
-          :class="{ 'bg-lime-600': value, 'bg-stone-600': !value }"
+          :class="{
+            'bg-lime-600': value,
+            'bg-stone-200': !value,
+            'dark:bg-stone-600': !value,
+          }"
         ></div>
         <div
           class="toggle__dot absolute w-6 h-6 bg-white rounded-full shadow inset-y-0 left-0"

@@ -651,7 +651,7 @@ initializeLayout();
     <!-- Navbar -->
     <div
       id="nav"
-      class="bg-stone-700 w-full h-12 text-white dark:bg-stone-800"
+      class="bg-stone-600 w-full h-12 text-white dark:bg-stone-800"
       style="min-width: 600px"
     >
       <div class="container mx-auto h-full flex items-center justify-center">
@@ -902,7 +902,7 @@ initializeLayout();
                         {{ key.keyInfo === " " ? "∅" : key.keyInfo }}
                       </div>
                       <div
-                        class="text-xs mb-1 opacity-60"
+                        class="text-xs mb-1 opacity-80 dark:opacity-60"
                         :class="checkSpecialFunctionKey(key.keyInfo).color"
                       >
                         {{
@@ -978,7 +978,7 @@ initializeLayout();
     </div>
 
     <!-- Footer -->
-    <footer class="bg-stone-70 dark:bg-stone-800 mt-4 py-4">
+    <footer class="bg-stone-600 dark:bg-stone-800 mt-4 py-4">
       <div class="container mx-auto px-4">
         <div class="text-center text-white">
           <p class="flex justify-center">
@@ -1024,8 +1024,8 @@ initializeLayout();
 }
 
 .key-btn {
-  @apply rounded bg-slate-300 hover:bg-slate-400 text-slate-600 w-16 h-16 m-1 cursor-pointer 
-  dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-slate-600;
+  @apply rounded bg-neutral-100 hover:bg-neutral-300 text-neutral-600 shadow-md w-16 h-16 m-1 cursor-pointer 
+  dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600;
 }
 
 .key-btn-active {
@@ -1034,7 +1034,7 @@ initializeLayout();
 }
 
 .key-btn-dummy {
-  @apply bg-slate-100 text-slate-300
+  @apply bg-neutral-100 text-neutral-300
   dark:bg-neutral-800 dark:text-neutral-600;
 }
 
@@ -1071,7 +1071,7 @@ initializeLayout();
     z-index: -1;
     background: inherit;
     color: inherit;
-    @apply rounded w-16 h-32;
+    @apply rounded w-16 h-32 shadow-md;
   }
   &:hover:before {
     background: inherit;
