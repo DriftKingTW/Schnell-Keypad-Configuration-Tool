@@ -21,9 +21,11 @@ import FunctionIcon from "icons/Function.vue";
 import CloudUploadIcon from "icons/CloudUpload.vue";
 import ContentCopyIcon from "icons/ContentCopy.vue";
 import HeartIcon from "icons/Heart.vue";
+import BookOpenVariantIcon from "icons/BookOpenVariant.vue";
 import MacrosEditor from "@/components/MacrosEditor.vue";
 import RotaryExtensionEditor from "@/components/RotaryExtensionEditor.vue";
 import Tooltip from "@/components/Tooltip.vue";
+import MainTutorial from "@/components/MainTutorial.vue";
 
 import {
   getSpecialKeyCode,
@@ -131,6 +133,7 @@ let floatingEditor = reactive({
 let editInfoText = ref("");
 let isEditingKeyInfo = ref(false);
 let isSelectingMacro = ref(false);
+let showTutorial = ref(false);
 let macroIndex = ref(-1);
 let ttLayoutIndex = ref(1);
 let isGlobalTTKey = ref(false);
@@ -157,6 +160,8 @@ const savedData = localStorage.getItem("keyconfig");
 if (savedData) {
   configJsonArray.push(...JSON.parse(savedData));
 }
+
+showTutorial.value = localStorage.getItem("showOnStart") !== "false";
 
 // Computed
 
@@ -682,6 +687,15 @@ initializeLayout();
             Ah snap, you are not allowed to use this on HTTP!
           </span>
         </esp-web-install-button>
+
+        <!-- button to show tutorial -->
+        <button
+          class="btn btn-export flex"
+          @click="showTutorial = !showTutorial"
+        >
+          <book-open-variant-icon :size="18" class="self-center mr-2" />
+          {{ $t("tutorial.buttonShow") }}
+        </button>
       </div>
     </div>
     <!-- File Upload Bar -->
@@ -696,6 +710,19 @@ initializeLayout();
         {{ $t("dragDrop") }}
       </div>
     </div>
+
+    <!-- Tutorial -->
+    <transition
+      enter-active-class="duration-300 ease-out"
+      enter-from-class="transform opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="duration-200 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="transform opacity-0"
+    >
+      <main-tutorial v-show="showTutorial" v-model="showTutorial" />
+    </transition>
+
     <!-- Hint -->
     <p class="text-neutral-400 mt-4 text-center">
       <span class="label">{{ $t("hint") }}</span>

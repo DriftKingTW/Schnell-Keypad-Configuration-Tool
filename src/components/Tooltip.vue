@@ -1,4 +1,4 @@
-<!-- src/components/HoverTooltip.vue -->
+<!-- src/components/Tooltip.vue -->
 <template>
   <div
     class="relative"

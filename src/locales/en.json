@@ -27,5 +27,11 @@
   "assignTTKey": "Assign TT",
   "ttLayout": "Choose target TT layout",
   "isGlobalTTKey": "Global TT",
-  "version": "Version"
+  "version": "Version",
+  "tutorial": {
+    "skip": "Skip",
+    "finish": "Get Started",
+    "showOnStart": "Show on start",
+    "buttonShow": "Show Tutorial"
+  }
 }

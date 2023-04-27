@@ -6,6 +6,7 @@ import zhTW from "./locales/zh-tw.json";
 import zhCN from "./locales/zh-cn.json";
 import "./index.scss";
 import { store, key } from "./store";
+import VueSplide from "@splidejs/vue-splide";
 
 const i18n = createI18n({
   globalInjection: true,
@@ -19,4 +20,4 @@ const i18n = createI18n({
   },
 });
 
-createApp(App).use(store, key).use(i18n).mount("#app");
+createApp(App).use(store, key).use(i18n).use(VueSplide).mount("#app");

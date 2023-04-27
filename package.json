@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@splidejs/vue-splide": "^0.6.12",
     "esp-web-tools": "^9.0.3",
     "flowbite": "^1.6.0",
     "flowbite-vue": "^0.0.10",
