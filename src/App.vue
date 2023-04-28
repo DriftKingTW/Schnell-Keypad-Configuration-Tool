@@ -21,6 +21,8 @@ import FunctionIcon from "icons/Function.vue";
 import CloudUploadIcon from "icons/CloudUpload.vue";
 import ContentCopyIcon from "icons/ContentCopy.vue";
 import HeartIcon from "icons/Heart.vue";
+import GithubIcon from "icons/Github.vue";
+import EmailIcon from "icons/Email.vue";
 import BookOpenVariantIcon from "icons/BookOpenVariant.vue";
 import MacrosEditor from "@/components/MacrosEditor.vue";
 import RotaryExtensionEditor from "@/components/RotaryExtensionEditor.vue";
@@ -980,8 +982,8 @@ initializeLayout();
     <!-- Footer -->
     <footer class="bg-stone-600 dark:bg-stone-800 mt-4 py-4">
       <div class="container mx-auto px-4">
-        <div class="text-center text-white">
-          <p class="flex justify-center">
+        <div class="text-center text-white flex justify-center divide-x">
+          <p class="flex justify-center mx-4">
             Made with
             <heart-icon
               size="1rem"
@@ -993,6 +995,18 @@ initializeLayout();
             </a>
             <small class="font-bold">(´ ‿｀)</small>
           </p>
+          <div class="flex justify-center px-4">
+            <a
+              class="flex"
+              href="http://github.com/driftkingtw"
+              target="_blank"
+            >
+              <github-icon size="1.5rem" class="mr-4" />
+            </a>
+            <a class="flex" href="mailto:driftkingtw@gmail.com">
+              <email-icon size="1.5rem" class="mr-4" />
+            </a>
+          </div>
         </div>
       </div>
     </footer>
