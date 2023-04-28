@@ -26,7 +26,7 @@ input:focus {
 
 select {
     @apply rounded border-solid border-2 border-stone-300 ml-2 m-1 cursor-pointer text-stone-600 
-    focus:border-lime-600 dark:bg-stone-800 dark:border-none dark:text-neutral-400;
+    focus:border-lime-600 dark:bg-stone-800 dark:border-black dark:text-neutral-400;
 }
 
 select:focus {
@@ -78,7 +78,7 @@ select:focus {
 
 .text-input {
     @apply rounded border-solid border-2 border-stone-300 py-1 px-2 ml-1 m-1 
-    focus:border-lime-600 dark:bg-stone-800 dark:border-none dark:text-neutral-400;
+    focus:border-lime-600 dark:bg-stone-800 dark:border-black dark:text-neutral-400;
 }
 
 .btn {

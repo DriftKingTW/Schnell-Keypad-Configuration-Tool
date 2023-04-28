@@ -28,6 +28,7 @@ import MacrosEditor from "@/components/MacrosEditor.vue";
 import RotaryExtensionEditor from "@/components/RotaryExtensionEditor.vue";
 import Tooltip from "@/components/Tooltip.vue";
 import MainTutorial from "@/components/MainTutorial.vue";
+import DarkModeButton from "@/components/DarkModeButton.vue";
 
 import {
   getSpecialKeyCode,
@@ -698,6 +699,8 @@ initializeLayout();
           <book-open-variant-icon :size="18" class="self-center mr-2" />
           {{ $t("tutorial.buttonShow") }}
         </button>
+
+        <dark-mode-button />
       </div>
     </div>
     <!-- File Upload Bar -->
