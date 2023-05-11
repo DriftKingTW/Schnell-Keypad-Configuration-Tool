@@ -11,11 +11,26 @@ const props = defineProps(["modelValue"]);
 const emit = defineEmits(["update:modelValue"]);
 
 const slides = [
-  { src: "/tutorial_images/dark/step.jpg", alt: "Step 1" },
-  { src: "/tutorial_images/dark/step.jpg", alt: "Step 2" },
-  { src: "/tutorial_images/dark/step.jpg", alt: "Step 3" },
-  { src: "/tutorial_images/dark/step.jpg", alt: "Step 4" },
-  { src: "/tutorial_images/dark/step.jpg", alt: "Step 5" },
+  {
+    src: `${import.meta.env.BASE_URL}tutorial_images/dark/step.jpg`,
+    alt: "Step 1",
+  },
+  {
+    src: `${import.meta.env.BASE_URL}tutorial_images/dark/step.jpg`,
+    alt: "Step 2",
+  },
+  {
+    src: `${import.meta.env.BASE_URL}tutorial_images/dark/step.jpg`,
+    alt: "Step 3",
+  },
+  {
+    src: `${import.meta.env.BASE_URL}tutorial_images/dark/step.jpg`,
+    alt: "Step 4",
+  },
+  {
+    src: `${import.meta.env.BASE_URL}tutorial_images/dark/step.jpg`,
+    alt: "Step 5",
+  },
 ];
 const progressWidth = ref(0);
 const splide: any = ref(null);
