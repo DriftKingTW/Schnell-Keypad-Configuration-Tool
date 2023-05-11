@@ -33,5 +33,6 @@
     "finish": "開始使用",
     "showOnStart": "啟動時顯示",
     "buttonShow": "使用說明"
-  }
+  },
+  "uploadKeyConfigToDevice": "上傳設定檔到裝置"
 }

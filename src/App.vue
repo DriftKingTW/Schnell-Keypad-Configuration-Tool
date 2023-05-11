@@ -10,6 +10,7 @@ import {
 } from "vue";
 import { useI18n } from "vue-i18n";
 import "esp-web-tools/dist/web/install-button";
+import axios from "axios";
 
 import "vue3-json-viewer/dist/index.css";
 import CheckIcon from "icons/Check.vue";
@@ -24,6 +25,8 @@ import HeartIcon from "icons/Heart.vue";
 import GithubIcon from "icons/Github.vue";
 import EmailIcon from "icons/Email.vue";
 import BookOpenVariantIcon from "icons/BookOpenVariant.vue";
+import UploadIcon from "icons/Upload.vue";
+
 import MacrosEditor from "@/components/MacrosEditor.vue";
 import RotaryExtensionEditor from "@/components/RotaryExtensionEditor.vue";
 import Tooltip from "@/components/Tooltip.vue";
@@ -203,6 +206,19 @@ watch(macroIndex, async () => {
 });
 
 // Functions
+
+/**
+ * Initialize the app
+ */
+const initializeApp = async () => {
+  // Connect to the device
+  try {
+    const response = await fetch("http://tp-keypad.local/api/network");
+    const data = await response.json();
+  } catch (error) {
+    console.error("Failed to connect to the device");
+  }
+};
 
 /**
  * Initialize current layout's data
@@ -506,6 +522,25 @@ const exportCombinedConfig = () => {
   document.body.removeChild(element);
 };
 
+const uploadConfigToDevice = async (type: string) => {
+  const url = `http://tp-keypad.local/api/config?type=${type}`;
+  const data = combinedConfig;
+  try {
+    const response = await axios.put(url, data);
+    console.log(response.data);
+    store.commit("showToast", {
+      message: "Upload successful",
+      type: "success",
+    });
+  } catch (error: any) {
+    console.log(error);
+    store.commit("showToast", {
+      message: `Upload failed: ${error.message}`,
+      type: "error",
+    });
+  }
+};
+
 /**
  * Update page title after changing the language
  *
@@ -646,6 +681,7 @@ const checkSpecialFunctionKey = (keyInfo: string) => {
   return result;
 };
 
+initializeApp();
 initializeLayout();
 </script>
 
@@ -756,6 +792,14 @@ initializeLayout();
         >
           <export-icon :size="18" class="self-center mr-2" />
           {{ $t("exportCombinedJSONConfig") }}
+        </button>
+        <button
+          name="export"
+          class="btn btn-export grow flex"
+          @click="uploadConfigToDevice('keyconfig')"
+        >
+          <upload-icon :size="18" class="self-center mr-2" />
+          {{ $t("uploadKeyConfigToDevice") }}
         </button>
       </div>
     </div>

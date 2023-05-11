@@ -33,5 +33,6 @@
     "finish": "Get Started",
     "showOnStart": "Show on start",
     "buttonShow": "Show Tutorial"
-  }
+  },
+  "uploadKeyConfigToDevice": "Upload Configuration to Device"
 }

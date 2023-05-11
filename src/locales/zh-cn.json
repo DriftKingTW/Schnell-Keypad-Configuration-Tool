@@ -33,5 +33,6 @@
     "finish": "开始使用",
     "showOnStart": "启动时显示",
     "buttonShow": "使用教程"
-  }
+  },
+  "uploadKeyConfigToDevice": "上传设置文件到装置"
 }
