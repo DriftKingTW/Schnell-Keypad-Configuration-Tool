@@ -27,11 +27,11 @@ import EmailIcon from "icons/Email.vue";
 import BookOpenVariantIcon from "icons/BookOpenVariant.vue";
 import LanConnectIcon from "icons/LanConnect.vue";
 import LanDisconnectIcon from "icons/LanDisconnect.vue";
-import WiFiStrengthAlertOutlineIcon from "icons/WiFiStrengthAlertOutline.vue";
-import WiFiStrength1Icon from "icons/WiFiStrength1.vue";
-import WiFiStrength2Icon from "icons/WiFiStrength2.vue";
-import WiFiStrength3Icon from "icons/WiFiStrength3.vue";
-import WiFiStrength4Icon from "icons/WiFiStrength4.vue";
+import wifiStrengthAlertOutlineIcon from "icons/wifiStrengthAlertOutline.vue";
+import wifiStrength1Icon from "icons/wifiStrength1.vue";
+import wifiStrength2Icon from "icons/wifiStrength2.vue";
+import wifiStrength3Icon from "icons/wifiStrength3.vue";
+import wifiStrength4Icon from "icons/wifiStrength4.vue";
 import IpNetworkIcon from "icons/IpNetwork.vue";
 
 import MacrosEditor from "@/components/MacrosEditor.vue";
@@ -870,31 +870,31 @@ initializeLayout();
             {{ networkInfo.ip ? networkInfo.ip : "Unkown" }}
           </span>
 
-          <wi-fi-strength4-icon
+          <wifi-strength4-icon
             v-if="networkInfo.rssi > -55"
             :size="24"
             class="self-center mx-2"
-          ></wi-fi-strength4-icon>
-          <wi-fi-strength3-icon
+          ></wifi-strength4-icon>
+          <wifi-strength3-icon
             v-else-if="networkInfo.rssi > -70"
             :size="24"
             class="self-center mx-2"
-          ></wi-fi-strength3-icon>
-          <wi-fi-strength2-icon
+          ></wifi-strength3-icon>
+          <wifi-strength2-icon
             v-else-if="networkInfo.rssi > -80"
             :size="24"
             class="self-center mx-2"
-          ></wi-fi-strength2-icon>
-          <wi-fi-strength1-icon
+          ></wifi-strength2-icon>
+          <wifi-strength1-icon
             v-else-if="networkInfo.rssi > -90"
             :size="24"
             class="self-center mx-2"
-          ></wi-fi-strength1-icon>
-          <wi-fi-strength-alert-outline-icon
+          ></wifi-strength1-icon>
+          <wifi-strength-alert-outline-icon
             v-else
             :size="24"
             class="self-center mx-2"
-          ></wi-fi-strength-alert-outline-icon>
+          ></wifi-strength-alert-outline-icon>
           <span class="self-center">RSSI {{ networkInfo.rssi }}</span>
         </div>
 
