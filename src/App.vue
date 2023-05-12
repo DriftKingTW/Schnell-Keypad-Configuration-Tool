@@ -27,11 +27,11 @@ import EmailIcon from "icons/Email.vue";
 import BookOpenVariantIcon from "icons/BookOpenVariant.vue";
 import LanConnectIcon from "icons/LanConnect.vue";
 import LanDisconnectIcon from "icons/LanDisconnect.vue";
-import wifiStrengthAlertOutlineIcon from "icons/wifiStrengthAlertOutline.vue";
-import wifiStrength1Icon from "icons/wifiStrength1.vue";
-import wifiStrength2Icon from "icons/wifiStrength2.vue";
-import wifiStrength3Icon from "icons/wifiStrength3.vue";
-import wifiStrength4Icon from "icons/wifiStrength4.vue";
+import WifiStrengthAlertOutlineIcon from "icons/WifiStrengthAlertOutline.vue";
+import WifiStrength1Icon from "icons/WifiStrength1.vue";
+import WifiStrength2Icon from "icons/WifiStrength2.vue";
+import WifiStrength3Icon from "icons/WifiStrength3.vue";
+import WifiStrength4Icon from "icons/WifiStrength4.vue";
 import IpNetworkIcon from "icons/IpNetwork.vue";
 
 import MacrosEditor from "@/components/MacrosEditor.vue";
