@@ -25,7 +25,14 @@ import HeartIcon from "icons/Heart.vue";
 import GithubIcon from "icons/Github.vue";
 import EmailIcon from "icons/Email.vue";
 import BookOpenVariantIcon from "icons/BookOpenVariant.vue";
-import UploadIcon from "icons/Upload.vue";
+import LanConnectIcon from "icons/LanConnect.vue";
+import LanDisconnectIcon from "icons/LanDisconnect.vue";
+import WiFiStrengthAlertOutlineIcon from "icons/WiFiStrengthAlertOutline.vue";
+import WiFiStrength1Icon from "icons/WiFiStrength1.vue";
+import WiFiStrength2Icon from "icons/WiFiStrength2.vue";
+import WiFiStrength3Icon from "icons/WiFiStrength3.vue";
+import WiFiStrength4Icon from "icons/WiFiStrength4.vue";
+import IpNetworkIcon from "icons/IpNetwork.vue";
 
 import MacrosEditor from "@/components/MacrosEditor.vue";
 import RotaryExtensionEditor from "@/components/RotaryExtensionEditor.vue";
@@ -50,6 +57,17 @@ const i18n = useI18n();
 document.title = i18n.t("navTitle");
 
 // Type declarations
+type NetworkInfo = {
+  apIP: string;
+  gatewayIP: string;
+  ip: string;
+  mac: string;
+  password: string;
+  rssi: number;
+  ssid: string;
+  subnetMask: string;
+};
+
 type Coordinate = {
   row: number;
   col: number;
@@ -145,6 +163,18 @@ let ttLayoutIndex = ref(1);
 let isGlobalTTKey = ref(false);
 let firmwareVersion = ref("Latest");
 let firmwareVersions = ref<string[]>(["Latest", "Beta"]);
+const keyboardUrl = ref("http://tp-keypad.local");
+const isKeyboardConnected = ref(false);
+const networkInfo: NetworkInfo = reactive({
+  apIP: "",
+  gatewayIP: "",
+  ip: "",
+  mac: "",
+  password: "",
+  rssi: -100,
+  ssid: "",
+  subnetMask: "",
+});
 
 const macros: any = reactive([]);
 const macroComponentKey = ref(0);
@@ -213,10 +243,24 @@ watch(macroIndex, async () => {
 const initializeApp = async () => {
   // Connect to the device
   try {
-    const response = await fetch("http://tp-keypad.local/api/network");
+    const response = await fetch(`${keyboardUrl.value}/api/network`);
     const data = await response.json();
+
+    if (response.status === 200) {
+      isKeyboardConnected.value = true;
+    }
+
+    networkInfo.ip = data.wifi.ip;
+    networkInfo.ssid = data.wifi.ssid;
+    networkInfo.password = data.wifi.password;
+    networkInfo.mac = data.wifi.mac;
+    networkInfo.rssi = data.wifi.rssi;
+    networkInfo.gatewayIP = data.wifi.gatewayIP;
+    networkInfo.subnetMask = data.wifi.subnetMask;
+    networkInfo.apIP = data.wifi.apIp;
   } catch (error) {
     console.error("Failed to connect to the device");
+    console.log(error);
   }
 };
 
@@ -523,7 +567,7 @@ const exportCombinedConfig = () => {
 };
 
 const uploadConfigToDevice = async (type: string) => {
-  const url = `http://tp-keypad.local/api/config?type=${type}`;
+  const url = `${keyboardUrl.value}/api/config?type=${type}`;
   const data = combinedConfig;
   try {
     const response = await axios.put(url, data);
@@ -793,12 +837,74 @@ initializeLayout();
           <export-icon :size="18" class="self-center mr-2" />
           {{ $t("exportCombinedJSONConfig") }}
         </button>
+      </div>
+    </div>
+    <div class="flex justify-center mt-4">
+      <div class="flex">
+        <div>
+          <label for="device_url"> Device URL: </label>
+          <input
+            type="text"
+            name="device_url"
+            class="text-input"
+            v-model="keyboardUrl"
+            :placeholder="`Ex: http://tp-keypad.local`"
+          />
+        </div>
+        <lan-connect-icon
+          v-if="isKeyboardConnected"
+          :size="24"
+          class="self-center mx-2 text-lime-500"
+        />
+        <lan-disconnect-icon
+          v-else
+          :size="24"
+          class="self-center mx-2 text-red-500 animate-pulse"
+        />
+        <div class="flex mr-2 text-stone-600 dark:text-stone-400">
+          <ip-network-icon
+            :size="24"
+            class="self-center mx-2"
+          ></ip-network-icon>
+          <span class="self-center">
+            {{ networkInfo.ip ? networkInfo.ip : "Unkown" }}
+          </span>
+
+          <wi-fi-strength4-icon
+            v-if="networkInfo.rssi > -55"
+            :size="24"
+            class="self-center mx-2"
+          ></wi-fi-strength4-icon>
+          <wi-fi-strength3-icon
+            v-else-if="networkInfo.rssi > -70"
+            :size="24"
+            class="self-center mx-2"
+          ></wi-fi-strength3-icon>
+          <wi-fi-strength2-icon
+            v-else-if="networkInfo.rssi > -80"
+            :size="24"
+            class="self-center mx-2"
+          ></wi-fi-strength2-icon>
+          <wi-fi-strength1-icon
+            v-else-if="networkInfo.rssi > -90"
+            :size="24"
+            class="self-center mx-2"
+          ></wi-fi-strength1-icon>
+          <wi-fi-strength-alert-outline-icon
+            v-else
+            :size="24"
+            class="self-center mx-2"
+          ></wi-fi-strength-alert-outline-icon>
+          <span class="self-center">RSSI {{ networkInfo.rssi }}</span>
+        </div>
+
         <button
           name="export"
           class="btn btn-export grow flex"
           @click="uploadConfigToDevice('keyconfig')"
+          :disabled="!isKeyboardConnected"
         >
-          <upload-icon :size="18" class="self-center mr-2" />
+          <cloud-upload-icon :size="24" class="self-center mr-2" />
           {{ $t("uploadKeyConfigToDevice") }}
         </button>
       </div>
