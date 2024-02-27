@@ -33,6 +33,7 @@ import WifiStrength2Icon from "icons/WifiStrength2.vue";
 import WifiStrength3Icon from "icons/WifiStrength3.vue";
 import WifiStrength4Icon from "icons/WifiStrength4.vue";
 import IpNetworkIcon from "icons/IpNetwork.vue";
+import RefreshIcon from "icons/Refresh.vue";
 
 import MacrosEditor from "@/components/MacrosEditor.vue";
 import RotaryExtensionEditor from "@/components/RotaryExtensionEditor.vue";
@@ -897,6 +898,10 @@ initializeLayout();
           ></wifi-strength-alert-outline-icon>
           <span class="self-center">RSSI {{ networkInfo.rssi }}</span>
         </div>
+
+        <button class="btn flex" @click="initializeApp">
+          <refresh-icon class="text-stone-400 hover:text-lime-400" />
+        </button>
 
         <button
           name="export"
