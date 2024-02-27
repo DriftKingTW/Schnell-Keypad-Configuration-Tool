@@ -164,7 +164,7 @@ let ttLayoutIndex = ref(1);
 let isGlobalTTKey = ref(false);
 let firmwareVersion = ref("Latest");
 let firmwareVersions = ref<string[]>(["Latest", "Beta"]);
-const keyboardUrl = ref("http://tp-keypad.local");
+const keyboardUrl = ref("http://schnell.local");
 const isKeyboardConnected = ref(false);
 const networkInfo: NetworkInfo = reactive({
   apIP: "",
@@ -849,7 +849,7 @@ initializeLayout();
             name="device_url"
             class="text-input"
             v-model="keyboardUrl"
-            :placeholder="`Ex: http://tp-keypad.local`"
+            :placeholder="`Ex: http://schnell.local`"
           />
         </div>
         <lan-connect-icon
