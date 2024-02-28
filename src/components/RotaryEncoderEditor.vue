@@ -254,7 +254,7 @@ initializeLayout();
   >
     <div class="bg-white rounded-lg shadow-lg p-6 dark:bg-stone-800 min-w-xl">
       <!-- header -->
-      <div class="flex justify-center text-slate-700 dark:text-white mb-2">
+      <div class="flex justify-center text-neutral-700 dark:text-white mb-2">
         <knob-icon :size="18" class="self-center mr-2" />
         <h2 class="text-lg font-semibold">
           {{ $t("rotaryEncoderEditorTitle") }}
@@ -266,13 +266,13 @@ initializeLayout();
           name="add_layout"
           v-model="currentLayoutIndex"
           @change="initializeLayout()"
-          class="btn bg-slate-300 dark:bg-neutral-700"
+          class="btn bg-neutral-300 dark:bg-neutral-700"
         >
           <option v-for="(title, i) in configTitles" :value="i">
             {{ $t("layout") }} {{ i }} - {{ title }}
           </option>
         </select> -->
-        <span class="text-slate-700 dark:text-neutral-400">
+        <span class="text-neutral-700 dark:text-neutral-400">
           {{ $t("layout") }} {{ currentLayoutIndex }} -
           {{ configTitles[currentLayoutIndex] }}
         </span>
@@ -358,8 +358,8 @@ initializeLayout();
 }
 
 .key-btn {
-  @apply rounded bg-slate-300 hover:bg-slate-400 text-slate-600 w-16 h-16 m-1 cursor-pointer 
-  dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-slate-600;
+  @apply rounded bg-neutral-300 hover:bg-neutral-400 text-neutral-600 w-16 h-16 m-1 cursor-pointer 
+  dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600;
 }
 
 .key-btn-active {
@@ -368,7 +368,7 @@ initializeLayout();
 }
 
 .key-btn-dummy {
-  @apply bg-slate-100 text-slate-300
+  @apply bg-neutral-100 text-neutral-300
   dark:bg-neutral-800 dark:text-neutral-600;
 }
 
@@ -421,7 +421,7 @@ initializeLayout();
   @apply w-24 h-24 m-1 cursor-pointer rounded-full bg-white
   dark:bg-neutral-700;
   &:hover {
-    @apply bg-neutral-100 dark:bg-slate-600;
+    @apply bg-neutral-100 dark:bg-neutral-600;
   }
   &:before {
     content: " ";
