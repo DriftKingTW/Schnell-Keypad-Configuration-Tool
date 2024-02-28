@@ -17,7 +17,7 @@ export default defineConfig({
       include: path.resolve(__dirname, "./src/locales/**"),
     }),
   ],
-  base: "/TinyPICO-BLE-Keypad-Key-Configuration-Tool/",
+  base: "/Schnell-Keypad-Configuration-Tool/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

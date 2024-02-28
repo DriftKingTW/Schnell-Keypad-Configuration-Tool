@@ -1,5 +1,5 @@
 {
-  "name": "tinypico-ble-keypad-key-configuration-tool",
+  "name": "schnell-keypad-configuration-tool",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -10,7 +10,7 @@
   "dependencies": {
     "@splidejs/vue-splide": "^0.6.12",
     "axios": "^1.4.0",
-    "esp-web-tools": "^9.2.1",
+    "esp-web-tools": "^10.0.1",
     "flowbite": "^1.6.0",
     "flowbite-vue": "^0.0.10",
     "vue": "^3.2.37",
