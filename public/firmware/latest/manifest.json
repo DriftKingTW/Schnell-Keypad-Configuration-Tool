@@ -1,5 +1,5 @@
 {
-  "name": "Schnell Keyboard Firmware",
+  "name": "Schnell Keypad Firmware",
   "version": "v0.1.0",
   "new_install_prompt_erase": true,
   "start_url": "/Schnell-Keypad-Configuration-Tool/",
