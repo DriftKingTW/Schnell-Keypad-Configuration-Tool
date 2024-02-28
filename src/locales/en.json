@@ -35,5 +35,6 @@
     "buttonShow": "Show Tutorial"
   },
   "uploadKeyConfigToDevice": "Upload Configuration to Device",
-  "rotaryEncoderEditorTitle": "Rotary Encoder Editor"
+  "rotaryEncoderEditorTitle": "Rotary Encoder Editor",
+  "removeEmptyMacro": "Remove Empty"
 }

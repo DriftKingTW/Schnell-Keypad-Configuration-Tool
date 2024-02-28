@@ -35,5 +35,6 @@
     "buttonShow": "使用教程"
   },
   "uploadKeyConfigToDevice": "上传设置文件到装置",
-  "rotaryEncoderEditorTitle": "旋钮编辑"
+  "rotaryEncoderEditorTitle": "旋钮编辑",
+  "removeEmptyMacro": "移除空巨集"
 }

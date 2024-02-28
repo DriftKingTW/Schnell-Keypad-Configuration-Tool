@@ -7,6 +7,7 @@ import "vue3-json-viewer/dist/index.css";
 import PlusIcon from "icons/Plus.vue";
 import MenuRightIcon from "icons/MenuRight.vue";
 import MenuLeftIcon from "icons/MenuLeft.vue";
+import CloseIcon from "icons/Close.vue";
 import DragHorizontalVariantIcon from "icons/DragHorizontalVariant.vue";
 
 import { getSpecialKeyCode, checkSpecialKey } from "../utils/specialKeyHandler";
@@ -174,6 +175,10 @@ initializeLayout();
         <plus-icon :size="18" class="self-center mr-2" />
         {{ $t("addMacro") }}
       </button>
+      <button class="btn btn-reset flex" @click="removeEmptyMacros">
+        <close-icon :size="18" class="self-center mr-2" />
+        {{ $t("removeEmptyMacro") }}
+      </button>
     </div>
 
     <div class="overflow-y-auto overflow-x-hidden" style="max-height: 30rem">
@@ -229,22 +234,22 @@ initializeLayout();
             </select>
             <input
               type="text"
-              placeholder=""
+              placeholder="Macro Name"
               class="col-span-7 w-full text-input"
-              v-model="macro.name"
-              @input="updateOuputData"
+              v-model.lazy="macro.name"
+              @change="updateOuputData"
             />
             <input
               v-if="macro.type === 1 || macro.type === 2"
               type="text"
-              placeholder=""
+              placeholder="Type string here..."
               class="col-span-12 w-full text-input"
               v-model="macro.stringContent"
               @input="updateOuputData"
             />
             <div
               v-else
-              class="col-span-12 w-full text-input outline-0 cursor-pointer"
+              class="col-span-12 w-full text-input outline-0 cursor-pointer h-9"
               :class="activeMacroIndex === index ? 'macro-active' : ''"
               @click="toggleActive(index)"
               tabindex="0"
