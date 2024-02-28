@@ -760,9 +760,9 @@ initializeLayout();
           class="btn language-selector"
           @change="updatePageTitle"
         >
-          <option value="en-US">🇺🇸 English</option>
-          <option value="zh-TW">🇹🇼 中文（繁體）</option>
-          <option value="zh-CN">🇨🇳 中文（简体）</option>
+          <option value="en-US">English</option>
+          <option value="zh-TW">中文（繁體）</option>
+          <option value="zh-CN">中文（简体）</option>
         </select>
 
         <!-- Firmware version selector -->
