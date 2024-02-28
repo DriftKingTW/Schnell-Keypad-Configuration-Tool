@@ -249,6 +249,7 @@ watch(macroIndex, async () => {
 const initializeApp = async () => {
   // Connect to the device
   try {
+    isKeyboardConnected.value = false;
     const response = await fetch(`${keyboardUrl.value}/api/network`);
     const data = await response.json();
 
