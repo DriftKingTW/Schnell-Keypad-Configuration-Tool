@@ -23,7 +23,7 @@
   },
   "copyCombinedJSONConfig": "Copy Configuration JSON",
   "exportCombinedJSONConfig": "Export Configuration JSON File",
-  "rotaryExtensionConfiguratorTitle": "Rotary Extension Configurator",
+  "rotaryExtensionEditorTitle": "Rotary Extension Editor",
   "assignTTKey": "Assign TT",
   "ttLayout": "Choose target TT layout",
   "isGlobalTTKey": "Global TT",
@@ -34,5 +34,6 @@
     "showOnStart": "Show on start",
     "buttonShow": "Show Tutorial"
   },
-  "uploadKeyConfigToDevice": "Upload Configuration to Device"
+  "uploadKeyConfigToDevice": "Upload Configuration to Device",
+  "rotaryEncoderEditorTitle": "Rotary Encoder Editor"
 }

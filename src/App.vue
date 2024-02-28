@@ -36,7 +36,7 @@ import IpNetworkIcon from "icons/IpNetwork.vue";
 import RefreshIcon from "icons/Refresh.vue";
 
 import MacrosEditor from "@/components/MacrosEditor.vue";
-import RotaryExtensionEditor from "@/components/RotaryExtensionEditor.vue";
+import RotaryEncoderEditor from "@/components/RotaryEncoderEditor.vue";
 import Tooltip from "@/components/Tooltip.vue";
 import MainTutorial from "@/components/MainTutorial.vue";
 import DarkModeButton from "@/components/DarkModeButton.vue";
@@ -85,7 +85,8 @@ type KeySize =
   | "w-2u"
   | "h-1.25u"
   | "h-1.5u"
-  | "h-2u";
+  | "h-2u"
+  | "rotary";
 
 type Key = {
   keyStroke: number;
@@ -109,22 +110,25 @@ const COLS = 7;
 const DUMMY_KEYS: Coordinate[] = [
   { row: 2, col: 6 },
   { row: 0, col: 6 },
-  { row: 4, col: 3 },
-  { row: 4, col: 6 },
+  { row: 4, col: 5 },
 ];
 const KEYBOARD_LAYOUT: KeyboardLayout[] = [
   { row: 0, col: 0, size: "w-1.5u" },
   { row: 1, col: 0, size: "w-1.5u" },
   { row: 2, col: 0, size: "w-1.5u" },
   { row: 3, col: 0, size: "w-1.5u" },
-  { row: 4, col: 0, size: "w-1.5u" },
   { row: 1, col: 6, size: "h-2u" },
   { row: 3, col: 6, size: "h-2u" },
-  { row: 4, col: 4, size: "w-2u" },
-  { row: 4, col: 1, size: "w-1.5u" },
-  { row: 4, col: 2, size: "w-1.5u" },
-  { row: 4, col: 5, size: "w-1.25u" },
+  { row: 4, col: 0, size: "w-1.25u" },
+  { row: 4, col: 1, size: "w-1.25u" },
+  { row: 4, col: 2, size: "w-1.25u" },
+  { row: 4, col: 3, size: "w-1.25u" },
+  { row: 4, col: 4, size: "w-1.5u" },
+  { row: 4, col: 6, size: "rotary" },
 ];
+
+const RE_ROW_LIST = [4];
+const RE_COL_LIST = [6];
 
 // Default objects
 const defaultKey: Key = readonly({
@@ -180,13 +184,14 @@ const networkInfo: NetworkInfo = reactive({
 const macros: any = reactive([]);
 const macroComponentKey = ref(0);
 
-const rotaryExtension: any = reactive([]);
-const rotaryExtensionComponentKey = ref(0);
+const rotaryEncoder: any = reactive([]);
+const rotaryEncoderComponentKey = ref(0);
 
 const combinedConfig = reactive({
   keyConfig: [],
   macros: [],
   rotaryExtension: [],
+  onBoardRotaryEncoder: [],
 });
 
 // Refs declaration
@@ -297,6 +302,8 @@ const initializeLayout = (reset: boolean = false) => {
 
   // Initialize output data
   updateOutputData();
+
+  rotaryEncoderComponentKey.value++;
 
   // Configure dummy keys
   DUMMY_KEYS.forEach((key) => {
@@ -645,9 +652,9 @@ const loadKeyConfigFile = (event: any) => {
   macros.push(...json.macros);
   macroComponentKey.value++;
 
-  rotaryExtension.length = 0;
-  rotaryExtension.push(...json.rotaryExtension);
-  rotaryExtensionComponentKey.value++;
+  rotaryEncoder.length = 0;
+  rotaryEncoder.push(...json.onBoardRotaryEncoder);
+  rotaryEncoderComponentKey.value++;
 
   initializeLayout();
 };
@@ -684,8 +691,16 @@ const updateMacro = (macros: any) => {
   combinedConfig.macros = JSON.parse(JSON.stringify(macros));
 };
 
-const updateRotaryExtension = (rotaryExtension: any) => {
-  combinedConfig.rotaryExtension = JSON.parse(JSON.stringify(rotaryExtension));
+const updaterotaryEncoder = (rotaryEncoder: any) => {
+  const data = JSON.parse(JSON.stringify(rotaryEncoder));
+  // Map rotary encoder button data to default key matrix
+  combinedConfig.onBoardRotaryEncoder = data;
+  combinedConfig.keyConfig.map((layer: ConfigJSONObject, index) => {
+    RE_ROW_LIST.forEach((row, col) => {
+      layer.keymap[row][RE_COL_LIST[col]] = data[index].rotaryMap[0];
+      layer.keyInfo[row][RE_COL_LIST[col]] = data[index].rotaryInfo[0];
+    });
+  });
 };
 
 const copyCombinedConfig = () => {
@@ -816,12 +831,6 @@ initializeLayout();
     </p>
     <div class="flex justify-center mt-4">
       <div class="flex">
-        <RotaryExtensionEditor
-          :configTitles="keyMapTitles"
-          :rotaryExtension="rotaryExtension"
-          :key="rotaryExtensionComponentKey"
-          @update-rotary-extension="updateRotaryExtension"
-        />
         <button
           name="copy"
           class="btn btn-export grow flex"
@@ -924,7 +933,7 @@ initializeLayout();
         class="col-start-1 col-span-12 justify-self-center lg:col-start-1 lg:col-span-5 xl:justify-self-end xl:col-start-2 w-full mt-4"
         style="max-width: 600px"
       />
-      <!-- Key Configurator -->
+      <!-- Key Editor -->
       <div
         class="col-start-2 col-span-10 justify-self-center lg:col-start-6 lg:col-span-7 xl:col-start-7 xl:justify-self-start"
         style="min-width: 600px"
@@ -1031,7 +1040,7 @@ initializeLayout();
             <template v-for="(_, row) in layout">
               <template v-for="(key, col) in layout[row]">
                 <span
-                  v-if="!key.dummy"
+                  v-if="!key.dummy && key.keySize !== 'rotary'"
                   class="inline-block key-btn"
                   :class="{
                     'key-btn-active': key.active,
@@ -1055,9 +1064,7 @@ initializeLayout();
                     }`"
                     class="h-full"
                   >
-                    <div
-                      class="truncate mx-2 flex flex-col h-full justify-between"
-                    >
+                    <div class="truncate mx-2 flex flex-col h-full">
                       <div class="truncate">
                         {{ key.keyInfo === " " ? "∅" : key.keyInfo }}
                       </div>
@@ -1076,6 +1083,14 @@ initializeLayout();
                     </div>
                   </Tooltip>
                 </span>
+                <RotaryEncoderEditor
+                  v-else-if="!key.dummy && key.keySize === 'rotary'"
+                  :configTitles="keyMapTitles"
+                  :rotaryEncoder="rotaryEncoder"
+                  :currentLayoutIndex="currentLayoutIndex"
+                  :key="rotaryEncoderComponentKey"
+                  @update-rotary-encoder="updaterotaryEncoder"
+                />
               </template>
               <br />
             </template>
@@ -1248,5 +1263,9 @@ initializeLayout();
   &:hover:before {
     background: inherit;
   }
+}
+
+.key-rotary {
+  @apply w-20 h-20 rounded-full;
 }
 </style>

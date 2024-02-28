@@ -23,7 +23,7 @@
   },
   "copyCombinedJSONConfig": "拷贝 JSON 设置文件",
   "exportCombinedJSONConfig": "导出 JSON 设置文件",
-  "rotaryExtensionConfiguratorTitle": "旋钮拓展板键位设置",
+  "rotaryExtensionEditorTitle": "旋钮拓展板键位设置",
   "assignTTKey": "设置 TT 键",
   "ttLayout": "选择目标 TT 布局",
   "isGlobalTTKey": "全局 TT",
@@ -34,5 +34,6 @@
     "showOnStart": "启动时显示",
     "buttonShow": "使用教程"
   },
-  "uploadKeyConfigToDevice": "上传设置文件到装置"
+  "uploadKeyConfigToDevice": "上传设置文件到装置",
+  "rotaryEncoderEditorTitle": "旋钮编辑"
 }

@@ -26,8 +26,8 @@ type Key = {
 };
 
 type ConfigJSONObject = {
-  keymap: number[];
-  keyInfo: string[];
+  // keymap: number[];
+  // keyInfo: string[];
   rotaryMap: number[];
   rotaryInfo: string[];
 };
@@ -38,7 +38,7 @@ type ConfigJSONArray = ConfigJSONObject[];
 const defaultKey: Key = readonly({
   keyStroke: 0,
   keyInfo: " ",
-  keySize: "1u",
+  keySize: "w-1.5u",
   dummy: false,
   active: false,
 });
@@ -52,19 +52,23 @@ let currentREIndex = ref(-1);
 
 let isExpandRotaryEncoder = ref(false);
 
-const props = defineProps(["configTitles", "rotaryExtension"]);
-const emit = defineEmits(["updateRotaryExtension"]);
+const props = defineProps([
+  "configTitles",
+  "rotaryEncoder",
+  "currentLayoutIndex",
+]);
+const emit = defineEmits(["updateRotaryEncoder"]);
 const currentLayoutIndex = ref(0);
 const outputJsonString = ref("");
 
 const { configTitles: configTitles } = toRefs(props);
 
-const isShowRotaryExtensionModal = ref(false);
-const showRotaryExtensionModal = () => {
-  isShowRotaryExtensionModal.value = true;
+const isShowrotaryEncoderModal = ref(false);
+const showrotaryEncoderModal = () => {
+  isShowrotaryEncoderModal.value = true;
 };
-const closeRotaryExtensionModal = () => {
-  isShowRotaryExtensionModal.value = false;
+const closerotaryEncoderModal = () => {
+  isShowrotaryEncoderModal.value = false;
 };
 
 /**
@@ -74,22 +78,24 @@ const closeRotaryExtensionModal = () => {
  */
 const initializeLayout = (reset: boolean = false) => {
   // Load saved data in localStorage
-  const loadData = localStorage.getItem("rotaryExtension");
+  const loadData = localStorage.getItem("rotaryEncoder");
+
+  currentLayoutIndex.value = props.currentLayoutIndex;
 
   layout.length = 0;
   reLayout.length = 0;
   configJsonArray.length = 0;
 
   // Initialize layout
-  for (let i = 0; i < 3; i++) {
-    layout.push({ ...defaultKey });
-  }
+  // for (let i = 0; i < 3; i++) {
+  //   layout.push({ ...defaultKey });
+  // }
 
   reLayout.push([{ ...defaultKey }, { ...defaultKey }, { ...defaultKey }]);
 
-  if (props.rotaryExtension.length > 0) {
+  if (props.rotaryEncoder.length > 0) {
     // If prop data is available
-    configJsonArray.push(...props.rotaryExtension);
+    configJsonArray.push(...props.rotaryEncoder);
   } else if (loadData) {
     // If localStorage data is available
     const loadDataArray = JSON.parse(loadData);
@@ -98,12 +104,12 @@ const initializeLayout = (reset: boolean = false) => {
 
   // Load data if exists
   if (configJsonArray[currentLayoutIndex.value] && !reset) {
-    for (let i = 0; i < 3; i++) {
-      const loadData = { ...defaultKey };
-      loadData.keyStroke = configJsonArray[currentLayoutIndex.value].keymap[i];
-      loadData.keyInfo = configJsonArray[currentLayoutIndex.value].keyInfo[i];
-      layout[i] = loadData;
-    }
+    // for (let i = 0; i < 3; i++) {
+    //   const loadData = { ...defaultKey };
+    //   loadData.keyStroke = configJsonArray[currentLayoutIndex.value].keymap[i];
+    //   loadData.keyInfo = configJsonArray[currentLayoutIndex.value].keyInfo[i];
+    //   layout[i] = loadData;
+    // }
     // load data to reLayout
     for (let i = 0; i < 3; i++) {
       const loadData = { ...defaultKey };
@@ -187,8 +193,8 @@ const updateKey = (e: any) => {
  */
 const updateOutputData = () => {
   configJsonArray[currentLayoutIndex.value] = {
-    keymap: layout.map((k) => k.keyStroke),
-    keyInfo: layout.map((k) => k.keyInfo),
+    // keymap: layout.map((k) => k.keyStroke),
+    // keyInfo: layout.map((k) => k.keyInfo),
     rotaryMap: reLayout[0].map((k) => k.keyStroke),
     rotaryInfo: reLayout[0].map((k) => k.keyInfo),
   };
@@ -202,8 +208,8 @@ const updateOutputData = () => {
 
   //save to localStorage
   outputJsonString.value = JSON.stringify(configJsonArray);
-  localStorage.setItem("rotaryExtension", outputJsonString.value);
-  emit("updateRotaryExtension", configJsonArray);
+  localStorage.setItem("rotaryEncoder", outputJsonString.value);
+  emit("updateRotaryEncoder", configJsonArray);
 };
 
 /**
@@ -233,162 +239,108 @@ initializeLayout();
 </script>
 
 <template>
-  <button
-    @click="showRotaryExtensionModal"
-    type="button"
-    class="btn btn-install grow flex"
+  <div
+    @click="showrotaryEncoderModal"
+    class="inline-block relative h-8 key-knob"
   >
-    <knob-icon :size="18" class="self-center mr-2" />
-    {{ $t("rotaryExtensionConfiguratorTitle") }}
-  </button>
+    <knob-icon :size="92" />
+    <!-- {{ $t("rotaryEncoderEditorTitle") }} -->
+  </div>
   <!-- create a modal -->
   <div
     size="xl"
-    v-if="isShowRotaryExtensionModal"
+    v-if="isShowrotaryEncoderModal"
     class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50"
   >
     <div class="bg-white rounded-lg shadow-lg p-6 dark:bg-stone-800 min-w-xl">
       <!-- header -->
-      <div class="flex justify-between text-white mb-2">
+      <div class="flex justify-center text-slate-700 dark:text-white mb-2">
         <knob-icon :size="18" class="self-center mr-2" />
         <h2 class="text-lg font-semibold">
-          {{ $t("rotaryExtensionConfiguratorTitle") }}
+          {{ $t("rotaryEncoderEditorTitle") }}
         </h2>
       </div>
 
       <div class="flex justify-center">
-        <select
+        <!-- <select
           name="add_layout"
           v-model="currentLayoutIndex"
           @change="initializeLayout()"
           class="btn bg-slate-300 dark:bg-neutral-700"
         >
           <option v-for="(title, i) in configTitles" :value="i">
-            {{ $t("layout") }} {{ i + 1 }} - {{ title }}
+            {{ $t("layout") }} {{ i }} - {{ title }}
           </option>
-        </select>
+        </select> -->
+        <span class="text-slate-700 dark:text-neutral-400">
+          {{ $t("layout") }} {{ currentLayoutIndex }} -
+          {{ configTitles[currentLayoutIndex] }}
+        </span>
       </div>
 
       <div
-        id="keymap"
-        class="flex justify-center my-4 outline-0"
+        class="flex justify-center items-center my-4 outline-0 transition-all"
         tabindex="0"
         @keydown.prevent="updateKey($event)"
       >
-        <div>
-          <template v-for="key in 3">
-            <span
-              class="inline-block key-btn key-1u"
-              :class="{
-                'key-btn-active': layout[key - 1].active,
-              }"
-              @click="toggleActive(key - 1)"
-            >
-              <!-- @contextmenu="updateKeyInfo($event, key - 1)" -->
-              <div class="truncate mx-2">
-                {{
-                  layout[key - 1].keyInfo === " "
-                    ? "∅"
-                    : layout[key - 1].keyInfo
-                }}
-              </div>
-            </span>
-            <br />
-          </template>
-        </div>
-      </div>
-
-      <!-- Knob -->
-      <div class="flex justify-center items-center my-4 outline-0">
         <span
-          class="knob"
+          class="inline-block key-btn key-w-1-5u"
           :class="{
-            'knob-active': isExpandRotaryEncoder,
+            'key-btn-active': reLayout[0][1].active,
           }"
-          @click="isExpandRotaryEncoder = !isExpandRotaryEncoder"
-        ></span>
+          @click="toggleActive(1, 0)"
+        >
+          <div class="truncate mx-2">
+            {{ reLayout[0][1].keyInfo === " " ? "∅" : reLayout[0][1].keyInfo }}
+          </div>
+          <div class="flex justify-center">
+            <rotate-left-icon
+              :size="24"
+              class="self-center justify-center mx-2 text-neutral-500"
+            />
+          </div>
+        </span>
+
+        <span
+          class="inline-block key-btn key-w-1-5u"
+          :class="{
+            'key-btn-active': reLayout[0][0].active,
+          }"
+          @click="toggleActive(0, 0)"
+        >
+          <div class="truncate mx-2">
+            {{ reLayout[0][0].keyInfo === " " ? "∅" : reLayout[0][0].keyInfo }}
+          </div>
+          <div class="flex justify-center">
+            <gesture-tap-icon
+              :size="24"
+              class="self-center justify-center mx-2 text-neutral-500"
+            />
+          </div>
+        </span>
+
+        <span
+          class="inline-block key-btn key-w-1-5u"
+          :class="{
+            'key-btn-active': reLayout[0][2].active,
+          }"
+          @click="toggleActive(2, 0)"
+        >
+          <div class="truncate mx-2">
+            {{ reLayout[0][2].keyInfo === " " ? "∅" : reLayout[0][2].keyInfo }}
+          </div>
+          <div class="flex justify-center">
+            <rotate-right-icon
+              :size="24"
+              class="self-center justify-center mx-2 text-neutral-500"
+            />
+          </div>
+        </span>
       </div>
 
-      <Transition
-        enter-active-class="duration-100 ease-out"
-        enter-from-class="translate-y-full opacity-0"
-        enter-to-class="translate-y-0 opacity-100"
-        leave-active-class="duration-100 ease-in-out"
-        leave-from-class="translate-y-full opacity-100"
-        leave-to-class="translate-y-0 opacity-0"
-        mode="out-in"
-      >
-        <div
-          v-show="isExpandRotaryEncoder"
-          class="flex justify-center items-center my-4 outline-0 transition-all"
-          tabindex="0"
-          @keydown.prevent="updateKey($event)"
-        >
-          <span
-            class="inline-block key-btn key-1u"
-            :class="{
-              'key-btn-active': reLayout[0][1].active,
-            }"
-            @click="toggleActive(1, 0)"
-          >
-            <div class="truncate mx-2">
-              {{
-                reLayout[0][1].keyInfo === " " ? "∅" : reLayout[0][1].keyInfo
-              }}
-            </div>
-            <div class="flex justify-center">
-              <rotate-left-icon
-                :size="24"
-                class="self-center justify-center mx-2 text-neutral-500"
-              />
-            </div>
-          </span>
-
-          <span
-            class="inline-block key-btn key-1u"
-            :class="{
-              'key-btn-active': reLayout[0][0].active,
-            }"
-            @click="toggleActive(0, 0)"
-          >
-            <div class="truncate mx-2">
-              {{
-                reLayout[0][0].keyInfo === " " ? "∅" : reLayout[0][0].keyInfo
-              }}
-            </div>
-            <div class="flex justify-center">
-              <gesture-tap-icon
-                :size="24"
-                class="self-center justify-center mx-2 text-neutral-500"
-              />
-            </div>
-          </span>
-
-          <span
-            class="inline-block key-btn key-1u"
-            :class="{
-              'key-btn-active': reLayout[0][2].active,
-            }"
-            @click="toggleActive(2, 0)"
-          >
-            <div class="truncate mx-2">
-              {{
-                reLayout[0][2].keyInfo === " " ? "∅" : reLayout[0][2].keyInfo
-              }}
-            </div>
-            <div class="flex justify-center">
-              <rotate-right-icon
-                :size="24"
-                class="self-center justify-center mx-2 text-neutral-500"
-              />
-            </div>
-          </span>
-        </div>
-      </Transition>
-
-      <div class="flex justify-end">
+      <div class="flex justify-center">
         <button
-          @click="closeRotaryExtensionModal"
+          @click="closerotaryEncoderModal"
           type="button"
           class="btn btn-export"
         >
@@ -442,6 +394,10 @@ initializeLayout();
 
 .key-h-1-5u {
   @apply h-24;
+}
+
+.key-knob {
+  @apply text-neutral-100 hover:text-neutral-300 drop-shadow-md dark:text-neutral-700 dark:hover:text-neutral-600 cursor-pointer;
 }
 
 .key-h-2u {

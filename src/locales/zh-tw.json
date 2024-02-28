@@ -23,7 +23,7 @@
   },
   "copyCombinedJSONConfig": "複製 JSON 設定內容",
   "exportCombinedJSONConfig": "導出 JSON 設定檔案",
-  "rotaryExtensionConfiguratorTitle": "旋鈕擴充板鍵位設定",
+  "rotaryExtensionEditorTitle": "旋鈕擴充板鍵位設定",
   "assignTTKey": "設定 TT 鍵",
   "ttLayout": "選擇目標 TT 佈局",
   "isGlobalTTKey": "全域 TT",
@@ -34,5 +34,6 @@
     "showOnStart": "啟動時顯示",
     "buttonShow": "使用說明"
   },
-  "uploadKeyConfigToDevice": "上傳設定檔到裝置"
+  "uploadKeyConfigToDevice": "上傳設定檔到裝置",
+  "rotaryEncoderEditorTitle": "旋鈕編輯"
 }
