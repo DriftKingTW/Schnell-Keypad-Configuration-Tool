@@ -1,6 +1,6 @@
 {
   "name": "Schnell Keypad Firmware",
-  "version": "v0.1.0",
+  "version": "v1.0.0",
   "new_install_prompt_erase": true,
   "start_url": "/Schnell-Keypad-Configuration-Tool/",
   "new_install_improv_wait_time": 10,
