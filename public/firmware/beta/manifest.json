@@ -1,31 +1,16 @@
 {
-  "name": "Schnell Keyboard Firmware",
-  "version": "[Beta] v0.3.0-beta3",
+  "name": "Schnell Keypad Firmware",
+  "version": "v1.0.1 beta",
+  "start_url": "/Schnell-Keypad-Configuration-Tool/",
   "new_install_prompt_erase": true,
-  "start_url": "/TinyPICO-BLE-Keypad-Key-Configuration-Tool/",
+  "new_install_improv_wait_time": 10,
   "builds": [
     {
-      "chipFamily": "ESP32",
+      "chipFamily": "ESP32-S3",
       "parts": [
         {
-          "path": "bootloader_dio_40m.bin",
-          "offset": 4096
-        },
-        {
-          "path": "partitions.bin",
-          "offset": 32768
-        },
-        {
-          "path": "boot_app0.bin",
-          "offset": 57344
-        },
-        {
-          "path": "firmware.bin",
-          "offset": 65536
-        },
-        {
-          "path": "spiffs.bin",
-          "offset": 2686976
+          "path": "merged-firmware.bin",
+          "offset": "0x0"
         }
       ]
     }
