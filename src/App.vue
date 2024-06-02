@@ -249,6 +249,8 @@ watch(macroIndex, async () => {
 const initializeApp = async () => {
   // Connect to the device
   try {
+    const userLocale = navigator.language || navigator.languages[0];
+    i18n.locale.value = userLocale;
     isKeyboardConnected.value = false;
     const response = await fetch(`${keyboardUrl.value}/api/network`);
     const data = await response.json();
