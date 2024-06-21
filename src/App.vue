@@ -214,7 +214,7 @@ const darkMode = computed(() => {
 const manifestJSON = computed(() => {
   return (
     import.meta.env.BASE_URL +
-    `/firmware/${firmwareVersion.value.toLowerCase()}/manifest.json`
+    `firmware/${firmwareVersion.value.toLowerCase()}/manifest.json?v=${Date.now()}`
   );
 });
 
