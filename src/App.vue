@@ -1043,7 +1043,7 @@ initializeLayout();
           id="keymap"
           class="flex justify-center mt-4 outline-0"
           tabindex="0"
-          @keydown.prevent="updateKey($event)"
+          @keydown="updateKey($event)"
         >
           <div>
             <template v-for="(_, row) in layout">
@@ -1097,6 +1097,7 @@ initializeLayout();
                   :configTitles="keyMapTitles"
                   :rotaryEncoder="rotaryEncoder"
                   :currentLayoutIndex="currentLayoutIndex"
+                  :macros="combinedConfig.macros"
                   :key="rotaryEncoderComponentKey"
                   @update-rotary-encoder="updaterotaryEncoder"
                 />

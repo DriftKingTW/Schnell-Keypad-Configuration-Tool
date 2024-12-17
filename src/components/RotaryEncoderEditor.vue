@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { Modal } from "flowbite-vue";
-import { ref, reactive, toRefs, readonly } from "vue";
+import { ref, reactive, toRefs, readonly, nextTick } from "vue";
 
 import KnobIcon from "icons/Knob.vue";
 import RotateRightIcon from "icons/RotateRight.vue";
 import RotateLeftIcon from "icons/RotateLeft.vue";
 import GestureTapIcon from "icons/GestureTap.vue";
 import { getSpecialKeyCode } from "./../utils/specialKeyHandler";
+
+import AlphaMBoxIcon from "icons/AlphaMBox.vue";
+import CheckIcon from "icons/Check.vue";
+import CloseIcon from "icons/Close.vue";
 
 type KeySize =
   | "1u"
@@ -52,10 +56,23 @@ let currentREIndex = ref(-1);
 
 let isExpandRotaryEncoder = ref(false);
 
+let isEditingKeyInfo = ref(false);
+let floatingEditor = reactive({
+  floatLeft: false,
+  x: 0,
+  y: 0,
+  row: 0,
+  col: 0,
+});
+let editInfoText = ref("");
+let isSelectingMacro = ref(false);
+let macroIndex = ref(-1);
+
 const props = defineProps([
   "configTitles",
   "rotaryEncoder",
   "currentLayoutIndex",
+  "macros",
 ]);
 const emit = defineEmits(["updateRotaryEncoder"]);
 const currentLayoutIndex = ref(0);
@@ -70,6 +87,9 @@ const showrotaryEncoderModal = () => {
 const closerotaryEncoderModal = () => {
   isShowrotaryEncoderModal.value = false;
 };
+
+// Refs declaration
+const macroFloatingEditorInput = ref<HTMLInputElement | null>(null);
 
 /**
  * Initialize current layout's data
@@ -104,13 +124,6 @@ const initializeLayout = (reset: boolean = false) => {
 
   // Load data if exists
   if (configJsonArray[currentLayoutIndex.value] && !reset) {
-    // for (let i = 0; i < 3; i++) {
-    //   const loadData = { ...defaultKey };
-    //   loadData.keyStroke = configJsonArray[currentLayoutIndex.value].keymap[i];
-    //   loadData.keyInfo = configJsonArray[currentLayoutIndex.value].keyInfo[i];
-    //   layout[i] = loadData;
-    // }
-    // load data to reLayout
     for (let i = 0; i < 3; i++) {
       const loadData = { ...defaultKey };
       loadData.keyStroke =
@@ -129,16 +142,6 @@ const initializeLayout = (reset: boolean = false) => {
  *
  */
 const toggleActive = (index: number, reIndex: number = -1) => {
-  // if (resetKeyMode.value) {
-  //   const newKey: Key = { ...defaultKey };
-  //   newKey.keySize = layout[index].keySize;
-  //   newKey.dummy = layout[index].dummy;
-  //   layout[index] = newKey;
-  //   resetKeyMode.value = false;
-  //   updateOutputData();
-  //   return;
-  // }
-
   // Update target key active state
   if (reIndex >= 0) {
     const originalActive: boolean = reLayout[reIndex][index].active;
@@ -172,11 +175,6 @@ const updateKey = (e: any) => {
     reLayout[currentREIndex.value][currentKeyLocation.value].keyStroke =
       specialKeyCode === 0 ? e.key.charCodeAt(0) : specialKeyCode;
     reLayout[currentREIndex.value][currentKeyLocation.value].keyInfo = e.code;
-  } else {
-    // Update key's ASCII code and key information
-    layout[currentKeyLocation.value].keyStroke =
-      specialKeyCode === 0 ? e.key.charCodeAt(0) : specialKeyCode;
-    layout[currentKeyLocation.value].keyInfo = e.code;
   }
 
   updateOutputData();
@@ -235,6 +233,69 @@ const resetKeysState = () => {
   });
 };
 
+/**
+ * Save user input's key info
+ *
+ */
+const saveKeyInfo = () => {
+  if (editInfoText.value.length > 0) {
+    reLayout[floatingEditor.row][floatingEditor.col].keyInfo =
+      editInfoText.value;
+  }
+  isEditingKeyInfo.value = false;
+  updateOutputData();
+};
+
+/**
+ * Close floating editor and reset editing status
+ *
+ */
+const resetKeyEditing = () => {
+  isEditingKeyInfo.value = false;
+  isSelectingMacro.value = false;
+  macroIndex.value = -1;
+};
+
+/**
+ * Show key info input field on where user right clicked
+ *
+ */
+const updateKeyInfo = async (e: any, row: number, col: number) => {
+  e.preventDefault();
+  isEditingKeyInfo.value = true;
+  floatingEditor.y = e.pageY;
+  floatingEditor.row = row;
+  floatingEditor.col = col;
+  editInfoText.value = reLayout[row][col].keyInfo;
+  if (e.view.screen.width - e.pageX < 300) {
+    floatingEditor.floatLeft = true;
+    floatingEditor.x = e.view.screen.width - e.pageX;
+  } else {
+    floatingEditor.x = e.pageX;
+    floatingEditor.floatLeft = false;
+  }
+  await nextTick();
+  macroFloatingEditorInput.value?.focus();
+};
+
+/**
+ * Assign macro to a key
+ *
+ */
+const assignMacro = () => {
+  if (!isSelectingMacro.value) {
+    isSelectingMacro.value = true;
+  } else {
+    if (macroIndex.value > -1 && isEditingKeyInfo.value) {
+      editInfoText.value = `MACRO_${macroIndex.value}`;
+      saveKeyInfo();
+      macroIndex.value = -1;
+    }
+    isSelectingMacro.value = false;
+    isEditingKeyInfo.value = false;
+  }
+};
+
 initializeLayout();
 </script>
 
@@ -262,16 +323,6 @@ initializeLayout();
       </div>
 
       <div class="flex justify-center">
-        <!-- <select
-          name="add_layout"
-          v-model="currentLayoutIndex"
-          @change="initializeLayout()"
-          class="btn bg-neutral-300 dark:bg-neutral-700"
-        >
-          <option v-for="(title, i) in configTitles" :value="i">
-            {{ $t("layout") }} {{ i }} - {{ title }}
-          </option>
-        </select> -->
         <span class="text-neutral-700 dark:text-neutral-400">
           {{ $t("layout") }} {{ currentLayoutIndex }} -
           {{ configTitles[currentLayoutIndex] }}
@@ -289,6 +340,7 @@ initializeLayout();
             'key-btn-active': reLayout[0][1].active,
           }"
           @click="toggleActive(1, 0)"
+          @contextmenu="updateKeyInfo($event, 0, 1)"
         >
           <div class="truncate mx-2">
             {{ reLayout[0][1].keyInfo === " " ? "∅" : reLayout[0][1].keyInfo }}
@@ -307,6 +359,7 @@ initializeLayout();
             'key-btn-active': reLayout[0][0].active,
           }"
           @click="toggleActive(0, 0)"
+          @contextmenu="updateKeyInfo($event, 0, 0)"
         >
           <div class="truncate mx-2">
             {{ reLayout[0][0].keyInfo === " " ? "∅" : reLayout[0][0].keyInfo }}
@@ -325,6 +378,7 @@ initializeLayout();
             'key-btn-active': reLayout[0][2].active,
           }"
           @click="toggleActive(2, 0)"
+          @contextmenu="updateKeyInfo($event, 0, 2)"
         >
           <div class="truncate mx-2">
             {{ reLayout[0][2].keyInfo === " " ? "∅" : reLayout[0][2].keyInfo }}
@@ -348,6 +402,69 @@ initializeLayout();
         </button>
       </div>
     </div>
+
+    <transition
+      enter-active-class="duration-300 ease-out"
+      enter-from-class="transform opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="duration-200 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="transform opacity-0"
+    >
+      <div
+        v-show="isEditingKeyInfo"
+        class="floating-editor"
+        :style="`${
+          floatingEditor.floatLeft
+            ? `right: ${floatingEditor.x}px;`
+            : `left: ${floatingEditor.x}px;`
+        } top: ${floatingEditor.y}px;`"
+      >
+        <input
+          type="text"
+          ref="macroFloatingEditorInput"
+          name="macroFloatingEditorInput"
+          v-model="editInfoText"
+          id="floating-editor"
+          @keyup.enter="saveKeyInfo"
+          @keydown.esc="resetKeyEditing"
+        />
+        <button type="button" class="btn btn-export flex" @click="saveKeyInfo">
+          <check-icon :size="18" class="self-center" />
+        </button>
+        <button
+          type="button"
+          :class="`btn btn-export flex ${
+            isSelectingMacro ? 'key-btn-active' : ''
+          }`"
+          @click="assignMacro"
+          @keydown.esc="resetKeyEditing"
+        >
+          <alpha-m-box-icon :size="18" class="self-center" />
+        </button>
+        <select
+          v-show="isSelectingMacro"
+          v-model="macroIndex"
+          class="h-9"
+          @change="assignMacro"
+        >
+          <option
+            v-for="(macro, index) in props.macros"
+            :key="index"
+            :value="index"
+          >
+            M{{ index }} - {{ macro.name }}
+          </option>
+        </select>
+        <button
+          type="button"
+          class="btn btn-reset flex"
+          @click="resetKeyEditing"
+        >
+          <close-icon :size="18" class="self-center" />
+        </button>
+      </div>
+    </transition>
   </div>
 </template>
 
