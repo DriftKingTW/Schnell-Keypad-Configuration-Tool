@@ -729,10 +729,16 @@ const checkSpecialFunctionKey = (keyInfo: string) => {
   }
   if (keyInfo.startsWith("MACRO_")) {
     const macroIndex: number = Number(keyInfo.slice(6));
-    const { name } = combinedConfig.macros[macroIndex];
-    result.isSpecialKey = true;
-    result.color = "text-sky-400";
-    result.specialKeyText = `${name}`;
+    if (combinedConfig.macros[macroIndex]) {
+      const { name } = combinedConfig.macros[macroIndex];
+      result.isSpecialKey = true;
+      result.color = "text-sky-400";
+      result.specialKeyText = `${name}`;
+    } else {
+      result.isSpecialKey = true;
+      result.color = "text-sky-400";
+      result.specialKeyText = `NO MACRO`;
+    }
     return result;
   }
   if (keyInfo.startsWith("TT_")) {
