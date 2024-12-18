@@ -36,5 +36,8 @@
   },
   "uploadKeyConfigToDevice": "上傳設定檔到裝置",
   "rotaryEncoderEditorTitle": "旋鈕編輯",
-  "removeEmptyMacro": "刪除空巨集"
+  "removeEmptyMacro": "刪除空巨集",
+  "baudRate": "傳輸速率",
+  "openSerialConnection": "開啟序列通訊 (USB)",
+  "toggleSerialMonitor": "切換序列通訊監控顯示"
 }

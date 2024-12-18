@@ -36,5 +36,8 @@
   },
   "uploadKeyConfigToDevice": "Upload Configuration to Device",
   "rotaryEncoderEditorTitle": "Rotary Encoder Editor",
-  "removeEmptyMacro": "Remove Empty"
+  "removeEmptyMacro": "Remove Empty",
+  "baudRate": "Baud Rate",
+  "openSerialConnection": "Open Serial Connection",
+  "toggleSerialMonitor": "Toggle Serial Monitor"
 }

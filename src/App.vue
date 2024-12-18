@@ -163,6 +163,7 @@ let floatingEditor = reactive({
 let editInfoText = ref("");
 let isEditingKeyInfo = ref(false);
 let isSelectingMacro = ref(false);
+let configToSerialData = ref("");
 let showTutorial = ref(false);
 let macroIndex = ref(-1);
 let ttLayoutIndex = ref(1);
@@ -534,6 +535,8 @@ const updateOutputData = () => {
   combinedConfig.keyConfig = JSON.parse(
     JSON.stringify(filteredConfigJsonArray)
   );
+
+  configToSerialData.value = JSON.stringify(combinedConfig);
 };
 
 /**
@@ -859,7 +862,10 @@ initializeLayout();
         </button>
       </div>
     </div>
-    <SerialConnection />
+    <SerialConnection
+      :configString="configToSerialData"
+      class="flex justify-center mt-4"
+    />
     <div class="flex justify-center mt-4">
       <div class="flex">
         <div>

@@ -36,5 +36,8 @@
   },
   "uploadKeyConfigToDevice": "上传设置文件到装置",
   "rotaryEncoderEditorTitle": "旋钮编辑",
-  "removeEmptyMacro": "移除空巨集"
+  "removeEmptyMacro": "移除空巨集",
+  "baudRate": "波特率",
+  "openSerialConnection": "开启串口 (USB)",
+  "toggleSerialMonitor": "切换串口监视器"
 }
