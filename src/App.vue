@@ -50,6 +50,7 @@ import { useStore } from "vuex";
 import { key } from "./store";
 import { Toast } from "flowbite-vue";
 import ToggleCheckbox from "@/components/ToggleCheckbox.vue";
+import SerialConnection from "./components/SerialConnection.vue";
 
 const store = useStore(key);
 
@@ -858,6 +859,7 @@ initializeLayout();
         </button>
       </div>
     </div>
+    <SerialConnection />
     <div class="flex justify-center mt-4">
       <div class="flex">
         <div>
