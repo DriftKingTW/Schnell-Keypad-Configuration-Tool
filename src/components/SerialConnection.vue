@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import UsbIcon from "icons/Usb.vue";
 import MathLogIcon from "icons/MathLog.vue";
