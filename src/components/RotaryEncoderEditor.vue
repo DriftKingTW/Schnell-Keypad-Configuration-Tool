@@ -344,10 +344,22 @@ initializeLayout();
         >
           <div class="truncate mx-2">
             {{ reLayout[0][1].keyInfo === " " ? "∅" : reLayout[0][1].keyInfo }}
+            <div
+              class="text-sky-400 text-xs opacity-80 dark:opacity-60"
+              v-if="reLayout[0][1].keyInfo.startsWith('MACRO_')"
+            >
+              {{ props.macros[Number(reLayout[0][1].keyInfo.slice(6))].name }}
+            </div>
+            <div v-else class="text-xs opacity-80 dark:opacity-60">
+              {{
+                reLayout[0][1].keyStroke === 0 ? "∅" : reLayout[0][1].keyStroke
+              }}
+            </div>
           </div>
-          <div class="flex justify-center">
+
+          <div class="flex justify-end">
             <rotate-left-icon
-              :size="24"
+              :size="18"
               class="self-center justify-center mx-2 text-neutral-500"
             />
           </div>
@@ -363,10 +375,21 @@ initializeLayout();
         >
           <div class="truncate mx-2">
             {{ reLayout[0][0].keyInfo === " " ? "∅" : reLayout[0][0].keyInfo }}
+            <div
+              class="text-sky-400 text-xs opacity-80 dark:opacity-60"
+              v-if="reLayout[0][0].keyInfo.startsWith('MACRO_')"
+            >
+              {{ props.macros[Number(reLayout[0][0].keyInfo.slice(6))].name }}
+            </div>
+            <div v-else class="text-xs opacity-80 dark:opacity-60">
+              {{
+                reLayout[0][0].keyStroke === 0 ? "∅" : reLayout[0][0].keyStroke
+              }}
+            </div>
           </div>
-          <div class="flex justify-center">
+          <div class="flex justify-end">
             <gesture-tap-icon
-              :size="24"
+              :size="18"
               class="self-center justify-center mx-2 text-neutral-500"
             />
           </div>
@@ -382,10 +405,21 @@ initializeLayout();
         >
           <div class="truncate mx-2">
             {{ reLayout[0][2].keyInfo === " " ? "∅" : reLayout[0][2].keyInfo }}
+            <div
+              class="text-sky-400 text-xs opacity-80 dark:opacity-60"
+              v-if="reLayout[0][2].keyInfo.startsWith('MACRO_')"
+            >
+              {{ props.macros[Number(reLayout[0][2].keyInfo.slice(6))].name }}
+            </div>
+            <div v-else class="text-xs opacity-80 dark:opacity-60">
+              {{
+                reLayout[0][2].keyStroke === 0 ? "∅" : reLayout[0][2].keyStroke
+              }}
+            </div>
           </div>
-          <div class="flex justify-center">
+          <div class="flex justify-end">
             <rotate-right-icon
-              :size="24"
+              :size="18"
               class="self-center justify-center mx-2 text-neutral-500"
             />
           </div>
