@@ -6,7 +6,7 @@ import ConnectionIcon from "icons/Connection.vue";
 
 const serialInput = ref("");
 const serialOutput = ref("");
-const port = ref(null);
+const port = ref<any | null>(null);
 const baudRate = ref(115200);
 const showSerialMonitor = ref(false);
 const isConnected = ref(false); // New variable to check if serial device is connected
@@ -27,7 +27,11 @@ const openSerialRequest = async () => {
 
 const readSerialData = async () => {
   const textDecoder = new TextDecoderStream();
-  const readableStreamClosed = port.value.readable.pipeTo(textDecoder.writable);
+  if (port.value && (port.value as any).readable) {
+    const readableStreamClosed = port.value.readable.pipeTo(
+      textDecoder.writable
+    );
+  }
   const reader = textDecoder.readable.getReader();
 
   try {
@@ -52,7 +56,6 @@ const updateConfigViaSerial = async () => {
     try {
       await writer.write(textEncoder.encode(props.configString));
       console.log("Data sent:", props.configString);
-      props.configString = ""; // Clear the input after sending
     } catch (error) {
       console.error("Error sending serial data:", error);
     } finally {
