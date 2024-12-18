@@ -128,8 +128,7 @@ const KEYBOARD_LAYOUT: KeyboardLayout[] = [
   { row: 4, col: 6, size: "rotary" },
 ];
 
-const RE_ROW_LIST = [4];
-const RE_COL_LIST = [6];
+const RE_LIST = [{ row: 4, col: 6 }];
 
 // Default objects
 const defaultKey: Key = readonly({
@@ -703,10 +702,15 @@ const updaterotaryEncoder = (rotaryEncoder: any) => {
   const data = JSON.parse(JSON.stringify(rotaryEncoder));
   // Map rotary encoder button data to default key matrix
   combinedConfig.onBoardRotaryEncoder = data;
-  combinedConfig.keyConfig.map((layer: ConfigJSONObject, index) => {
-    RE_ROW_LIST.forEach((row, col) => {
-      layer.keymap[row][RE_COL_LIST[col]] = data[index].rotaryMap[0];
-      layer.keyInfo[row][RE_COL_LIST[col]] = data[index].rotaryInfo[0];
+  updateOutputData();
+  configJsonArray.forEach((keyConfig: ConfigJSONObject, index) => {
+    RE_LIST.forEach((re) => {
+      keyConfig.keymap[re.row][re.col] = data[index].rotaryMap[0];
+      keyConfig.keyInfo[re.row][re.col] = data[index].rotaryInfo[0];
+      layout[re.row][re.col].keyStroke =
+        data[currentLayoutIndex.value].rotaryMap[0];
+      layout[re.row][re.col].keyInfo =
+        data[currentLayoutIndex.value].rotaryInfo[0];
     });
   });
   updateOutputData();
