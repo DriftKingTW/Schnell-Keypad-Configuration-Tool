@@ -696,6 +696,7 @@ const dragleave = () => {
 
 const updateMacro = (macros: any) => {
   combinedConfig.macros = JSON.parse(JSON.stringify(macros));
+  updateOutputData();
 };
 
 const updaterotaryEncoder = (rotaryEncoder: any) => {
@@ -708,6 +709,7 @@ const updaterotaryEncoder = (rotaryEncoder: any) => {
       layer.keyInfo[row][RE_COL_LIST[col]] = data[index].rotaryInfo[0];
     });
   });
+  updateOutputData();
 };
 
 const copyCombinedConfig = () => {
