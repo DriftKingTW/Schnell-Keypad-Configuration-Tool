@@ -9,6 +9,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+  # Allows other workflows (e.g. update-firmware) to deploy after committing,
+  # since commits pushed with GITHUB_TOKEN do not re-trigger the push event.
+  workflow_call:
+
 # Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -30,6 +34,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Always build the tip of master so a deploy invoked right after an
+          # automated commit picks up that commit (the triggering SHA may be
+          # the parent when called from another workflow).
+          ref: master
       - name: Set up Node
         uses: actions/setup-node@v4
         with:

@@ -21,6 +21,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 env:
   FW_REPO: DriftKingTW/Schnell-BLE-Keypad
@@ -96,3 +98,13 @@ jobs:
           fi
           git commit -m "chore: update ${{ steps.vars.outputs.channel }} firmware to ${{ steps.vars.outputs.tag }}"
           git push
+
+  # The commit above is pushed with GITHUB_TOKEN, which does not re-trigger
+  # deploy.yml's push event, so deploy it explicitly here.
+  deploy:
+    needs: update
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy.yml
