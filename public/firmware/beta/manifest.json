@@ -1,8 +1,7 @@
 {
   "name": "Schnell Keypad Firmware",
-  "version": "v1.0.2 beta 1",
+  "version": "v1.0.2-beta.2",
   "start_url": "/Schnell-Keypad-Configuration-Tool/",
-  "new_install_prompt_erase": true,
   "new_install_improv_wait_time": 10,
   "builds": [
     {
@@ -11,8 +10,13 @@
         {
           "path": "merged-firmware.bin",
           "offset": "0x0"
+        },
+        {
+          "path": "spiffs.bin",
+          "offset": "0x210000"
         }
       ]
     }
-  ]
+  ],
+  "new_install_prompt_erase": true
 }
