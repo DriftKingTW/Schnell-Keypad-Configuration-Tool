@@ -1,0 +1,12 @@
+{
+  "stable": {
+    "latest": "v1.0.1",
+    "versions": [
+      "v1.0.1",
+      "v1.0.0"
+    ]
+  },
+  "beta": {
+    "latest": "v1.1.0-beta.2"
+  }
+}

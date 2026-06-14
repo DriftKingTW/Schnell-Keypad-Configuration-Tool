@@ -167,8 +167,15 @@ let showTutorial = ref(false);
 let macroIndex = ref(-1);
 let ttLayoutIndex = ref(1);
 let isGlobalTTKey = ref(false);
-let firmwareVersion = ref("Stable");
-let firmwareVersions = ref<string[]>(["Stable", "Beta"]);
+// Holds the path segment under public/firmware (e.g. "stable", "beta" or a
+// version tag like "v1.0.1"), which maps directly to a manifest folder.
+let firmwareVersion = ref("stable");
+const showOldVersions = ref(false);
+type FirmwareIndex = {
+  stable: { latest: string; versions: string[] };
+  beta: { latest: string };
+};
+const firmwareIndex = ref<FirmwareIndex | null>(null);
 const keyboardUrl = ref("http://schnell.local");
 const isKeyboardConnected = ref(false);
 const networkInfo: NetworkInfo = reactive({
@@ -215,9 +222,50 @@ const darkMode = computed(() => {
 const manifestJSON = computed(() => {
   return (
     import.meta.env.BASE_URL +
-    `firmware/${firmwareVersion.value.toLowerCase()}/manifest.json?v=${Date.now()}`
+    `firmware/${firmwareVersion.value}/manifest.json?v=${Date.now()}`
   );
 });
+
+// Dropdown options: always the latest stable/beta; older stable versions are
+// appended only when the user opts in via the "show old versions" checkbox.
+const firmwareVersions = computed<{ value: string; label: string }[]>(() => {
+  const idx = firmwareIndex.value;
+  if (!idx) {
+    return [
+      { value: "stable", label: "Stable" },
+      { value: "beta", label: "Beta" },
+    ];
+  }
+  const options = [
+    { value: "stable", label: `Stable (${idx.stable.latest})` },
+    { value: "beta", label: `Beta (${idx.beta.latest})` },
+  ];
+  if (showOldVersions.value) {
+    for (const v of idx.stable.versions) {
+      if (v !== idx.stable.latest) options.push({ value: v, label: v });
+    }
+  }
+  return options;
+});
+
+// Reset to the latest stable when old versions are hidden while one is selected.
+watch(showOldVersions, (show) => {
+  if (!show && firmwareVersion.value !== "stable" && firmwareVersion.value !== "beta") {
+    firmwareVersion.value = "stable";
+  }
+});
+
+const loadFirmwareIndex = async () => {
+  try {
+    const res = await fetch(
+      `${import.meta.env.BASE_URL}firmware/index.json?v=${Date.now()}`
+    );
+    if (res.ok) firmwareIndex.value = await res.json();
+  } catch (e) {
+    // Fall back to the static stable/beta options.
+  }
+};
+loadFirmwareIndex();
 
 const showToast = computed(() => {
   return store.state.showToast;
@@ -787,11 +835,15 @@ initializeLayout();
         <!-- Firmware version selector -->
         <div class="flex items-center">
           <select v-model="firmwareVersion" class="btn language-selector">
-            <option v-for="version in firmwareVersions" :value="version">
-              {{ $t("version") }} : {{ version }}
+            <option v-for="opt in firmwareVersions" :value="opt.value">
+              {{ $t("version") }} : {{ opt.label }}
             </option>
           </select>
         </div>
+        <label class="flex items-center cursor-pointer select-none ml-1 mr-1">
+          <input type="checkbox" v-model="showOldVersions" class="mr-1" />
+          {{ $t("showOldVersions") }}
+        </label>
 
         <esp-web-install-button :manifest="manifestJSON">
           <button slot="activate" type="button" class="btn btn-install flex">

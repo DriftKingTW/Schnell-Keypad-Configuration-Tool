@@ -28,6 +28,7 @@
   "ttLayout": "選擇目標 TT 佈局",
   "isGlobalTTKey": "全域 TT",
   "version": "版本",
+  "showOldVersions": "顯示舊版本",
   "tutorial": {
     "skip": "跳過",
     "finish": "開始使用",

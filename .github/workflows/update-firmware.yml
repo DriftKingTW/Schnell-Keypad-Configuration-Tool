@@ -87,6 +87,29 @@ jobs:
             } + (if $erase then { new_install_prompt_erase: true } else {} end)' \
             > "$DEST/manifest.json"
 
+      - name: Archive stable version and rebuild index
+        run: |
+          cd public/firmware
+          CHANNEL="${{ steps.vars.outputs.channel }}"
+          TAG="${{ steps.vars.outputs.tag }}"
+          # Stable releases are archived under their tag so they stay
+          # selectable later. Beta keeps only the single latest build.
+          if [ "$CHANNEL" = "stable" ]; then
+            rm -rf "$TAG"
+            mkdir -p "$TAG"
+            cp stable/merged-firmware.bin stable/spiffs.bin stable/manifest.json "$TAG/"
+          fi
+          # index.json drives the version dropdown in the web UI.
+          STABLE_LATEST=$(jq -r .version stable/manifest.json)
+          BETA_LATEST=$(jq -r .version beta/manifest.json)
+          VERSIONS=$(ls -d v*/ 2>/dev/null | sed 's#/##' | sort -rV | jq -R . | jq -s .)
+          jq -n \
+            --arg sl "$STABLE_LATEST" \
+            --arg bl "$BETA_LATEST" \
+            --argjson vs "${VERSIONS:-[]}" \
+            '{ stable: { latest: $sl, versions: $vs }, beta: { latest: $bl } }' \
+            > index.json
+
       - name: Commit and push
         run: |
           git config user.name  "github-actions[bot]"
