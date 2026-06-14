@@ -23,7 +23,7 @@ permissions:
   contents: write
 
 env:
-  FW_REPO: DriftKingTW/TinyPICO-BLE-Keypad
+  FW_REPO: DriftKingTW/Schnell-BLE-Keypad
 
 jobs:
   update:
