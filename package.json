@@ -12,7 +12,7 @@
     "axios": "^1.4.0",
     "esp-web-tools": "^10.0.1",
     "flowbite": "^1.6.0",
-    "flowbite-vue": "^0.0.10",
+    "flowbite-vue": "^0.2.3",
     "vue": "^3.2.37",
     "vue-i18n": "^9.1.10",
     "vue-material-design-icons": "^5.2.0",

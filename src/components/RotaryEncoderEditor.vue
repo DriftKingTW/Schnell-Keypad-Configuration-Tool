@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Modal } from "flowbite-vue";
 import { ref, reactive, toRefs, readonly, nextTick } from "vue";
 
 import KnobIcon from "icons/Knob.vue";
