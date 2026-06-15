@@ -255,6 +255,16 @@ watch(showOldVersions, (show) => {
   }
 });
 
+// Optional ?channel= deep link (e.g. from the Discord release announcement):
+// "beta"/"stable" select that channel; a specific version tag is honoured only
+// if it exists in the index (validated below to avoid arbitrary fetch paths).
+const requestedChannel = new URLSearchParams(window.location.search).get(
+  "channel"
+);
+if (requestedChannel === "beta" || requestedChannel === "stable") {
+  firmwareVersion.value = requestedChannel;
+}
+
 const loadFirmwareIndex = async () => {
   try {
     const res = await fetch(
@@ -263,6 +273,15 @@ const loadFirmwareIndex = async () => {
     if (res.ok) firmwareIndex.value = await res.json();
   } catch (e) {
     // Fall back to the static stable/beta options.
+  }
+  if (
+    requestedChannel &&
+    requestedChannel !== "beta" &&
+    requestedChannel !== "stable" &&
+    firmwareIndex.value?.stable.versions.includes(requestedChannel)
+  ) {
+    showOldVersions.value = true;
+    firmwareVersion.value = requestedChannel;
   }
 };
 loadFirmwareIndex();
