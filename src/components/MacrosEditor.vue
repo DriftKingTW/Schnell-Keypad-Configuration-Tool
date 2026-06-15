@@ -19,7 +19,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(["updateMacro"]);
+const emit = defineEmits(["updateMacro", "update:modelValue"]);
 
 type Macro = {
   type: number;

@@ -2,7 +2,7 @@
 <template>
   <div
     class="relative"
-    :class="class"
+    :class="$props.class"
     @mouseenter="showTooltip"
     @mouseleave="hideTooltip"
   >

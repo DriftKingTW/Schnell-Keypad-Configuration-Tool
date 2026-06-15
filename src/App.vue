@@ -48,7 +48,7 @@ import {
 } from "./utils/specialKeyHandler";
 import { useStore } from "vuex";
 import { key } from "./store";
-import { Toast } from "flowbite-vue";
+import { FwbToast } from "flowbite-vue";
 import ToggleCheckbox from "@/components/ToggleCheckbox.vue";
 import SerialConnection from "./components/SerialConnection.vue";
 
@@ -642,7 +642,7 @@ const uploadConfigToDevice = async (type: string) => {
     console.log(error);
     store.commit("showToast", {
       message: `Upload failed: ${error.message}`,
-      type: "error",
+      type: "danger",
     });
   }
 };
@@ -1269,14 +1269,14 @@ initializeLayout();
     leave-from-class="opacity-100"
     leave-to-class="transform opacity-0"
   >
-    <Toast
+    <FwbToast
       v-show="showToast"
-      :type="toastType"
+      :type="toastType || 'empty'"
       closable
       class="fixed bottom-6 right-1/2 translate-x-1/2"
     >
       {{ toastMessage }}
-    </Toast>
+    </FwbToast>
   </transition>
 </template>
 
