@@ -1,7 +1,6 @@
-import path from "path";
+import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import vueI18n from "@intlify/vite-plugin-vue-i18n";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,15 +12,14 @@ export default defineConfig({
         },
       },
     }),
-    vueI18n({
-      include: path.resolve(__dirname, "./src/locales/**"),
-    }),
   ],
   base: "/Schnell-Keypad-Configuration-Tool/",
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-      icons: path.resolve(__dirname, "node_modules/vue-material-design-icons"),
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      icons: fileURLToPath(
+        new URL("./node_modules/vue-material-design-icons", import.meta.url)
+      ),
     },
   },
 });
