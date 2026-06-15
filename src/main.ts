@@ -9,6 +9,7 @@ import { store, key } from "./store";
 import VueSplide from "@splidejs/vue-splide";
 
 const i18n = createI18n({
+  legacy: false,
   globalInjection: true,
   fallbackLocale: "en",
   messages: {
