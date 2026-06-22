@@ -1023,7 +1023,9 @@ initializeLayout();
       @confirm="onConfirm"
     >
       <template #body>
-        <p class="text-sm text-gray-600 mt-2">{{ confirmMessage }}</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">
+          {{ confirmMessage }}
+        </p>
       </template>
     </Modal>
     <div class="flex justify-center mt-4">
