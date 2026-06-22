@@ -152,7 +152,7 @@ const readConfigViaSerial = async () => {
         :disabled="!isConnected"
       >
         <usb-icon :size="24" class="self-center mr-2" />
-        {{ $t("uploadKeyConfigToDevice") }} (beta only)
+        {{ $t("uploadKeyConfigToDevice") }}
       </button>
     </div>
 
