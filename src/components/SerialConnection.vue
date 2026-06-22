@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import UsbIcon from "icons/Usb.vue";
 import MathLogIcon from "icons/MathLog.vue";
 import ConnectionIcon from "icons/Connection.vue";
 import TrayArrowDownIcon from "icons/TrayArrowDown.vue";
+import Modal from "@/components/Modal.vue";
 
+const { t } = useI18n();
 const serialInput = ref("");
 const serialOutput = ref("");
 const port = ref<any | null>(null);
@@ -13,6 +16,31 @@ const showSerialMonitor = ref(false);
 const isConnected = ref(false); // New variable to check if serial device is connected
 const props = defineProps(["configString"]);
 const emit = defineEmits(["config-read"]);
+
+// Confirmation modal shared by the serial read / upload actions.
+const confirmOpen = ref(false);
+const confirmMessage = ref("");
+let confirmAction: (() => void) | null = null;
+
+const askConfirm = (message: string, action: () => void) => {
+  confirmMessage.value = message;
+  confirmAction = action;
+  confirmOpen.value = true;
+};
+
+const onConfirm = () => {
+  const action = confirmAction;
+  confirmAction = null;
+  if (action) action();
+};
+
+const confirmReadConfig = () => {
+  askConfirm(t("confirmReadFromDevice"), readConfigViaSerial);
+};
+
+const confirmUpdateConfig = () => {
+  askConfirm(t("confirmUploadToDevice"), updateConfigViaSerial);
+};
 
 const openSerialRequest = async () => {
   try {
@@ -140,7 +168,7 @@ const readConfigViaSerial = async () => {
       </button>
       <button
         class="btn btn-export grow flex"
-        @click="readConfigViaSerial"
+        @click="confirmReadConfig"
         :disabled="!isConnected"
       >
         <tray-arrow-down-icon :size="24" class="self-center mr-2" />
@@ -148,7 +176,7 @@ const readConfigViaSerial = async () => {
       </button>
       <button
         class="btn btn-export grow flex"
-        @click="updateConfigViaSerial"
+        @click="confirmUpdateConfig"
         :disabled="!isConnected"
       >
         <usb-icon :size="24" class="self-center mr-2" />
@@ -163,5 +191,19 @@ const readConfigViaSerial = async () => {
     >
       {{ serialOutput }}
     </div>
+
+    <Modal
+      v-model:isOpen="confirmOpen"
+      :title="$t('confirmTitle')"
+      :confirmText="$t('confirm')"
+      :cancelText="$t('cancel')"
+      @confirm="onConfirm"
+    >
+      <template #body>
+        <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">
+          {{ confirmMessage }}
+        </p>
+      </template>
+    </Modal>
   </div>
 </template>

@@ -51,6 +51,7 @@ import { key } from "./store";
 import { FwbToast } from "flowbite-vue";
 import ToggleCheckbox from "@/components/ToggleCheckbox.vue";
 import SerialConnection from "./components/SerialConnection.vue";
+import Modal from "@/components/Modal.vue";
 
 const store = useStore(key);
 
@@ -317,8 +318,9 @@ watch(macroIndex, async () => {
 const initializeApp = async () => {
   // Connect to the device
   try {
-    const userLocale = navigator.language || navigator.languages[0];
-    i18n.locale.value = userLocale;
+    const savedLocale = localStorage.getItem("locale");
+    i18n.locale.value =
+      savedLocale || navigator.language || navigator.languages[0];
     isKeyboardConnected.value = false;
     const response = await fetch(`${keyboardUrl.value}/api/network`);
     const data = await response.json();
@@ -672,6 +674,8 @@ const uploadConfigToDevice = async (type: string) => {
  */
 const updatePageTitle = () => {
   document.title = i18n.t("navTitle");
+  // Remember the user's language choice across visits.
+  localStorage.setItem("locale", i18n.locale.value);
 };
 
 /**
@@ -771,6 +775,31 @@ const onSerialConfigRead = (configJsonString: string) => {
       type: "danger",
     });
   }
+};
+
+// Confirmation modal shared by the device read / upload actions.
+const confirmOpen = ref(false);
+const confirmMessage = ref("");
+let confirmAction: (() => void) | null = null;
+
+const askConfirm = (message: string, action: () => void) => {
+  confirmMessage.value = message;
+  confirmAction = action;
+  confirmOpen.value = true;
+};
+
+const onConfirm = () => {
+  const action = confirmAction;
+  confirmAction = null;
+  if (action) action();
+};
+
+const confirmReadFromDevice = () => {
+  askConfirm(i18n.t("confirmReadFromDevice"), readConfigFromDevice);
+};
+
+const confirmUploadToDevice = (type: string) => {
+  askConfirm(i18n.t("confirmUploadToDevice"), () => uploadConfigToDevice(type));
 };
 
 /**
@@ -985,6 +1014,20 @@ initializeLayout();
       class="flex justify-center mt-4"
       @config-read="onSerialConfigRead"
     />
+
+    <Modal
+      v-model:isOpen="confirmOpen"
+      :title="$t('confirmTitle')"
+      :confirmText="$t('confirm')"
+      :cancelText="$t('cancel')"
+      @confirm="onConfirm"
+    >
+      <template #body>
+        <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">
+          {{ confirmMessage }}
+        </p>
+      </template>
+    </Modal>
     <div class="flex justify-center mt-4">
       <div class="flex">
         <div>
@@ -1051,7 +1094,7 @@ initializeLayout();
         <button
           name="read"
           class="btn btn-export grow flex"
-          @click="readConfigFromDevice"
+          @click="confirmReadFromDevice"
           :disabled="!isKeyboardConnected"
         >
           <tray-arrow-down-icon :size="24" class="self-center mr-2" />
@@ -1061,7 +1104,7 @@ initializeLayout();
         <button
           name="export"
           class="btn btn-export grow flex"
-          @click="uploadConfigToDevice('keyconfig')"
+          @click="confirmUploadToDevice('keyconfig')"
           :disabled="!isKeyboardConnected"
         >
           <cloud-upload-icon :size="24" class="self-center mr-2" />
