@@ -41,5 +41,10 @@
   "baudRate": "波特率",
   "openSerialConnection": "开启串口 (USB)",
   "toggleSerialMonitor": "切换串口监视器",
-  "readKeyConfigFromDevice": "从装置读取设置文件"
+  "readKeyConfigFromDevice": "从装置读取设置文件",
+  "confirm": "确认",
+  "cancel": "取消",
+  "confirmTitle": "请确认",
+  "confirmReadFromDevice": "要从装置读取设置文件吗?这会覆盖编辑器中当前的设置。",
+  "confirmUploadToDevice": "要将当前设置上传到装置吗?这会覆盖装置上保存的设置。"
 }

@@ -41,5 +41,10 @@
   "baudRate": "Baud Rate",
   "openSerialConnection": "Open Serial Connection",
   "toggleSerialMonitor": "Toggle Serial Monitor",
-  "readKeyConfigFromDevice": "Read Configuration from Device"
+  "readKeyConfigFromDevice": "Read Configuration from Device",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "confirmTitle": "Please confirm",
+  "confirmReadFromDevice": "Read the configuration from the device? This will replace the configuration currently in the editor.",
+  "confirmUploadToDevice": "Upload the current configuration to the device? This will overwrite the configuration stored on the device."
 }

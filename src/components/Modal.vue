@@ -30,17 +30,17 @@
             <button
               type="button"
               class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
-              @click="closeModal"
+              @click="onConfirm"
             >
-              OK
+              {{ confirmText }}
             </button>
             <button
               v-if="showCancel"
               type="button"
               class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-              @click="closeModal"
+              @click="onCancel"
             >
-              Cancel
+              {{ cancelText }}
             </button>
           </slot>
         </div>
@@ -64,10 +64,27 @@ export default {
       type: Boolean,
       default: true,
     },
+    confirmText: {
+      type: String,
+      default: "OK",
+    },
+    cancelText: {
+      type: String,
+      default: "Cancel",
+    },
   },
+  emits: ["update:isOpen", "confirm", "cancel"],
   methods: {
     closeModal() {
       this.$emit("update:isOpen", false);
+    },
+    onConfirm() {
+      this.$emit("confirm");
+      this.closeModal();
+    },
+    onCancel() {
+      this.$emit("cancel");
+      this.closeModal();
     },
   },
 };

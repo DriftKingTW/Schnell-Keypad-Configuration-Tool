@@ -41,5 +41,10 @@
   "baudRate": "傳輸速率",
   "openSerialConnection": "開啟序列通訊 (USB)",
   "toggleSerialMonitor": "切換序列通訊監控顯示",
-  "readKeyConfigFromDevice": "從裝置讀取設定檔"
+  "readKeyConfigFromDevice": "從裝置讀取設定檔",
+  "confirm": "確認",
+  "cancel": "取消",
+  "confirmTitle": "請確認",
+  "confirmReadFromDevice": "要從裝置讀取設定檔嗎?這會覆蓋編輯器中目前的設定。",
+  "confirmUploadToDevice": "要將目前的設定上傳到裝置嗎?這會覆蓋裝置上儲存的設定。"
 }
