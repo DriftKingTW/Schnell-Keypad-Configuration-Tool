@@ -3,6 +3,7 @@ import { ref } from "vue";
 import UsbIcon from "icons/Usb.vue";
 import MathLogIcon from "icons/MathLog.vue";
 import ConnectionIcon from "icons/Connection.vue";
+import TrayArrowDownIcon from "icons/TrayArrowDown.vue";
 
 const serialInput = ref("");
 const serialOutput = ref("");
@@ -11,6 +12,7 @@ const baudRate = ref(115200);
 const showSerialMonitor = ref(false);
 const isConnected = ref(false); // New variable to check if serial device is connected
 const props = defineProps(["configString"]);
+const emit = defineEmits(["config-read"]);
 
 const openSerialRequest = async () => {
   try {
@@ -65,6 +67,52 @@ const updateConfigViaSerial = async () => {
     console.error("Serial port is not open");
   }
 };
+
+// Ask the device to dump its current keyconfig.json and emit the JSON found
+// between the <<<CONFIG_BEGIN>>> / <<<CONFIG_END>>> markers. Relies on
+// readSerialData() (started on connect) to populate serialOutput.
+const readConfigViaSerial = async () => {
+  if (!port.value || !port.value.writable) {
+    console.error("Serial port is not open");
+    return;
+  }
+
+  const begin = "<<<CONFIG_BEGIN>>>";
+  const end = "<<<CONFIG_END>>>";
+  const searchStart = serialOutput.value.length;
+
+  const writer = port.value.writable.getWriter();
+  try {
+    await writer.write(new TextEncoder().encode("READ_CONFIG"));
+  } catch (error) {
+    console.error("Error sending serial data:", error);
+    writer.releaseLock();
+    return;
+  }
+  writer.releaseLock();
+
+  const deadline = Date.now() + 5000;
+  while (Date.now() < deadline) {
+    const buf = serialOutput.value;
+    const b = buf.indexOf(begin, searchStart);
+    const e = b !== -1 ? buf.indexOf(end, b + begin.length) : -1;
+    if (b !== -1 && e !== -1) {
+      const between = buf.slice(b + begin.length, e);
+      // Take the JSON object span, ignoring any log lines printed by other
+      // tasks that may land between the markers.
+      const open = between.indexOf("{");
+      const close = between.lastIndexOf("}");
+      if (open !== -1 && close > open) {
+        emit("config-read", between.slice(open, close + 1));
+      } else {
+        console.error("No JSON found in device config response");
+      }
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  console.error("Timed out waiting for config from device");
+};
 </script>
 
 <template>
@@ -89,6 +137,14 @@ const updateConfigViaSerial = async () => {
       >
         <math-log-icon :size="24" class="self-center mr-2" />
         {{ $t("toggleSerialMonitor") }}
+      </button>
+      <button
+        class="btn btn-export grow flex"
+        @click="readConfigViaSerial"
+        :disabled="!isConnected"
+      >
+        <tray-arrow-down-icon :size="24" class="self-center mr-2" />
+        {{ $t("readKeyConfigFromDevice") }}
       </button>
       <button
         class="btn btn-export grow flex"

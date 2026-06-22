@@ -40,5 +40,6 @@
   "removeEmptyMacro": "移除空巨集",
   "baudRate": "波特率",
   "openSerialConnection": "开启串口 (USB)",
-  "toggleSerialMonitor": "切换串口监视器"
+  "toggleSerialMonitor": "切换串口监视器",
+  "readKeyConfigFromDevice": "从装置读取设置文件"
 }

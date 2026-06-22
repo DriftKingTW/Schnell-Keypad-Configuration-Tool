@@ -40,5 +40,6 @@
   "removeEmptyMacro": "Remove Empty",
   "baudRate": "Baud Rate",
   "openSerialConnection": "Open Serial Connection",
-  "toggleSerialMonitor": "Toggle Serial Monitor"
+  "toggleSerialMonitor": "Toggle Serial Monitor",
+  "readKeyConfigFromDevice": "Read Configuration from Device"
 }
