@@ -716,9 +716,7 @@ const uploadFile = (event: any) => {
  * Log the uploaded file to the console
  * @param {event} Event The file loaded event
  */
-const loadKeyConfigFile = (event: any) => {
-  let str: string = event.target.result;
-  let json = JSON.parse(str);
+const applyKeyConfig = (json: any) => {
   configJsonArray = [...json.keyConfig];
 
   macros.length = 0;
@@ -730,6 +728,49 @@ const loadKeyConfigFile = (event: any) => {
   rotaryEncoderComponentKey.value++;
 
   initializeLayout();
+};
+
+const loadKeyConfigFile = (event: any) => {
+  applyKeyConfig(JSON.parse(event.target.result));
+};
+
+/**
+ * Read the configuration currently stored on the device over HTTP.
+ */
+const readConfigFromDevice = async () => {
+  try {
+    const response = await axios.get(
+      `${keyboardUrl.value}/api/config?type=keyconfig`
+    );
+    applyKeyConfig(response.data.config);
+    store.commit("showToast", {
+      message: "Configuration read from device",
+      type: "success",
+    });
+  } catch (error: any) {
+    store.commit("showToast", {
+      message: `Read failed: ${error.message}`,
+      type: "danger",
+    });
+  }
+};
+
+/**
+ * Apply a keyconfig.json string received from the device over serial.
+ */
+const onSerialConfigRead = (configJsonString: string) => {
+  try {
+    applyKeyConfig(JSON.parse(configJsonString));
+    store.commit("showToast", {
+      message: "Configuration read from device",
+      type: "success",
+    });
+  } catch (error: any) {
+    store.commit("showToast", {
+      message: `Read failed: ${error.message}`,
+      type: "danger",
+    });
+  }
 };
 
 /**
@@ -942,6 +983,7 @@ initializeLayout();
     <SerialConnection
       :configString="configToSerialData"
       class="flex justify-center mt-4"
+      @config-read="onSerialConfigRead"
     />
     <div class="flex justify-center mt-4">
       <div class="flex">
@@ -1004,6 +1046,16 @@ initializeLayout();
 
         <button class="btn flex" @click="initializeApp">
           <refresh-icon class="text-stone-400 hover:text-lime-400" />
+        </button>
+
+        <button
+          name="read"
+          class="btn btn-export grow flex"
+          @click="readConfigFromDevice"
+          :disabled="!isKeyboardConnected"
+        >
+          <tray-arrow-down-icon :size="24" class="self-center mr-2" />
+          {{ $t("readKeyConfigFromDevice") }}
         </button>
 
         <button
