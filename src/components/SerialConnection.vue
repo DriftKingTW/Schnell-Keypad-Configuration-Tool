@@ -5,6 +5,7 @@ import UsbIcon from "icons/Usb.vue";
 import MathLogIcon from "icons/MathLog.vue";
 import ConnectionIcon from "icons/Connection.vue";
 import TrayArrowDownIcon from "icons/TrayArrowDown.vue";
+import WifiSettingsIcon from "icons/WifiSettings.vue";
 import Modal from "@/components/Modal.vue";
 
 const { t } = useI18n();
@@ -16,6 +17,15 @@ const showSerialMonitor = ref(false);
 const isConnected = ref(false); // New variable to check if serial device is connected
 const props = defineProps(["configString"]);
 const emit = defineEmits(["config-read"]);
+
+// WiFi credentials sent to the device over serial (persisted to its
+// config.json and used the next time it boots into WiFi mode).
+const showWifiModal = ref(false);
+const wifiSsid = ref("");
+const wifiPassword = ref("");
+// Networks scanned by the device, offered as SSID suggestions.
+const wifiNetworks = ref<{ ssid: string; rssi: number }[]>([]);
+const scanningWifi = ref(false);
 
 // Confirmation modal shared by the serial read / upload actions.
 const confirmOpen = ref(false);
@@ -141,6 +151,116 @@ const readConfigViaSerial = async () => {
   }
   console.error("Timed out waiting for config from device");
 };
+
+// Write a single string to the serial port. Returns true on success.
+const writeSerial = async (data: string): Promise<boolean> => {
+  if (!port.value || !port.value.writable) {
+    console.error("Serial port is not open");
+    return false;
+  }
+  const writer = port.value.writable.getWriter();
+  try {
+    await writer.write(new TextEncoder().encode(data));
+    return true;
+  } catch (error) {
+    console.error("Error sending serial data:", error);
+    return false;
+  } finally {
+    writer.releaseLock();
+  }
+};
+
+// Send a command, then wait for a JSON object delimited by the given markers
+// in the serial output. Returns the parsed object, or null on timeout / no
+// JSON / parse error.
+const requestJsonViaSerial = async (
+  command: string,
+  begin: string,
+  end: string,
+  timeoutMs: number
+): Promise<any | null> => {
+  const searchStart = serialOutput.value.length;
+  if (!(await writeSerial(command))) return null;
+
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const buf = serialOutput.value;
+    const b = buf.indexOf(begin, searchStart);
+    const e = b !== -1 ? buf.indexOf(end, b + begin.length) : -1;
+    if (b !== -1 && e !== -1) {
+      const between = buf.slice(b + begin.length, e);
+      const open = between.indexOf("{");
+      const close = between.lastIndexOf("}");
+      if (open === -1 || close <= open) return null;
+      try {
+        return JSON.parse(between.slice(open, close + 1));
+      } catch {
+        console.error("Failed to parse device response:", command);
+        return null;
+      }
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  console.error("Timed out waiting for device response:", command);
+  return null;
+};
+
+// Ask the device to scan for nearby networks and populate the SSID
+// suggestions (strongest signal first, de-duplicated across APs/bands).
+const scanWifiViaSerial = async () => {
+  if (scanningWifi.value) return;
+  scanningWifi.value = true;
+  try {
+    const res = await requestJsonViaSerial(
+      "SCAN_WIFI",
+      "<<<WIFISCAN_BEGIN>>>",
+      "<<<WIFISCAN_END>>>",
+      10000
+    );
+    if (!res) return;
+    const seen = new Set<string>();
+    wifiNetworks.value = (res.networks ?? [])
+      .sort((a: any, b: any) => b.rssi - a.rssi)
+      .filter((n: any) => {
+        if (!n.ssid || seen.has(n.ssid)) return false;
+        seen.add(n.ssid);
+        return true;
+      });
+  } finally {
+    scanningWifi.value = false;
+  }
+};
+
+// Open the WiFi dialog, pre-fill the SSID currently stored on the device
+// (the password is never returned), then scan for nearby networks.
+const openWifiModal = async () => {
+  wifiPassword.value = "";
+  showWifiModal.value = true;
+
+  const res = await requestJsonViaSerial(
+    "READ_WIFI",
+    "<<<WIFI_BEGIN>>>",
+    "<<<WIFI_END>>>",
+    5000
+  );
+  if (res) wifiSsid.value = res.ssid ?? "";
+
+  // Sequential, not concurrent: the device reads one serial command at a time.
+  await scanWifiViaSerial();
+};
+
+// Persist the entered WiFi credentials to the device. The "WRITE_WIFI" prefix
+// tells the firmware to save the trailing JSON to its config.json.
+const updateWifiViaSerial = async () => {
+  if (!wifiSsid.value) return;
+  const payload = JSON.stringify({
+    ssid: wifiSsid.value,
+    password: wifiPassword.value,
+  });
+  if (await writeSerial("WRITE_WIFI" + payload)) {
+    showWifiModal.value = false;
+  }
+};
 </script>
 
 <template>
@@ -182,6 +302,14 @@ const readConfigViaSerial = async () => {
         <usb-icon :size="24" class="self-center mr-2" />
         {{ $t("uploadKeyConfigToDevice") }}
       </button>
+      <button
+        class="btn btn-export grow flex"
+        @click="openWifiModal"
+        :disabled="!isConnected"
+      >
+        <wifi-settings-icon :size="24" class="self-center mr-2" />
+        {{ $t("configureWifi") }}
+      </button>
     </div>
 
     <div
@@ -203,6 +331,68 @@ const readConfigViaSerial = async () => {
         <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">
           {{ confirmMessage }}
         </p>
+      </template>
+    </Modal>
+
+    <Modal
+      v-model:isOpen="showWifiModal"
+      :title="$t('configureWifi')"
+      :confirmText="$t('confirm')"
+      :cancelText="$t('cancel')"
+      @confirm="updateWifiViaSerial"
+    >
+      <template #body>
+        <div class="mt-4 flex flex-col space-y-3 text-left">
+          <label class="flex flex-col text-sm text-gray-600 dark:text-gray-300">
+            <span class="mb-1 flex items-center justify-between">
+              {{ $t("wifiScannedNetworks") }}
+              <button
+                type="button"
+                class="text-xs text-cyan-600 dark:text-cyan-400 hover:underline disabled:opacity-50 disabled:no-underline"
+                :disabled="scanningWifi"
+                @click="scanWifiViaSerial"
+              >
+                {{ scanningWifi ? $t("wifiScanning") : $t("wifiRescan") }}
+              </button>
+            </span>
+            <select
+              class="input-filled w-full cursor-pointer"
+              :value="wifiSsid"
+              :disabled="scanningWifi || wifiNetworks.length === 0"
+              @change="wifiSsid = ($event.target as HTMLSelectElement).value"
+            >
+              <option value="" disabled>{{ $t("wifiSelectNetwork") }}</option>
+              <option
+                v-for="net in wifiNetworks"
+                :key="net.ssid"
+                :value="net.ssid"
+              >
+                {{ net.ssid }}
+              </option>
+            </select>
+          </label>
+          <label class="flex flex-col text-sm text-gray-600 dark:text-gray-300">
+            <span class="mb-1">{{ $t("wifiSsid") }}</span>
+            <input
+              v-model="wifiSsid"
+              type="text"
+              class="input-filled w-full"
+              autocomplete="off"
+            />
+          </label>
+          <label class="flex flex-col text-sm text-gray-600 dark:text-gray-300">
+            <span class="mb-1">{{ $t("wifiPassword") }}</span>
+            <input
+              v-model="wifiPassword"
+              type="password"
+              class="input-filled w-full"
+              autocomplete="off"
+            />
+          </label>
+          <p class="text-xs text-gray-500 dark:text-gray-400">
+            {{ $t("wifiConfigHint") }}
+          </p>
+        </div>
       </template>
     </Modal>
   </div>

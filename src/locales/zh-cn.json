@@ -46,5 +46,13 @@
   "cancel": "取消",
   "confirmTitle": "请确认",
   "confirmReadFromDevice": "要从装置读取设置文件吗?这会覆盖编辑器中当前的设置。",
-  "confirmUploadToDevice": "要将当前设置上传到装置吗?这会覆盖装置上保存的设置。"
+  "confirmUploadToDevice": "要将当前设置上传到装置吗?这会覆盖装置上保存的设置。",
+  "configureWifi": "设置 WiFi",
+  "wifiSsid": "网络名称 (SSID)",
+  "wifiPassword": "密码",
+  "wifiConfigHint": "账号密码会保存到装置，并在下次进入 WiFi 模式时使用。",
+  "wifiRescan": "重新扫描",
+  "wifiScanning": "扫描中...",
+  "wifiScannedNetworks": "附近的网络",
+  "wifiSelectNetwork": "选择网络..."
 }

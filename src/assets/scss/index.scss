@@ -77,8 +77,15 @@ select:focus {
 }
 
 .text-input {
-    @apply rounded border-solid border-2 border-stone-300 py-1 px-2 ml-1 m-1 
+    @apply rounded border-solid border-2 border-stone-300 py-1 px-2 ml-1 m-1
     focus:border-lime-600 dark:bg-stone-800 dark:border-black dark:text-neutral-400;
+}
+
+// Filled, borderless field matching the app's .label / drag-drop-bar surfaces.
+.input-filled {
+    @apply rounded border-none bg-stone-200 text-stone-600 py-2 px-3 m-0
+    dark:bg-stone-700 dark:text-neutral-200
+    focus:outline-none focus:ring-0 disabled:opacity-50;
 }
 
 .btn {
