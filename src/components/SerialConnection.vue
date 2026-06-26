@@ -26,6 +26,9 @@ const wifiPassword = ref("");
 // Networks scanned by the device, offered as SSID suggestions.
 const wifiNetworks = ref<{ ssid: string; rssi: number }[]>([]);
 const scanningWifi = ref(false);
+// True while any WiFi serial exchange (read or scan) is in flight, so the
+// dialog's controls stay disabled and can't race a second command.
+const wifiBusy = ref(false);
 
 // Confirmation modal shared by the serial read / upload actions.
 const confirmOpen = ref(false);
@@ -237,16 +240,21 @@ const openWifiModal = async () => {
   wifiPassword.value = "";
   showWifiModal.value = true;
 
-  const res = await requestJsonViaSerial(
-    "READ_WIFI",
-    "<<<WIFI_BEGIN>>>",
-    "<<<WIFI_END>>>",
-    5000
-  );
-  if (res) wifiSsid.value = res.ssid ?? "";
+  wifiBusy.value = true;
+  try {
+    const res = await requestJsonViaSerial(
+      "READ_WIFI",
+      "<<<WIFI_BEGIN>>>",
+      "<<<WIFI_END>>>",
+      5000
+    );
+    if (res) wifiSsid.value = res.ssid ?? "";
 
-  // Sequential, not concurrent: the device reads one serial command at a time.
-  await scanWifiViaSerial();
+    // Sequential, not concurrent: the device reads one serial command at a time.
+    await scanWifiViaSerial();
+  } finally {
+    wifiBusy.value = false;
+  }
 };
 
 // Persist the entered WiFi credentials to the device. The "WRITE_WIFI" prefix
@@ -334,13 +342,7 @@ const updateWifiViaSerial = async () => {
       </template>
     </Modal>
 
-    <Modal
-      v-model:isOpen="showWifiModal"
-      :title="$t('configureWifi')"
-      :confirmText="$t('confirm')"
-      :cancelText="$t('cancel')"
-      @confirm="updateWifiViaSerial"
-    >
+    <Modal v-model:isOpen="showWifiModal" :title="$t('configureWifi')">
       <template #body>
         <div class="mt-4 flex flex-col space-y-3 text-left">
           <label class="flex flex-col text-sm text-gray-600 dark:text-gray-300">
@@ -349,7 +351,7 @@ const updateWifiViaSerial = async () => {
               <button
                 type="button"
                 class="text-xs text-cyan-600 dark:text-cyan-400 hover:underline disabled:opacity-50 disabled:no-underline"
-                :disabled="scanningWifi"
+                :disabled="wifiBusy || scanningWifi"
                 @click="scanWifiViaSerial"
               >
                 {{ scanningWifi ? $t("wifiScanning") : $t("wifiRescan") }}
@@ -393,6 +395,25 @@ const updateWifiViaSerial = async () => {
             {{ $t("wifiConfigHint") }}
           </p>
         </div>
+      </template>
+      <!-- Custom footer so the dialog only closes on a successful save, and
+           Confirm is blocked while busy or when no SSID is set. -->
+      <template #footer>
+        <button
+          type="button"
+          class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:hover:bg-green-600 sm:ml-3 sm:w-auto sm:text-sm"
+          :disabled="wifiBusy || scanningWifi || !wifiSsid"
+          @click="updateWifiViaSerial"
+        >
+          {{ $t("confirm") }}
+        </button>
+        <button
+          type="button"
+          class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-stone-600 shadow-sm px-4 py-2 bg-white dark:bg-stone-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-gray-500 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+          @click="showWifiModal = false"
+        >
+          {{ $t("cancel") }}
+        </button>
       </template>
     </Modal>
   </div>
