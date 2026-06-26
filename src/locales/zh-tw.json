@@ -46,5 +46,13 @@
   "cancel": "取消",
   "confirmTitle": "請確認",
   "confirmReadFromDevice": "要從裝置讀取設定檔嗎?這會覆蓋編輯器中目前的設定。",
-  "confirmUploadToDevice": "要將目前的設定上傳到裝置嗎?這會覆蓋裝置上儲存的設定。"
+  "confirmUploadToDevice": "要將目前的設定上傳到裝置嗎?這會覆蓋裝置上儲存的設定。",
+  "configureWifi": "設定 WiFi",
+  "wifiSsid": "網路名稱 (SSID)",
+  "wifiPassword": "密碼",
+  "wifiConfigHint": "帳號密碼會儲存到裝置，並在下次進入 WiFi 模式時使用。",
+  "wifiRescan": "重新掃描",
+  "wifiScanning": "掃描中...",
+  "wifiScannedNetworks": "附近的網路",
+  "wifiSelectNetwork": "選擇網路..."
 }

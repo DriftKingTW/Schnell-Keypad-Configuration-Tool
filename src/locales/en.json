@@ -46,5 +46,13 @@
   "cancel": "Cancel",
   "confirmTitle": "Please confirm",
   "confirmReadFromDevice": "Read the configuration from the device? This will replace the configuration currently in the editor.",
-  "confirmUploadToDevice": "Upload the current configuration to the device? This will overwrite the configuration stored on the device."
+  "confirmUploadToDevice": "Upload the current configuration to the device? This will overwrite the configuration stored on the device.",
+  "configureWifi": "Configure WiFi",
+  "wifiSsid": "Network name (SSID)",
+  "wifiPassword": "Password",
+  "wifiConfigHint": "Credentials are saved to the device and used the next time it boots into WiFi mode.",
+  "wifiRescan": "Rescan",
+  "wifiScanning": "Scanning...",
+  "wifiScannedNetworks": "Nearby networks",
+  "wifiSelectNetwork": "Select a network..."
 }
