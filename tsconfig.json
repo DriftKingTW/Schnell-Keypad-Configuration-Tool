@@ -12,7 +12,9 @@
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
     "skipLibCheck": true,
+    "baseUrl": ".",
     "paths": {
+      "@/*": ["./src/*"],
       "@splidejs/vue-splide": ["./src/splide.d.ts"]
     }
   },

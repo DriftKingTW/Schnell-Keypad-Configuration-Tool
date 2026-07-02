@@ -52,6 +52,9 @@ import { FwbToast } from "flowbite-vue";
 import ToggleCheckbox from "@/components/ToggleCheckbox.vue";
 import SerialConnection from "./components/SerialConnection.vue";
 import Modal from "@/components/Modal.vue";
+import CloudConfigModal from "@/components/CloudConfigModal.vue";
+import AccountIcon from "icons/Account.vue";
+import { useAuth } from "@/composables/useAuth";
 
 const store = useStore(key);
 
@@ -802,6 +805,27 @@ const confirmUploadToDevice = (type: string) => {
   askConfirm(i18n.t("confirmUploadToDevice"), () => uploadConfigToDevice(type));
 };
 
+// Cloud (Supabase) saved configurations.
+const { user: cloudUser, isSupabaseEnabled } = useAuth();
+const showCloudModal = ref(false);
+
+// Ensure combinedConfig is fresh before handing it to the cloud modal.
+const openCloudModal = () => {
+  updateOutputData();
+  showCloudModal.value = true;
+};
+
+// Suggest the current layout's title as the default save name.
+const cloudSuggestedName = computed(
+  () => configJsonArray[currentLayoutIndex.value]?.title || ""
+);
+
+// A config loaded from the cloud has the same shape as combinedConfig.
+const onCloudConfigLoad = (config: any) => {
+  applyKeyConfig(config);
+  updateOutputData();
+};
+
 /**
  * Log the uploaded file to the console
  * @param {event} Event The file loaded event
@@ -956,6 +980,17 @@ initializeLayout();
           {{ $t("tutorial.buttonShow") }}
         </button>
 
+        <!-- Cloud saved configurations (Supabase) -->
+        <button
+          v-if="isSupabaseEnabled"
+          class="btn btn-export flex"
+          :title="$t('cloud.title')"
+          @click="openCloudModal"
+        >
+          <account-icon :size="18" class="self-center mr-2" />
+          {{ cloudUser ? $t("cloud.myConfigs") : $t("cloud.signIn") }}
+        </button>
+
         <dark-mode-button />
       </div>
     </div>
@@ -1028,6 +1063,14 @@ initializeLayout();
         </p>
       </template>
     </Modal>
+
+    <!-- Cloud saved configurations (Supabase) -->
+    <CloudConfigModal
+      v-model:isOpen="showCloudModal"
+      :currentConfig="combinedConfig"
+      :suggestedName="cloudSuggestedName"
+      @load="onCloudConfigLoad"
+    />
     <div class="flex justify-center mt-4">
       <div class="flex">
         <div>
