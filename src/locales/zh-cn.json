@@ -54,5 +54,30 @@
   "wifiRescan": "重新扫描",
   "wifiScanning": "扫描中...",
   "wifiScannedNetworks": "附近的网络",
-  "wifiSelectNetwork": "选择网络..."
+  "wifiSelectNetwork": "选择网络...",
+  "cloud": {
+    "title": "云端配置",
+    "signIn": "登录",
+    "myConfigs": "我的配置",
+    "signInHint": "使用 Google 登录，即可将键位配置保存到云端并随时载入。",
+    "signInGoogle": "使用 Google 登录",
+    "signOut": "登出",
+    "namePlaceholder": "配置名称",
+    "save": "保存",
+    "load": "载入",
+    "delete": "删除",
+    "loading": "载入中...",
+    "empty": "尚无已保存的配置。",
+    "nameRequired": "请输入名称。",
+    "saveSuccess": "配置已保存到云端。",
+    "saveError": "保存失败",
+    "loadSuccess": "配置已载入。",
+    "loadListError": "载入配置列表失败",
+    "loadConfirm": "载入“{name}”？这会替换当前编辑器中的配置。",
+    "overwriteConfirm": "已有名为“{name}”的配置，要覆盖吗？",
+    "deleteConfirm": "删除“{name}”？此操作无法撤销。",
+    "deleteSuccess": "配置已删除。",
+    "deleteError": "删除失败",
+    "signInError": "登录失败"
+  }
 }

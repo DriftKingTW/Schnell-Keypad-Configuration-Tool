@@ -54,5 +54,30 @@
   "wifiRescan": "Rescan",
   "wifiScanning": "Scanning...",
   "wifiScannedNetworks": "Nearby networks",
-  "wifiSelectNetwork": "Select a network..."
+  "wifiSelectNetwork": "Select a network...",
+  "cloud": {
+    "title": "Cloud Configurations",
+    "signIn": "Sign in",
+    "myConfigs": "My Configs",
+    "signInHint": "Sign in with Google to save and load your keypad configurations in the cloud.",
+    "signInGoogle": "Sign in with Google",
+    "signOut": "Sign out",
+    "namePlaceholder": "Configuration name",
+    "save": "Save",
+    "load": "Load",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "empty": "No saved configurations yet.",
+    "nameRequired": "Please enter a name.",
+    "saveSuccess": "Configuration saved to the cloud.",
+    "saveError": "Failed to save",
+    "loadSuccess": "Configuration loaded.",
+    "loadListError": "Failed to load configurations",
+    "loadConfirm": "Load \"{name}\"? This will replace the configuration currently in the editor.",
+    "overwriteConfirm": "A configuration named \"{name}\" already exists. Overwrite it?",
+    "deleteConfirm": "Delete \"{name}\"? This cannot be undone.",
+    "deleteSuccess": "Configuration deleted.",
+    "deleteError": "Failed to delete",
+    "signInError": "Sign in failed"
+  }
 }

@@ -48,6 +48,12 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
+        env:
+          # Supabase cloud login / saved configs. Set these in the repo:
+          # Settings → Secrets and variables → Actions → New repository secret.
+          # The anon key is safe to expose (protected by Row Level Security).
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

@@ -54,5 +54,30 @@
   "wifiRescan": "重新掃描",
   "wifiScanning": "掃描中...",
   "wifiScannedNetworks": "附近的網路",
-  "wifiSelectNetwork": "選擇網路..."
+  "wifiSelectNetwork": "選擇網路...",
+  "cloud": {
+    "title": "雲端設定",
+    "signIn": "登入",
+    "myConfigs": "我的設定",
+    "signInHint": "使用 Google 登入，即可將鍵位設定儲存到雲端並隨時載入。",
+    "signInGoogle": "使用 Google 登入",
+    "signOut": "登出",
+    "namePlaceholder": "設定名稱",
+    "save": "儲存",
+    "load": "載入",
+    "delete": "刪除",
+    "loading": "載入中...",
+    "empty": "尚無已儲存的設定。",
+    "nameRequired": "請輸入名稱。",
+    "saveSuccess": "設定已儲存到雲端。",
+    "saveError": "儲存失敗",
+    "loadSuccess": "設定已載入。",
+    "loadListError": "載入設定清單失敗",
+    "loadConfirm": "載入「{name}」？這會取代目前編輯器中的設定。",
+    "overwriteConfirm": "已有名為「{name}」的設定，要覆蓋嗎？",
+    "deleteConfirm": "刪除「{name}」？此動作無法復原。",
+    "deleteSuccess": "設定已刪除。",
+    "deleteError": "刪除失敗",
+    "signInError": "登入失敗"
+  }
 }
