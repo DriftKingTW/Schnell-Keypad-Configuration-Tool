@@ -301,9 +301,9 @@ initializeLayout();
 <template>
   <div
     @click="showrotaryEncoderModal"
-    class="inline-block relative h-8 key-knob"
+    class="inline-block relative h-8"
   >
-    <knob-icon :size="92" />
+    <div class="knob"></div>
     <!-- {{ $t("rotaryEncoderEditorTitle") }} -->
   </div>
   <!-- create a modal -->
@@ -504,16 +504,13 @@ initializeLayout();
 <style scoped lang="scss">
 // Rotary-encoder specific styles. The shared keycap classes (.key-btn,
 // .key-w-1-5u, etc.) live in assets/scss/index.scss.
-.key-knob {
-  @apply text-stone-300 hover:text-stone-400 drop-shadow-md dark:text-neutral-700 dark:hover:text-neutral-600 cursor-pointer;
-}
-
 .knob {
-  // knob figure with a dot on it
-  @apply w-24 h-24 m-1 cursor-pointer rounded-full bg-stone-200
-  dark:bg-neutral-700;
+  // Knob figure (white keycap-style circle with a dot indicator), matching
+  // the outlined keycaps.
+  @apply w-24 h-24 m-1 cursor-pointer rounded-full bg-white border border-stone-300 shadow-sm
+  dark:bg-neutral-700 dark:border-transparent;
   &:hover {
-    @apply bg-stone-300 dark:bg-neutral-600;
+    @apply bg-stone-100 border-stone-400 dark:bg-neutral-600;
   }
   &:before {
     content: " ";
