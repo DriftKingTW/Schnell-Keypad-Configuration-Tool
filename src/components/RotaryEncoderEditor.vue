@@ -502,68 +502,10 @@ initializeLayout();
 </template>
 
 <style scoped lang="scss">
-.key-btn:focus {
-  outline: none;
-  box-shadow: none;
-}
-
-.key-btn {
-  @apply rounded bg-stone-200 hover:bg-stone-300 text-neutral-700 shadow-md w-16 h-16 m-1 cursor-pointer
-  dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600;
-}
-
-.key-btn-active {
-  @apply bg-amber-300 hover:bg-amber-400 text-neutral-800
-  dark:bg-amber-400 dark:hover:bg-amber-500 dark:text-neutral-900;
-}
-
-.key-btn-dummy {
-  @apply bg-stone-100 text-neutral-400
-  dark:bg-neutral-800 dark:text-neutral-600;
-}
-
-.key-1u {
-  @apply w-16;
-}
-
-.key-w-1-25u {
-  @apply w-20;
-}
-
-.key-w-1-5u {
-  @apply w-24;
-}
-
-.key-w-2u {
-  @apply w-32;
-}
-
-.key-h-1-25u {
-  @apply h-20;
-}
-
-.key-h-1-5u {
-  @apply h-24;
-}
-
+// Rotary-encoder specific styles. The shared keycap classes (.key-btn,
+// .key-w-1-5u, etc.) live in assets/scss/index.scss.
 .key-knob {
   @apply text-stone-200 hover:text-stone-300 drop-shadow-md dark:text-neutral-700 dark:hover:text-neutral-600 cursor-pointer;
-}
-
-.key-h-2u {
-  transform: translateY(-4.5rem);
-  &:before {
-    content: " ";
-    position: absolute;
-    transform: translateY(0.5rem);
-    z-index: -1;
-    background: inherit;
-    color: inherit;
-    @apply rounded w-16 h-32;
-  }
-  &:hover:before {
-    background: inherit;
-  }
 }
 
 .knob {
