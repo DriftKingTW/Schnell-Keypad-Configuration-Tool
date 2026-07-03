@@ -107,3 +107,91 @@ select:focus {
     @apply bg-stone-200 text-stone-400 hover:bg-stone-300 active:bg-stone-400  text-stone-600
     dark:bg-stone-700 dark:hover:bg-stone-800 dark:active:bg-stone-900 dark:text-stone-400;
 }
+
+.btn-cancel {
+    @apply bg-red-500 text-white hover:bg-red-600 active:bg-red-700
+    dark:bg-red-600 dark:hover:bg-red-700 dark:active:bg-red-800;
+}
+
+// Keycaps — shared by the main keyboard (App.vue) and the rotary editor
+// (RotaryEncoderEditor.vue). Kept global so both stay in sync from one place.
+.key-btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.key-btn {
+    @apply rounded bg-white border border-stone-300 hover:bg-stone-100 hover:border-stone-400 text-neutral-700 shadow-sm w-16 h-16 m-1 cursor-pointer
+    dark:bg-neutral-700 dark:border-neutral-600 dark:text-neutral-400 dark:hover:bg-neutral-600 dark:hover:border-neutral-500;
+}
+
+.key-btn-active {
+    @apply bg-amber-300 border-amber-400 hover:bg-amber-400 hover:border-amber-500 text-neutral-800
+    dark:bg-amber-400 dark:border-amber-500 dark:hover:bg-amber-500 dark:hover:border-amber-600 dark:text-neutral-900;
+}
+
+.key-btn-dummy {
+    @apply bg-stone-50 border-stone-200 text-neutral-400
+    dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-600;
+}
+
+.key-1u {
+    @apply w-16;
+}
+
+.key-w-1-25u {
+    @apply w-20;
+}
+
+.key-w-1-5u {
+    @apply w-24;
+}
+
+.key-w-2u {
+    @apply w-32;
+}
+
+.key-h-1-25u {
+    @apply h-20;
+}
+
+.key-h-1-5u {
+    @apply h-24;
+}
+
+.key-h-2u {
+    transform: translateY(-4.5rem);
+    // The top box and the :before extension form one tall key. Drop the
+    // border and rounding where they meet so the two halves join seamlessly.
+    // !important beats the dark:border utility (higher specificity) so the
+    // seam stays borderless in dark mode too.
+    border-bottom-color: transparent !important;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    &:before {
+        content: " ";
+        position: absolute;
+        // Centre horizontally so the extension lines up with the top box's
+        // border box (absolute children otherwise sit inside the 1px border).
+        left: 50%;
+        transform: translate(-50%, 0.5rem);
+        z-index: -1;
+        background: inherit;
+        color: inherit;
+        @apply rounded w-16 h-32 border border-stone-300 shadow-sm dark:border-neutral-600;
+        // Top edge/corners come from the main box; the extension supplies the
+        // sides and bottom, so no seam appears where the two meet. !important
+        // beats the dark:border utility so this stays transparent in dark mode.
+        border-top-color: transparent !important;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+    // Keep the extension's fill and border in step with the top box on hover.
+    &:hover:before {
+        @apply bg-stone-100 border-stone-400 dark:bg-neutral-600 dark:border-neutral-500;
+    }
+}
+
+.key-rotary {
+    @apply w-20 h-20 rounded-full;
+}

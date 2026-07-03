@@ -301,9 +301,9 @@ initializeLayout();
 <template>
   <div
     @click="showrotaryEncoderModal"
-    class="inline-block relative h-8 key-knob"
+    class="inline-block relative h-8"
   >
-    <knob-icon :size="92" />
+    <div class="knob"></div>
     <!-- {{ $t("rotaryEncoderEditorTitle") }} -->
   </div>
   <!-- create a modal -->
@@ -502,76 +502,15 @@ initializeLayout();
 </template>
 
 <style scoped lang="scss">
-.key-btn:focus {
-  outline: none;
-  box-shadow: none;
-}
-
-.key-btn {
-  @apply rounded bg-neutral-300 hover:bg-neutral-400 text-neutral-600 w-16 h-16 m-1 cursor-pointer 
-  dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600;
-}
-
-.key-btn-active {
-  @apply bg-amber-300 hover:bg-amber-400
-  dark:bg-amber-400 dark:hover:bg-amber-500 dark:text-neutral-900;
-}
-
-.key-btn-dummy {
-  @apply bg-neutral-100 text-neutral-300
-  dark:bg-neutral-800 dark:text-neutral-600;
-}
-
-.key-1u {
-  @apply w-16;
-}
-
-.key-w-1-25u {
-  @apply w-20;
-}
-
-.key-w-1-5u {
-  @apply w-24;
-}
-
-.key-w-2u {
-  @apply w-32;
-}
-
-.key-h-1-25u {
-  @apply h-20;
-}
-
-.key-h-1-5u {
-  @apply h-24;
-}
-
-.key-knob {
-  @apply text-neutral-100 hover:text-neutral-300 drop-shadow-md dark:text-neutral-700 dark:hover:text-neutral-600 cursor-pointer;
-}
-
-.key-h-2u {
-  transform: translateY(-4.5rem);
-  &:before {
-    content: " ";
-    position: absolute;
-    transform: translateY(0.5rem);
-    z-index: -1;
-    background: inherit;
-    color: inherit;
-    @apply rounded w-16 h-32;
-  }
-  &:hover:before {
-    background: inherit;
-  }
-}
-
+// Rotary-encoder specific styles. The shared keycap classes (.key-btn,
+// .key-w-1-5u, etc.) live in assets/scss/index.scss.
 .knob {
-  // knob figure with a dot on it
-  @apply w-24 h-24 m-1 cursor-pointer rounded-full bg-white
-  dark:bg-neutral-700;
+  // Knob figure (white keycap-style circle with a dot indicator), matching
+  // the outlined keycaps.
+  @apply w-20 h-20 m-1 cursor-pointer rounded-full bg-white border border-stone-300 shadow-sm
+  dark:bg-neutral-700 dark:border-neutral-600;
   &:hover {
-    @apply bg-neutral-100 dark:bg-neutral-600;
+    @apply bg-stone-100 border-stone-400 dark:bg-neutral-600 dark:border-neutral-500;
   }
   &:before {
     content: " ";
@@ -581,7 +520,7 @@ initializeLayout();
     z-index: 1;
     background: inherit;
     color: inherit;
-    @apply rounded-full w-4 h-4 bg-neutral-600;
+    @apply rounded-full w-4 h-4 bg-neutral-300 dark:bg-neutral-600;
   }
 }
 
