@@ -11,7 +11,6 @@ import TrayArrowDownIcon from "icons/TrayArrowDown.vue";
 import CloudUploadIcon from "icons/CloudUpload.vue";
 import WifiSettingsIcon from "icons/WifiSettings.vue";
 import CloseIcon from "icons/Close.vue";
-import RefreshIcon from "icons/Refresh.vue";
 import LanConnectIcon from "icons/LanConnect.vue";
 import LanDisconnectIcon from "icons/LanDisconnect.vue";
 import IpNetworkIcon from "icons/IpNetwork.vue";
@@ -440,9 +439,6 @@ onMounted(() => checkNetwork(true));
           v-model="keyboardUrl"
           :placeholder="`Ex: http://schnell.local`"
         />
-        <button class="btn flex" :title="$t('connect')" @click="checkNetwork()">
-          <refresh-icon class="text-stone-400 hover:text-lime-400" />
-        </button>
       </template>
       <button class="btn btn-install flex items-center" @click="connect">
         <connection-icon :size="20" class="self-center mr-2" />
