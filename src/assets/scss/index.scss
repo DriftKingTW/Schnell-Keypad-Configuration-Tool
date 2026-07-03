@@ -186,8 +186,9 @@ select:focus {
         border-top-left-radius: 0;
         border-top-right-radius: 0;
     }
+    // Keep the extension's fill and border in step with the top box on hover.
     &:hover:before {
-        background: inherit;
+        @apply bg-stone-100 border-stone-400 dark:bg-neutral-600 dark:border-neutral-500;
     }
 }
 
