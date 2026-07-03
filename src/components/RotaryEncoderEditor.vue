@@ -520,7 +520,7 @@ initializeLayout();
     z-index: 1;
     background: inherit;
     color: inherit;
-    @apply rounded-full w-4 h-4 bg-neutral-400 dark:bg-neutral-600;
+    @apply rounded-full w-4 h-4 bg-neutral-300 dark:bg-neutral-600;
   }
 }
 
