@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { ref, reactive, toRefs, readonly, nextTick } from "vue";
+import { ref, reactive, toRefs, readonly, nextTick, computed } from "vue";
 
 import KnobIcon from "icons/Knob.vue";
 import RotateRightIcon from "icons/RotateRight.vue";
 import RotateLeftIcon from "icons/RotateLeft.vue";
 import GestureTapIcon from "icons/GestureTap.vue";
-import { getSpecialKeyCode } from "./../utils/specialKeyHandler";
+import {
+  getSpecialKeyCode,
+  checkSpecialKey,
+  asciiToEventCode,
+} from "./../utils/specialKeyHandler";
 
 import AlphaMBoxIcon from "icons/AlphaMBox.vue";
+import ChevronDownIcon from "icons/ChevronDown.vue";
 import CheckIcon from "icons/Check.vue";
 import CloseIcon from "icons/Close.vue";
 
@@ -252,6 +257,7 @@ const saveKeyInfo = () => {
 const resetKeyEditing = () => {
   isEditingKeyInfo.value = false;
   isSelectingMacro.value = false;
+  showMacroMenu.value = false;
   macroIndex.value = -1;
 };
 
@@ -262,37 +268,55 @@ const resetKeyEditing = () => {
 const updateKeyInfo = async (e: any, row: number, col: number) => {
   e.preventDefault();
   isEditingKeyInfo.value = true;
-  floatingEditor.y = e.pageY;
   floatingEditor.row = row;
   floatingEditor.col = col;
   editInfoText.value = reLayout[row][col].keyInfo;
-  if (e.view.screen.width - e.pageX < 300) {
+
+  // The editor is position:fixed, so use viewport (client) coordinates and
+  // keep it fully on-screen for keys near the edges.
+  const margin = 8;
+  const editorWidth = 340;
+  const editorHeight = 56;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  if (vw - e.clientX < editorWidth) {
     floatingEditor.floatLeft = true;
-    floatingEditor.x = e.view.screen.width - e.pageX;
+    floatingEditor.x = Math.max(margin, vw - e.clientX);
   } else {
-    floatingEditor.x = e.pageX;
     floatingEditor.floatLeft = false;
+    floatingEditor.x = e.clientX;
   }
+  floatingEditor.y = Math.min(e.clientY, vh - editorHeight - margin);
+
   await nextTick();
   macroFloatingEditorInput.value?.focus();
 };
 
-/**
- * Assign macro to a key
- *
- */
-const assignMacro = () => {
-  if (!isSelectingMacro.value) {
-    isSelectingMacro.value = true;
-  } else {
-    if (macroIndex.value > -1 && isEditingKeyInfo.value) {
-      editInfoText.value = `MACRO_${macroIndex.value}`;
-      saveKeyInfo();
-      macroIndex.value = -1;
-    }
-    isSelectingMacro.value = false;
-    isEditingKeyInfo.value = false;
+// Macro picker dropdown, matching the main key editor.
+const showMacroMenu = ref(false);
+const currentMacroIndex = computed(() => {
+  const t = editInfoText.value || "";
+  return t.startsWith("MACRO_") ? Number(t.slice(6)) : -1;
+});
+const macroPreview = (m: any) => {
+  if (!m) return "";
+  if (m.type === 0) {
+    return (m.keyStrokes || [])
+      .map((k: number) => {
+        const special = checkSpecialKey(k);
+        if (special !== "") return special;
+        const evt = asciiToEventCode(k);
+        if (evt !== "") return evt;
+        return String.fromCharCode(k);
+      })
+      .join(" + ");
   }
+  return m.stringContent || "";
+};
+const assignMacroToKey = (idx: number) => {
+  if (idx < 0) return;
+  editInfoText.value = `MACRO_${idx}`;
+  saveKeyInfo();
 };
 
 initializeLayout();
@@ -465,33 +489,72 @@ initializeLayout();
         <button type="button" class="btn btn-export flex" @click="saveKeyInfo">
           <check-icon :size="18" class="self-center" />
         </button>
-        <button
-          type="button"
-          :class="`btn btn-export flex ${
-            isSelectingMacro ? 'key-btn-active' : ''
-          }`"
-          @click="assignMacro"
-          @keydown.esc="resetKeyEditing"
-        >
-          <alpha-m-box-icon :size="18" class="self-center" />
-        </button>
-        <select
-          v-show="isSelectingMacro"
-          v-model="macroIndex"
-          class="h-9"
-          @change="assignMacro"
-        >
-          <option
-            v-for="(macro, index) in props.macros"
-            :key="index"
-            :value="index"
+        <div class="relative flex">
+          <button
+            type="button"
+            class="btn btn-export flex items-center"
+            @click="showMacroMenu = !showMacroMenu"
           >
-            M{{ index }} - {{ macro.name }}
-          </option>
-        </select>
+            <alpha-m-box-icon :size="18" class="self-center" />
+            <chevron-down-icon :size="16" class="self-center" />
+          </button>
+
+          <template v-if="showMacroMenu">
+            <div
+              class="fixed inset-0 z-10"
+              @click="showMacroMenu = false"
+            ></div>
+            <div
+              class="absolute right-0 top-full mt-1 z-20 w-64 max-h-72 overflow-auto rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 py-1 text-left text-gray-800 dark:text-gray-100"
+            >
+              <button
+                v-for="(m, i) in props.macros"
+                :key="i"
+                type="button"
+                class="w-full text-left px-4 py-3"
+                :class="
+                  i === currentMacroIndex
+                    ? 'bg-cyan-600'
+                    : 'hover:bg-gray-100 dark:hover:bg-stone-700'
+                "
+                @click="
+                  assignMacroToKey(i);
+                  showMacroMenu = false;
+                "
+              >
+                <div
+                  class="text-sm font-medium"
+                  :class="
+                    i === currentMacroIndex
+                      ? 'text-white'
+                      : 'text-gray-500 dark:text-gray-400'
+                  "
+                >
+                  {{ (m as any).name || `Macro ${i}` }}
+                </div>
+                <div
+                  class="text-xs truncate"
+                  :class="
+                    i === currentMacroIndex
+                      ? 'text-cyan-100'
+                      : 'text-amber-600 dark:text-amber-400'
+                  "
+                >
+                  {{ macroPreview(m) || "—" }}
+                </div>
+              </button>
+              <div
+                v-if="props.macros.length === 0"
+                class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400"
+              >
+                —
+              </div>
+            </div>
+          </template>
+        </div>
         <button
           type="button"
-          class="btn btn-reset flex"
+          class="btn btn-cancel flex"
           @click="resetKeyEditing"
         >
           <close-icon :size="18" class="self-center" />
