@@ -688,6 +688,8 @@ const onSerialConfigRead = (configJsonString: string) => {
 
 // Firmware controls (version + install) collapsed into a header dropdown.
 const showFirmwareMenu = ref(false);
+// Copy / download config actions collapsed into an "Export" dropdown.
+const showExportMenu = ref(false);
 
 // Cloud (Supabase) saved configurations.
 const { user: cloudUser, isSupabaseEnabled } = useAuth();
@@ -950,23 +952,44 @@ initializeLayout();
     </transition>
 
     <div class="flex justify-center mt-4">
-      <div class="flex">
+      <div class="relative">
         <button
-          name="copy"
-          class="btn btn-export grow flex"
-          @click="copyCombinedConfig"
-        >
-          <content-copy-icon :size="18" class="self-center mr-2" />
-          {{ $t("copyCombinedJSONConfig") }}
-        </button>
-        <button
-          name="export"
-          class="btn btn-export grow flex"
-          @click="exportCombinedConfig"
+          class="btn btn-export flex items-center"
+          @click="showExportMenu = !showExportMenu"
         >
           <export-icon :size="18" class="self-center mr-2" />
-          {{ $t("exportCombinedJSONConfig") }}
+          {{ $t("export") }}
+          <chevron-down-icon :size="18" class="self-center ml-1" />
         </button>
+
+        <template v-if="showExportMenu">
+          <!-- click-away backdrop -->
+          <div class="fixed inset-0 z-10" @click="showExportMenu = false"></div>
+          <div
+            class="absolute left-1/2 -translate-x-1/2 mt-1 z-20 w-64 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 py-1 text-gray-800 dark:text-gray-100"
+          >
+            <button
+              class="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-stone-700"
+              @click="
+                copyCombinedConfig();
+                showExportMenu = false;
+              "
+            >
+              <content-copy-icon :size="18" class="mr-2" />
+              {{ $t("copyCombinedJSONConfig") }}
+            </button>
+            <button
+              class="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-stone-700"
+              @click="
+                exportCombinedConfig();
+                showExportMenu = false;
+              "
+            >
+              <export-icon :size="18" class="mr-2" />
+              {{ $t("exportCombinedJSONConfig") }}
+            </button>
+          </div>
+        </template>
       </div>
     </div>
     <DeviceConnection
