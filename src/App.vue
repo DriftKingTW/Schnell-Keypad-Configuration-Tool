@@ -902,9 +902,11 @@ initializeLayout();
           <img
             :src="`${baseUrl}logo_dark.svg`"
             alt=""
-            class="h-8 w-auto"
+            class="h-6 w-auto"
           />
-          <span class="text-2xl tracking-wide brand-font whitespace-nowrap">
+          <span
+            class="text-2xl tracking-wide brand-font whitespace-nowrap translate-y-[2px]"
+          >
             Schnell 32
           </span>
         </div>
