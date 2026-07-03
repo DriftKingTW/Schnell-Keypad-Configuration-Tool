@@ -393,17 +393,29 @@ const updateKey = (e: any) => {
 const updateKeyInfo = async (e: any, row: number, col: number) => {
   e.preventDefault();
   isEditingKeyInfo.value = true;
-  floatingEditor.y = e.pageY;
   floatingEditor.row = row;
   floatingEditor.col = col;
   editInfoText.value = layout[row][col].keyInfo;
-  if (e.view.screen.width - e.pageX < 300) {
+
+  // The editor is position:fixed, so use viewport (client) coordinates and
+  // the window size, and keep it fully on-screen for keys near the edges.
+  const margin = 8;
+  const editorWidth = 340;
+  const editorHeight = 56;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  if (vw - e.clientX < editorWidth) {
+    // Not enough room to the right: anchor the editor's right edge near the
+    // cursor and let it extend left.
     floatingEditor.floatLeft = true;
-    floatingEditor.x = e.view.screen.width - e.pageX;
+    floatingEditor.x = Math.max(margin, vw - e.clientX);
   } else {
-    floatingEditor.x = e.pageX;
     floatingEditor.floatLeft = false;
+    floatingEditor.x = e.clientX;
   }
+  floatingEditor.y = Math.min(e.clientY, vh - editorHeight - margin);
+
   await nextTick();
   floatingEditorInput.value?.focus();
 };
@@ -1276,7 +1288,7 @@ initializeLayout();
               <check-icon :size="18" class="self-center" />
             </button>
             <select
-              class="btn btn-export cursor-pointer"
+              class="btn btn-export cursor-pointer !text-white !border-0 !m-1 self-stretch"
               :value="-1"
               :title="$t('macro')"
               @change="
