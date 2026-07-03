@@ -962,7 +962,7 @@ initializeLayout();
                 @click="showFirmwareMenu = false"
               ></div>
               <div
-                class="absolute left-0 mt-1 z-20 w-56 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 p-3 text-gray-800 dark:text-gray-100"
+                class="absolute left-0 mt-1 z-20 w-60 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 p-3 text-gray-800 dark:text-gray-100"
               >
                 <label class="block text-sm font-medium mb-1">
                   {{ $t("version") }}
@@ -975,16 +975,13 @@ initializeLayout();
                     {{ opt.label }}
                   </option>
                 </select>
-                <label
-                  class="flex items-center cursor-pointer select-none mt-2 text-sm"
-                >
-                  <input
-                    type="checkbox"
+                <div class="mt-3">
+                  <ToggleCheckbox
                     v-model="showOldVersions"
-                    class="mr-2"
+                    :label="$t('showOldVersions')"
+                    small
                   />
-                  {{ $t("showOldVersions") }}
-                </label>
+                </div>
 
                 <esp-web-install-button
                   :manifest="manifestJSON"
