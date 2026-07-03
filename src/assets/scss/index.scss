@@ -163,7 +163,9 @@ select:focus {
     transform: translateY(-4.5rem);
     // The top box and the :before extension form one tall key. Drop the
     // border and rounding where they meet so the two halves join seamlessly.
-    border-bottom-color: transparent;
+    // !important beats the dark:border utility (higher specificity) so the
+    // seam stays borderless in dark mode too.
+    border-bottom-color: transparent !important;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     &:before {
@@ -178,8 +180,9 @@ select:focus {
         color: inherit;
         @apply rounded w-16 h-32 border border-stone-300 shadow-sm dark:border-neutral-600;
         // Top edge/corners come from the main box; the extension supplies the
-        // sides and bottom, so no seam appears where the two meet.
-        border-top-color: transparent;
+        // sides and bottom, so no seam appears where the two meet. !important
+        // beats the dark:border utility so this stays transparent in dark mode.
+        border-top-color: transparent !important;
         border-top-left-radius: 0;
         border-top-right-radius: 0;
     }
