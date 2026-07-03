@@ -547,7 +547,7 @@ initializeLayout();
 }
 
 .key-knob {
-  @apply text-stone-300 hover:text-stone-400 drop-shadow-md dark:text-neutral-700 dark:hover:text-neutral-600 cursor-pointer;
+  @apply text-stone-200 hover:text-stone-300 drop-shadow-md dark:text-neutral-700 dark:hover:text-neutral-600 cursor-pointer;
 }
 
 .key-h-2u {
