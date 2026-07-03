@@ -508,17 +508,17 @@ initializeLayout();
 }
 
 .key-btn {
-  @apply rounded bg-neutral-300 hover:bg-neutral-400 text-neutral-600 w-16 h-16 m-1 cursor-pointer 
+  @apply rounded bg-stone-200 hover:bg-stone-300 text-neutral-700 shadow-md w-16 h-16 m-1 cursor-pointer
   dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600;
 }
 
 .key-btn-active {
-  @apply bg-amber-300 hover:bg-amber-400
+  @apply bg-amber-300 hover:bg-amber-400 text-neutral-800
   dark:bg-amber-400 dark:hover:bg-amber-500 dark:text-neutral-900;
 }
 
 .key-btn-dummy {
-  @apply bg-neutral-100 text-neutral-300
+  @apply bg-stone-100 text-neutral-400
   dark:bg-neutral-800 dark:text-neutral-600;
 }
 
@@ -547,7 +547,7 @@ initializeLayout();
 }
 
 .key-knob {
-  @apply text-neutral-100 hover:text-neutral-300 drop-shadow-md dark:text-neutral-700 dark:hover:text-neutral-600 cursor-pointer;
+  @apply text-stone-300 hover:text-stone-400 drop-shadow-md dark:text-neutral-700 dark:hover:text-neutral-600 cursor-pointer;
 }
 
 .key-h-2u {
@@ -568,10 +568,10 @@ initializeLayout();
 
 .knob {
   // knob figure with a dot on it
-  @apply w-24 h-24 m-1 cursor-pointer rounded-full bg-white
+  @apply w-24 h-24 m-1 cursor-pointer rounded-full bg-stone-200
   dark:bg-neutral-700;
   &:hover {
-    @apply bg-neutral-100 dark:bg-neutral-600;
+    @apply bg-stone-300 dark:bg-neutral-600;
   }
   &:before {
     content: " ";
