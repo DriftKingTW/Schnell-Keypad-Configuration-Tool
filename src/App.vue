@@ -49,9 +49,6 @@ import { useAuth } from "@/composables/useAuth";
 
 const store = useStore(key);
 
-// Public asset base path (handles the GitHub Pages sub-path).
-const baseUrl = import.meta.env.BASE_URL;
-
 // Set page title
 const i18n = useI18n();
 document.title = i18n.t("navTitle");
@@ -849,16 +846,9 @@ initializeLayout();
       >
         <!-- Left: app identity + firmware -->
         <div class="flex items-center gap-3">
-          <div class="flex items-center gap-2 whitespace-nowrap">
-            <img
-              :src="`${baseUrl}schnell_32.webp`"
-              alt=""
-              class="h-9 w-auto"
-            />
-            <span class="text-xl font-semibold tracking-wide brand-font">{{
-              $t("navTitle")
-            }}</span>
-          </div>
+          <span class="text-2xl tracking-wide brand-font whitespace-nowrap">
+            Schnell 32
+          </span>
 
           <!-- Firmware dropdown: version + old versions + install -->
           <div class="relative">
