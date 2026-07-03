@@ -913,6 +913,50 @@ initializeLayout();
             {{ cloudUser ? $t("cloud.myConfigs") : $t("cloud.signIn") }}
           </button>
 
+          <!-- Export config (copy / download) -->
+          <div class="relative">
+            <button
+              class="btn btn-export flex items-center"
+              @click="showExportMenu = !showExportMenu"
+            >
+              <export-icon :size="18" class="self-center mr-2" />
+              {{ $t("exportConfig") }}
+              <chevron-down-icon :size="18" class="self-center ml-1" />
+            </button>
+
+            <template v-if="showExportMenu">
+              <!-- click-away backdrop -->
+              <div
+                class="fixed inset-0 z-10"
+                @click="showExportMenu = false"
+              ></div>
+              <div
+                class="absolute right-0 mt-1 z-20 w-64 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 py-1 text-gray-800 dark:text-gray-100"
+              >
+                <button
+                  class="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-stone-700"
+                  @click="
+                    copyCombinedConfig();
+                    showExportMenu = false;
+                  "
+                >
+                  <content-copy-icon :size="18" class="mr-2" />
+                  {{ $t("copyCombinedJSONConfig") }}
+                </button>
+                <button
+                  class="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-stone-700"
+                  @click="
+                    exportCombinedConfig();
+                    showExportMenu = false;
+                  "
+                >
+                  <export-icon :size="18" class="mr-2" />
+                  {{ $t("exportCombinedJSONConfig") }}
+                </button>
+              </div>
+            </template>
+          </div>
+
           <!-- Tutorial (icon button, matching the dark-mode button) -->
           <button
             class="btn flex"
@@ -951,47 +995,6 @@ initializeLayout();
       <main-tutorial v-show="showTutorial" v-model="showTutorial" />
     </transition>
 
-    <div class="flex justify-center mt-4">
-      <div class="relative">
-        <button
-          class="btn btn-export flex items-center"
-          @click="showExportMenu = !showExportMenu"
-        >
-          <export-icon :size="18" class="self-center mr-2" />
-          {{ $t("export") }}
-          <chevron-down-icon :size="18" class="self-center ml-1" />
-        </button>
-
-        <template v-if="showExportMenu">
-          <!-- click-away backdrop -->
-          <div class="fixed inset-0 z-10" @click="showExportMenu = false"></div>
-          <div
-            class="absolute left-1/2 -translate-x-1/2 mt-1 z-20 w-64 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 py-1 text-gray-800 dark:text-gray-100"
-          >
-            <button
-              class="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-stone-700"
-              @click="
-                copyCombinedConfig();
-                showExportMenu = false;
-              "
-            >
-              <content-copy-icon :size="18" class="mr-2" />
-              {{ $t("copyCombinedJSONConfig") }}
-            </button>
-            <button
-              class="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-stone-700"
-              @click="
-                exportCombinedConfig();
-                showExportMenu = false;
-              "
-            >
-              <export-icon :size="18" class="mr-2" />
-              {{ $t("exportCombinedJSONConfig") }}
-            </button>
-          </div>
-        </template>
-      </div>
-    </div>
     <DeviceConnection
       :configString="configToSerialData"
       class="flex justify-center mt-4"
