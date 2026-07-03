@@ -439,6 +439,16 @@ const assignMacro = () => {
 };
 
 /**
+ * Assign a macro to the key being edited, picked straight from the floating
+ * editor's dropdown (no separate "select from the list on the left" step).
+ */
+const assignMacroToKey = (idx: number) => {
+  if (idx < 0) return;
+  editInfoText.value = `MACRO_${idx}`;
+  saveKeyInfo();
+};
+
+/**
  * Assign FN key label to active key
  *
  */
@@ -1265,16 +1275,25 @@ initializeLayout();
             >
               <check-icon :size="18" class="self-center" />
             </button>
-            <button
-              type="button"
-              :class="`btn btn-export flex ${
-                isSelectingMacro ? 'key-btn-active' : ''
-              }`"
-              @click="assignMacro"
-              @keydown.esc="resetKeyEditing"
+            <select
+              class="btn btn-export cursor-pointer"
+              :value="-1"
+              :title="$t('macro')"
+              @change="
+                assignMacroToKey(
+                  Number(($event.target as HTMLSelectElement).value)
+                )
+              "
             >
-              <alpha-m-box-icon :size="18" class="self-center" />
-            </button>
+              <option :value="-1" disabled>{{ $t("macro") }}</option>
+              <option
+                v-for="(m, i) in combinedConfig.macros"
+                :key="i"
+                :value="i"
+              >
+                {{ (m as any).name || `${$t("macro")} ${i}` }}
+              </option>
+            </select>
             <button
               type="button"
               class="btn btn-cancel flex"

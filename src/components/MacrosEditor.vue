@@ -75,6 +75,9 @@ const addMacro = () => {
     keyStrokes: [],
     stringContent: "",
   });
+  // Sync immediately so the new macro is available elsewhere (e.g. the key
+  // editor's macro dropdown) without needing a further edit.
+  updateOuputData();
 };
 
 /**

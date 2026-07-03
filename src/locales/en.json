@@ -14,6 +14,7 @@
   "firmwareInstall": "Firmware Install",
   "save": "Save",
   "addMacro": "Add Macro",
+  "macro": "Macro",
   "assignFnKey": "Assign FN",
   "dragDrop": "Drag and drop config file here",
   "toast": {
