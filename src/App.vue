@@ -10,7 +10,6 @@ import {
 } from "vue";
 import { useI18n } from "vue-i18n";
 import "esp-web-tools/dist/web/install-button";
-import axios from "axios";
 
 import "vue3-json-viewer/dist/index.css";
 import CheckIcon from "icons/Check.vue";
@@ -25,15 +24,6 @@ import HeartIcon from "icons/Heart.vue";
 import GithubIcon from "icons/Github.vue";
 import EmailIcon from "icons/Email.vue";
 import BookOpenVariantIcon from "icons/BookOpenVariant.vue";
-import LanConnectIcon from "icons/LanConnect.vue";
-import LanDisconnectIcon from "icons/LanDisconnect.vue";
-import WifiStrengthAlertOutlineIcon from "icons/WifiStrengthAlertOutline.vue";
-import WifiStrength1Icon from "icons/WifiStrength1.vue";
-import WifiStrength2Icon from "icons/WifiStrength2.vue";
-import WifiStrength3Icon from "icons/WifiStrength3.vue";
-import WifiStrength4Icon from "icons/WifiStrength4.vue";
-import IpNetworkIcon from "icons/IpNetwork.vue";
-import RefreshIcon from "icons/Refresh.vue";
 
 import MacrosEditor from "@/components/MacrosEditor.vue";
 import RotaryEncoderEditor from "@/components/RotaryEncoderEditor.vue";
@@ -48,33 +38,28 @@ import {
 } from "./utils/specialKeyHandler";
 import { useStore } from "vuex";
 import { key } from "./store";
-import { FwbToast } from "flowbite-vue";
 import ToggleCheckbox from "@/components/ToggleCheckbox.vue";
-import SerialConnection from "./components/SerialConnection.vue";
-import Modal from "@/components/Modal.vue";
+import DeviceConnection from "./components/DeviceConnection.vue";
 import CloudConfigModal from "@/components/CloudConfigModal.vue";
 import AccountIcon from "icons/Account.vue";
 import ChevronDownIcon from "icons/ChevronDown.vue";
+import TranslateIcon from "icons/Translate.vue";
+import CheckCircleIcon from "icons/CheckCircle.vue";
+import AlertCircleIcon from "icons/AlertCircle.vue";
+import AlertIcon from "icons/Alert.vue";
+import InformationIcon from "icons/Information.vue";
 import { useAuth } from "@/composables/useAuth";
 
 const store = useStore(key);
+
+// Public asset base path (handles the GitHub Pages sub-path).
+const baseUrl = import.meta.env.BASE_URL;
 
 // Set page title
 const i18n = useI18n();
 document.title = i18n.t("navTitle");
 
 // Type declarations
-type NetworkInfo = {
-  apIP: string;
-  gatewayIP: string;
-  ip: string;
-  mac: string;
-  password: string;
-  rssi: number;
-  ssid: string;
-  subnetMask: string;
-};
-
 type Coordinate = {
   row: number;
   col: number;
@@ -181,18 +166,6 @@ type FirmwareIndex = {
   beta: { latest: string };
 };
 const firmwareIndex = ref<FirmwareIndex | null>(null);
-const keyboardUrl = ref("http://schnell.local");
-const isKeyboardConnected = ref(false);
-const networkInfo: NetworkInfo = reactive({
-  apIP: "",
-  gatewayIP: "",
-  ip: "",
-  mac: "",
-  password: "",
-  rssi: -100,
-  ssid: "",
-  subnetMask: "",
-});
 
 const macros: any = reactive([]);
 const macroComponentKey = ref(0);
@@ -317,34 +290,13 @@ watch(macroIndex, async () => {
 // Functions
 
 /**
- * Initialize the app
+ * Initialize the app (restore the saved language). Device/network status is
+ * handled by the DeviceConnection panel.
  */
-const initializeApp = async () => {
-  // Connect to the device
-  try {
-    const savedLocale = localStorage.getItem("locale");
-    i18n.locale.value =
-      savedLocale || navigator.language || navigator.languages[0];
-    isKeyboardConnected.value = false;
-    const response = await fetch(`${keyboardUrl.value}/api/network`);
-    const data = await response.json();
-
-    if (response.status === 200) {
-      isKeyboardConnected.value = true;
-    }
-
-    networkInfo.ip = data.wifi.ip;
-    networkInfo.ssid = data.wifi.ssid;
-    networkInfo.password = data.wifi.password;
-    networkInfo.mac = data.wifi.mac;
-    networkInfo.rssi = data.wifi.rssi;
-    networkInfo.gatewayIP = data.wifi.gatewayIP;
-    networkInfo.subnetMask = data.wifi.subnetMask;
-    networkInfo.apIP = data.wifi.apIp;
-  } catch (error) {
-    console.error("Failed to connect to the device");
-    console.log(error);
-  }
+const initializeApp = () => {
+  const savedLocale = localStorage.getItem("locale");
+  i18n.locale.value =
+    savedLocale || navigator.language || navigator.languages[0];
 };
 
 /**
@@ -447,17 +399,29 @@ const updateKey = (e: any) => {
 const updateKeyInfo = async (e: any, row: number, col: number) => {
   e.preventDefault();
   isEditingKeyInfo.value = true;
-  floatingEditor.y = e.pageY;
   floatingEditor.row = row;
   floatingEditor.col = col;
   editInfoText.value = layout[row][col].keyInfo;
-  if (e.view.screen.width - e.pageX < 300) {
+
+  // The editor is position:fixed, so use viewport (client) coordinates and
+  // the window size, and keep it fully on-screen for keys near the edges.
+  const margin = 8;
+  const editorWidth = 340;
+  const editorHeight = 56;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  if (vw - e.clientX < editorWidth) {
+    // Not enough room to the right: anchor the editor's right edge near the
+    // cursor and let it extend left.
     floatingEditor.floatLeft = true;
-    floatingEditor.x = e.view.screen.width - e.pageX;
+    floatingEditor.x = Math.max(margin, vw - e.clientX);
   } else {
-    floatingEditor.x = e.pageX;
     floatingEditor.floatLeft = false;
+    floatingEditor.x = e.clientX;
   }
+  floatingEditor.y = Math.min(e.clientY, vh - editorHeight - margin);
+
   await nextTick();
   floatingEditorInput.value?.focus();
 };
@@ -490,6 +454,16 @@ const assignMacro = () => {
     isSelectingMacro.value = false;
     isEditingKeyInfo.value = false;
   }
+};
+
+/**
+ * Assign a macro to the key being edited, picked straight from the floating
+ * editor's dropdown (no separate "select from the list on the left" step).
+ */
+const assignMacroToKey = (idx: number) => {
+  if (idx < 0) return;
+  editInfoText.value = `MACRO_${idx}`;
+  saveKeyInfo();
 };
 
 /**
@@ -653,25 +627,6 @@ const exportCombinedConfig = () => {
   document.body.removeChild(element);
 };
 
-const uploadConfigToDevice = async (type: string) => {
-  const url = `${keyboardUrl.value}/api/config?type=${type}`;
-  const data = combinedConfig;
-  try {
-    const response = await axios.put(url, data);
-    console.log(response.data);
-    store.commit("showToast", {
-      message: "Upload successful",
-      type: "success",
-    });
-  } catch (error: any) {
-    console.log(error);
-    store.commit("showToast", {
-      message: `Upload failed: ${error.message}`,
-      type: "danger",
-    });
-  }
-};
-
 /**
  * Update page title after changing the language
  *
@@ -743,28 +698,7 @@ const loadKeyConfigFile = (event: any) => {
 };
 
 /**
- * Read the configuration currently stored on the device over HTTP.
- */
-const readConfigFromDevice = async () => {
-  try {
-    const response = await axios.get(
-      `${keyboardUrl.value}/api/config?type=keyconfig`
-    );
-    applyKeyConfig(response.data.config);
-    store.commit("showToast", {
-      message: "Configuration read from device",
-      type: "success",
-    });
-  } catch (error: any) {
-    store.commit("showToast", {
-      message: `Read failed: ${error.message}`,
-      type: "danger",
-    });
-  }
-};
-
-/**
- * Apply a keyconfig.json string received from the device over serial.
+ * Apply a keyconfig.json string received from the device.
  */
 const onSerialConfigRead = (configJsonString: string) => {
   try {
@@ -781,33 +715,59 @@ const onSerialConfigRead = (configJsonString: string) => {
   }
 };
 
-// Confirmation modal shared by the device read / upload actions.
-const confirmOpen = ref(false);
-const confirmMessage = ref("");
-let confirmAction: (() => void) | null = null;
-
-const askConfirm = (message: string, action: () => void) => {
-  confirmMessage.value = message;
-  confirmAction = action;
-  confirmOpen.value = true;
-};
-
-const onConfirm = () => {
-  const action = confirmAction;
-  confirmAction = null;
-  if (action) action();
-};
-
-const confirmReadFromDevice = () => {
-  askConfirm(i18n.t("confirmReadFromDevice"), readConfigFromDevice);
-};
-
-const confirmUploadToDevice = (type: string) => {
-  askConfirm(i18n.t("confirmUploadToDevice"), () => uploadConfigToDevice(type));
-};
-
 // Firmware controls (version + install) collapsed into a header dropdown.
 const showFirmwareMenu = ref(false);
+// Copy / download config actions collapsed into an "Export" dropdown.
+const showExportMenu = ref(false);
+// Macro picker dropdown in the floating key editor.
+const showMacroMenu = ref(false);
+// Index of the macro currently assigned to the key being edited (-1 if none),
+// so the picker can highlight it.
+const currentMacroIndex = computed(() => {
+  const t = editInfoText.value || "";
+  return t.startsWith("MACRO_") ? Number(t.slice(6)) : -1;
+});
+
+// One-line preview of a macro's content for the picker: the key combo for
+// keystroke macros, or the string for text macros.
+const macroPreview = (m: any) => {
+  if (!m) return "";
+  if (m.type === 0) {
+    return (m.keyStrokes || [])
+      .map((k: number) => {
+        const special = checkSpecialKey(k);
+        if (special !== "") return special;
+        const evt = asciiToEventCode(k);
+        if (evt !== "") return evt;
+        // Printable characters (e.g. punctuation like ";") that the lookups
+        // above don't cover — fall back to the character itself.
+        return String.fromCharCode(k);
+      })
+      .join(" + ");
+  }
+  return m.stringContent || "";
+};
+
+// Language selector as a dropdown.
+const languages = [
+  { value: "en-US", label: "English" },
+  { value: "zh-TW", label: "中文（繁體）" },
+  { value: "zh-CN", label: "中文（简体）" },
+];
+const showLangMenu = ref(false);
+const currentLangLabel = computed(() => {
+  const loc = i18n.locale.value;
+  const exact = languages.find((l) => l.value === loc);
+  if (exact) return exact.label;
+  if (loc.startsWith("zh-TW")) return "中文（繁體）";
+  if (loc.startsWith("zh-CN")) return "中文（简体）";
+  return "English";
+});
+const setLocale = (value: string) => {
+  i18n.locale.value = value;
+  showLangMenu.value = false;
+  updatePageTitle();
+};
 
 // Cloud (Supabase) saved configurations.
 const { user: cloudUser, isSupabaseEnabled } = useAuth();
@@ -934,16 +894,28 @@ initializeLayout();
     <!-- Navbar -->
     <div
       id="nav"
-      class="bg-stone-600 w-full h-12 text-white dark:bg-stone-800"
+      class="bg-stone-600 w-full h-16 text-white dark:bg-stone-800"
       style="min-width: 600px"
     >
       <div
         class="container mx-auto h-full flex items-center justify-between px-4"
       >
-        <!-- Left: app identity + firmware -->
-        <div class="flex items-center gap-3">
-          <div class="text-xl whitespace-nowrap">{{ $t("navTitle") }}</div>
+        <!-- Left: app identity -->
+        <div class="flex items-center gap-2">
+          <img
+            :src="`${baseUrl}logo_dark.svg`"
+            alt=""
+            class="h-6 w-auto"
+          />
+          <span
+            class="text-2xl tracking-wide brand-font whitespace-nowrap translate-y-[2px]"
+          >
+            Schnell 32
+          </span>
+        </div>
 
+        <!-- Right: preferences + account -->
+        <div class="flex items-center gap-2">
           <!-- Firmware dropdown: version + old versions + install -->
           <div class="relative">
             <button
@@ -962,7 +934,7 @@ initializeLayout();
                 @click="showFirmwareMenu = false"
               ></div>
               <div
-                class="absolute left-0 mt-1 z-20 w-60 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 p-3 text-gray-800 dark:text-gray-100"
+                class="absolute right-0 mt-1 z-20 w-60 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 p-3 text-gray-800 dark:text-gray-100"
               >
                 <label class="block text-sm font-medium mb-1 !mx-0">
                   {{ $t("version") }}
@@ -1006,19 +978,6 @@ initializeLayout();
               </div>
             </template>
           </div>
-        </div>
-
-        <!-- Right: preferences + account -->
-        <div class="flex items-center gap-2">
-          <select
-            v-model="$i18n.locale"
-            class="btn language-selector"
-            @change="updatePageTitle"
-          >
-            <option value="en-US">English</option>
-            <option value="zh-TW">中文（繁體）</option>
-            <option value="zh-CN">中文（简体）</option>
-          </select>
 
           <!-- Cloud saved configurations (Supabase) -->
           <button
@@ -1031,6 +990,50 @@ initializeLayout();
             {{ cloudUser ? $t("cloud.myConfigs") : $t("cloud.signIn") }}
           </button>
 
+          <!-- Export config (copy / download) -->
+          <div class="relative">
+            <button
+              class="btn btn-export flex items-center"
+              @click="showExportMenu = !showExportMenu"
+            >
+              <export-icon :size="18" class="self-center mr-2" />
+              {{ $t("exportConfig") }}
+              <chevron-down-icon :size="18" class="self-center ml-1" />
+            </button>
+
+            <template v-if="showExportMenu">
+              <!-- click-away backdrop -->
+              <div
+                class="fixed inset-0 z-10"
+                @click="showExportMenu = false"
+              ></div>
+              <div
+                class="absolute right-0 mt-1 z-20 w-64 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 py-1 text-gray-800 dark:text-gray-100"
+              >
+                <button
+                  class="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-stone-700"
+                  @click="
+                    copyCombinedConfig();
+                    showExportMenu = false;
+                  "
+                >
+                  <content-copy-icon :size="18" class="mr-2" />
+                  {{ $t("copyCombinedJSONConfig") }}
+                </button>
+                <button
+                  class="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-stone-700"
+                  @click="
+                    exportCombinedConfig();
+                    showExportMenu = false;
+                  "
+                >
+                  <export-icon :size="18" class="mr-2" />
+                  {{ $t("exportCombinedJSONConfig") }}
+                </button>
+              </div>
+            </template>
+          </div>
+
           <!-- Tutorial (icon button, matching the dark-mode button) -->
           <button
             class="btn flex"
@@ -1039,6 +1042,41 @@ initializeLayout();
           >
             <book-open-variant-icon class="hover:text-stone-400" />
           </button>
+
+          <!-- Language selector (icon, grouped with the other icon buttons) -->
+          <div class="relative">
+            <button
+              class="btn flex items-center"
+              :title="currentLangLabel"
+              @click="showLangMenu = !showLangMenu"
+            >
+              <translate-icon :size="20" class="self-center" />
+              <chevron-down-icon :size="16" class="self-center" />
+            </button>
+
+            <template v-if="showLangMenu">
+              <div
+                class="fixed inset-0 z-10"
+                @click="showLangMenu = false"
+              ></div>
+              <div
+                class="absolute right-0 mt-1 z-20 w-44 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 py-1 text-gray-800 dark:text-gray-100"
+              >
+                <button
+                  v-for="lang in languages"
+                  :key="lang.value"
+                  class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-stone-700"
+                  :class="{
+                    'font-medium text-cyan-600 dark:text-cyan-400':
+                      lang.label === currentLangLabel,
+                  }"
+                  @click="setLocale(lang.value)"
+                >
+                  {{ lang.label }}
+                </button>
+              </div>
+            </template>
+          </div>
 
           <dark-mode-button />
         </div>
@@ -1069,45 +1107,11 @@ initializeLayout();
       <main-tutorial v-show="showTutorial" v-model="showTutorial" />
     </transition>
 
-    <div class="flex justify-center mt-4">
-      <div class="flex">
-        <button
-          name="copy"
-          class="btn btn-export grow flex"
-          @click="copyCombinedConfig"
-        >
-          <content-copy-icon :size="18" class="self-center mr-2" />
-          {{ $t("copyCombinedJSONConfig") }}
-        </button>
-        <button
-          name="export"
-          class="btn btn-export grow flex"
-          @click="exportCombinedConfig"
-        >
-          <export-icon :size="18" class="self-center mr-2" />
-          {{ $t("exportCombinedJSONConfig") }}
-        </button>
-      </div>
-    </div>
-    <SerialConnection
+    <DeviceConnection
       :configString="configToSerialData"
-      class="flex justify-center mt-4"
+      class="flex justify-center mt-8"
       @config-read="onSerialConfigRead"
     />
-
-    <Modal
-      v-model:isOpen="confirmOpen"
-      :title="$t('confirmTitle')"
-      :confirmText="$t('confirm')"
-      :cancelText="$t('cancel')"
-      @confirm="onConfirm"
-    >
-      <template #body>
-        <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">
-          {{ confirmMessage }}
-        </p>
-      </template>
-    </Modal>
 
     <!-- Cloud saved configurations (Supabase) -->
     <CloudConfigModal
@@ -1116,90 +1120,6 @@ initializeLayout();
       :suggestedName="cloudSuggestedName"
       @load="onCloudConfigLoad"
     />
-    <div class="flex justify-center mt-4">
-      <div class="flex">
-        <div>
-          <label for="device_url"> Device URL: </label>
-          <input
-            type="text"
-            name="device_url"
-            class="text-input"
-            v-model="keyboardUrl"
-            :placeholder="`Ex: http://schnell.local`"
-          />
-        </div>
-        <lan-connect-icon
-          v-if="isKeyboardConnected"
-          :size="24"
-          class="self-center mx-2 text-lime-500"
-        />
-        <lan-disconnect-icon
-          v-else
-          :size="24"
-          class="self-center mx-2 text-red-500 animate-pulse"
-        />
-        <div class="flex mr-2 text-stone-600 dark:text-stone-400">
-          <ip-network-icon
-            :size="24"
-            class="self-center mx-2"
-          ></ip-network-icon>
-          <span class="self-center">
-            {{ networkInfo.ip ? networkInfo.ip : "Unkown" }}
-          </span>
-
-          <wifi-strength4-icon
-            v-if="networkInfo.rssi > -55"
-            :size="24"
-            class="self-center mx-2"
-          ></wifi-strength4-icon>
-          <wifi-strength3-icon
-            v-else-if="networkInfo.rssi > -70"
-            :size="24"
-            class="self-center mx-2"
-          ></wifi-strength3-icon>
-          <wifi-strength2-icon
-            v-else-if="networkInfo.rssi > -80"
-            :size="24"
-            class="self-center mx-2"
-          ></wifi-strength2-icon>
-          <wifi-strength1-icon
-            v-else-if="networkInfo.rssi > -90"
-            :size="24"
-            class="self-center mx-2"
-          ></wifi-strength1-icon>
-          <wifi-strength-alert-outline-icon
-            v-else
-            :size="24"
-            class="self-center mx-2"
-          ></wifi-strength-alert-outline-icon>
-          <span class="self-center">RSSI {{ networkInfo.rssi }}</span>
-        </div>
-
-        <button class="btn flex" @click="initializeApp">
-          <refresh-icon class="text-stone-400 hover:text-lime-400" />
-        </button>
-
-        <button
-          name="read"
-          class="btn btn-export grow flex"
-          @click="confirmReadFromDevice"
-          :disabled="!isKeyboardConnected"
-        >
-          <tray-arrow-down-icon :size="24" class="self-center mr-2" />
-          {{ $t("readKeyConfigFromDevice") }}
-        </button>
-
-        <button
-          name="export"
-          class="btn btn-export grow flex"
-          @click="confirmUploadToDevice('keyconfig')"
-          :disabled="!isKeyboardConnected"
-        >
-          <cloud-upload-icon :size="24" class="self-center mr-2" />
-          {{ $t("uploadKeyConfigToDevice") }}
-        </button>
-      </div>
-    </div>
     <div class="grid grid-cols-12 gap-4 grow">
       <MacrosEditor
         v-model="macroIndex"
@@ -1285,7 +1205,7 @@ initializeLayout();
           </div>
         </div>
 
-        <div class="flex justify-center mt-2">
+        <div class="flex justify-center items-center gap-4 mt-2">
           <div>
             <label for="set_tt_layout">{{ $t("ttLayout") }}:</label>
             <select name="set_tt_layout" v-model="ttLayoutIndex" class="btn">
@@ -1408,16 +1328,70 @@ initializeLayout();
             >
               <check-icon :size="18" class="self-center" />
             </button>
-            <button
-              type="button"
-              :class="`btn btn-export flex ${
-                isSelectingMacro ? 'key-btn-active' : ''
-              }`"
-              @click="assignMacro"
-              @keydown.esc="resetKeyEditing"
-            >
-              <alpha-m-box-icon :size="18" class="self-center" />
-            </button>
+            <div class="relative flex">
+              <button
+                type="button"
+                class="btn btn-export flex items-center"
+                :title="$t('macro')"
+                @click="showMacroMenu = !showMacroMenu"
+              >
+                <alpha-m-box-icon :size="18" class="self-center" />
+                <chevron-down-icon :size="16" class="self-center" />
+              </button>
+
+              <template v-if="showMacroMenu">
+                <div
+                  class="fixed inset-0 z-10"
+                  @click="showMacroMenu = false"
+                ></div>
+                <div
+                  class="absolute right-0 top-full mt-1 z-20 w-64 max-h-72 overflow-auto rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 py-1 text-left text-gray-800 dark:text-gray-100"
+                >
+                  <button
+                    v-for="(m, i) in combinedConfig.macros"
+                    :key="i"
+                    type="button"
+                    class="w-full text-left px-4 py-3"
+                    :class="
+                      i === currentMacroIndex
+                        ? 'bg-cyan-600'
+                        : 'hover:bg-gray-100 dark:hover:bg-stone-700'
+                    "
+                    @click="
+                      assignMacroToKey(i);
+                      showMacroMenu = false;
+                    "
+                  >
+                    <div
+                      class="text-sm font-medium"
+                      :class="
+                        i === currentMacroIndex
+                          ? 'text-white'
+                          : 'text-gray-500 dark:text-gray-400'
+                      "
+                    >
+                      {{ (m as any).name || `${$t("macro")} ${i}` }}
+                    </div>
+                    <div
+                      class="text-xs truncate"
+                      :class="
+                        i === currentMacroIndex
+                          ? 'text-cyan-100'
+                          : 'text-amber-600 dark:text-amber-400'
+                      "
+                    >
+                      {{ macroPreview(m) || "—" }}
+                    </div>
+                  </button>
+                  <div
+                    v-if="combinedConfig.macros.length === 0"
+                    class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400"
+                  >
+                    {{ $t("addMacro") }}
+                  </div>
+                </div>
+              </template>
+            </div>
             <button
               type="button"
               class="btn btn-cancel flex"
@@ -1471,14 +1445,34 @@ initializeLayout();
     leave-from-class="opacity-100"
     leave-to-class="transform opacity-0"
   >
-    <FwbToast
+    <div
       v-show="showToast"
-      :type="toastType || 'empty'"
-      closable
-      class="fixed bottom-6 right-1/2 translate-x-1/2"
+      class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white text-sm font-medium"
+      :class="{
+        'bg-lime-600': toastType === 'success',
+        'bg-red-500': toastType === 'danger',
+        'bg-amber-500': toastType === 'warning',
+        'bg-stone-700': !toastType,
+      }"
     >
-      {{ toastMessage }}
-    </FwbToast>
+      <check-circle-icon
+        v-if="toastType === 'success'"
+        :size="20"
+        class="shrink-0"
+      />
+      <alert-circle-icon
+        v-else-if="toastType === 'danger'"
+        :size="20"
+        class="shrink-0"
+      />
+      <alert-icon
+        v-else-if="toastType === 'warning'"
+        :size="20"
+        class="shrink-0"
+      />
+      <information-icon v-else :size="20" class="shrink-0" />
+      <span>{{ toastMessage }}</span>
+    </div>
   </transition>
 </template>
 
