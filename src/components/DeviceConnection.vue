@@ -40,6 +40,10 @@ const serialOutput = ref("");
 const port = ref<any | null>(null);
 const baudRate = ref(115200);
 const isSerialConnected = ref(false);
+// Kept so disconnect can tear down the read pipeline before closing the port
+// (closing while the reader still holds the lock fails and wedges the port).
+let serialReader: any = null;
+let readableStreamClosed: Promise<any> | null = null;
 
 const showSerialMonitor = ref(false);
 const serialLog = ref<HTMLElement | null>(null);
@@ -68,10 +72,17 @@ const openSerialRequest = async () => {
 const disconnectSerial = async () => {
   showSerialMonitor.value = false;
   try {
+    // Cancel the reader and let the pipe settle so the port's readable is
+    // unlocked before we close it, otherwise close() throws and the port
+    // stays half-open (breaking the next connection).
+    await serialReader?.cancel();
+    await readableStreamClosed;
     await port.value?.close();
   } catch (error) {
     console.error("Error closing serial port:", error);
   }
+  serialReader = null;
+  readableStreamClosed = null;
   port.value = null;
   isSerialConnected.value = false;
 };
@@ -79,9 +90,12 @@ const disconnectSerial = async () => {
 const readSerialData = async () => {
   const textDecoder = new TextDecoderStream();
   if (port.value && (port.value as any).readable) {
-    port.value.readable.pipeTo(textDecoder.writable).catch(() => {});
+    readableStreamClosed = port.value.readable
+      .pipeTo(textDecoder.writable)
+      .catch(() => {});
   }
   const reader = textDecoder.readable.getReader();
+  serialReader = reader;
   try {
     while (true) {
       const { value, done } = await reader.read();
@@ -89,7 +103,7 @@ const readSerialData = async () => {
       serialOutput.value += value;
     }
   } catch (error) {
-    console.error("Error reading serial data:", error);
+    // The reader was cancelled during disconnect; nothing to handle.
   } finally {
     reader.releaseLock();
   }
