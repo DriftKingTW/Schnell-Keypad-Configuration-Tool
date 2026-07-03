@@ -44,6 +44,7 @@ import DeviceConnection from "./components/DeviceConnection.vue";
 import CloudConfigModal from "@/components/CloudConfigModal.vue";
 import AccountIcon from "icons/Account.vue";
 import ChevronDownIcon from "icons/ChevronDown.vue";
+import TranslateIcon from "icons/Translate.vue";
 import { useAuth } from "@/composables/useAuth";
 
 const store = useStore(key);
@@ -913,40 +914,6 @@ initializeLayout();
 
         <!-- Right: preferences + account -->
         <div class="flex items-center gap-2">
-          <!-- Language selector -->
-          <div class="relative">
-            <button
-              class="btn language-selector flex items-center"
-              @click="showLangMenu = !showLangMenu"
-            >
-              {{ currentLangLabel }}
-              <chevron-down-icon :size="18" class="self-center ml-1" />
-            </button>
-
-            <template v-if="showLangMenu">
-              <div
-                class="fixed inset-0 z-10"
-                @click="showLangMenu = false"
-              ></div>
-              <div
-                class="absolute left-0 mt-1 z-20 w-44 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 py-1 text-gray-800 dark:text-gray-100"
-              >
-                <button
-                  v-for="lang in languages"
-                  :key="lang.value"
-                  class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-stone-700"
-                  :class="{
-                    'font-medium text-cyan-600 dark:text-cyan-400':
-                      lang.label === currentLangLabel,
-                  }"
-                  @click="setLocale(lang.value)"
-                >
-                  {{ lang.label }}
-                </button>
-              </div>
-            </template>
-          </div>
-
           <!-- Cloud saved configurations (Supabase) -->
           <button
             v-if="isSupabaseEnabled"
@@ -1010,6 +977,41 @@ initializeLayout();
           >
             <book-open-variant-icon class="hover:text-stone-400" />
           </button>
+
+          <!-- Language selector (icon, grouped with the other icon buttons) -->
+          <div class="relative">
+            <button
+              class="btn flex items-center"
+              :title="currentLangLabel"
+              @click="showLangMenu = !showLangMenu"
+            >
+              <translate-icon :size="20" class="self-center" />
+              <chevron-down-icon :size="16" class="self-center" />
+            </button>
+
+            <template v-if="showLangMenu">
+              <div
+                class="fixed inset-0 z-10"
+                @click="showLangMenu = false"
+              ></div>
+              <div
+                class="absolute right-0 mt-1 z-20 w-44 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 py-1 text-gray-800 dark:text-gray-100"
+              >
+                <button
+                  v-for="lang in languages"
+                  :key="lang.value"
+                  class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-stone-700"
+                  :class="{
+                    'font-medium text-cyan-600 dark:text-cyan-400':
+                      lang.label === currentLangLabel,
+                  }"
+                  @click="setLocale(lang.value)"
+                >
+                  {{ lang.label }}
+                </button>
+              </div>
+            </template>
+          </div>
 
           <dark-mode-button />
         </div>
