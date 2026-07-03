@@ -49,6 +49,9 @@ import { useAuth } from "@/composables/useAuth";
 
 const store = useStore(key);
 
+// Public asset base path (handles the GitHub Pages sub-path).
+const baseUrl = import.meta.env.BASE_URL;
+
 // Set page title
 const i18n = useI18n();
 document.title = i18n.t("navTitle");
@@ -838,7 +841,7 @@ initializeLayout();
     <!-- Navbar -->
     <div
       id="nav"
-      class="bg-stone-600 w-full h-12 text-white dark:bg-stone-800"
+      class="bg-stone-600 w-full h-16 text-white dark:bg-stone-800"
       style="min-width: 600px"
     >
       <div
@@ -846,7 +849,14 @@ initializeLayout();
       >
         <!-- Left: app identity + firmware -->
         <div class="flex items-center gap-3">
-          <div class="text-xl whitespace-nowrap">{{ $t("navTitle") }}</div>
+          <div class="flex items-center gap-2 whitespace-nowrap">
+            <img
+              :src="`${baseUrl}schnell_32.webp`"
+              alt=""
+              class="h-9 w-auto"
+            />
+            <span class="text-xl">{{ $t("navTitle") }}</span>
+          </div>
 
           <!-- Firmware dropdown: version + old versions + install -->
           <div class="relative">
