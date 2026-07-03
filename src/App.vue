@@ -969,7 +969,7 @@ initializeLayout();
                 </label>
                 <select
                   v-model="firmwareVersion"
-                  class="w-full rounded-md border border-gray-300 dark:border-stone-600 bg-white dark:bg-stone-700 px-2 py-1 text-sm"
+                  class="w-full rounded-md border border-gray-300 dark:border-stone-600 bg-white dark:bg-stone-700 px-2 py-1 text-sm !m-0"
                 >
                   <option v-for="opt in firmwareVersions" :value="opt.value">
                     {{ opt.label }}
