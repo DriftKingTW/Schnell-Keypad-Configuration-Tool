@@ -54,6 +54,7 @@ import SerialConnection from "./components/SerialConnection.vue";
 import Modal from "@/components/Modal.vue";
 import CloudConfigModal from "@/components/CloudConfigModal.vue";
 import AccountIcon from "icons/Account.vue";
+import ChevronDownIcon from "icons/ChevronDown.vue";
 import { useAuth } from "@/composables/useAuth";
 
 const store = useStore(key);
@@ -805,6 +806,9 @@ const confirmUploadToDevice = (type: string) => {
   askConfirm(i18n.t("confirmUploadToDevice"), () => uploadConfigToDevice(type));
 };
 
+// Firmware controls (version + install) collapsed into a header dropdown.
+const showFirmwareMenu = ref(false);
+
 // Cloud (Supabase) saved configurations.
 const { user: cloudUser, isSupabaseEnabled } = useAuth();
 const showCloudModal = ref(false);
@@ -933,65 +937,113 @@ initializeLayout();
       class="bg-stone-600 w-full h-12 text-white dark:bg-stone-800"
       style="min-width: 600px"
     >
-      <div class="container mx-auto h-full flex items-center justify-center">
-        <div class="text-xl mx-4">{{ $t("navTitle") }}</div>
-        <select
-          v-model="$i18n.locale"
-          class="btn language-selector"
-          @change="updatePageTitle"
-        >
-          <option value="en-US">English</option>
-          <option value="zh-TW">中文（繁體）</option>
-          <option value="zh-CN">中文（简体）</option>
-        </select>
+      <div
+        class="container mx-auto h-full flex items-center justify-between px-4"
+      >
+        <!-- Left: app identity + firmware -->
+        <div class="flex items-center gap-3">
+          <div class="text-xl whitespace-nowrap">{{ $t("navTitle") }}</div>
 
-        <!-- Firmware version selector -->
-        <div class="flex items-center">
-          <select v-model="firmwareVersion" class="btn language-selector">
-            <option v-for="opt in firmwareVersions" :value="opt.value">
-              {{ $t("version") }} : {{ opt.label }}
-            </option>
-          </select>
+          <!-- Firmware dropdown: version + old versions + install -->
+          <div class="relative">
+            <button
+              class="btn btn-install flex items-center"
+              @click="showFirmwareMenu = !showFirmwareMenu"
+            >
+              <tray-arrow-down-icon :size="18" class="self-center mr-2" />
+              {{ $t("firmwareInstall") }}
+              <chevron-down-icon :size="18" class="self-center ml-1" />
+            </button>
+
+            <template v-if="showFirmwareMenu">
+              <!-- click-away backdrop -->
+              <div
+                class="fixed inset-0 z-10"
+                @click="showFirmwareMenu = false"
+              ></div>
+              <div
+                class="absolute left-0 mt-1 z-20 w-64 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 p-3 text-gray-800 dark:text-gray-100"
+              >
+                <label class="block text-sm font-medium mb-1">
+                  {{ $t("version") }}
+                </label>
+                <select
+                  v-model="firmwareVersion"
+                  class="w-full rounded-md border border-gray-300 dark:border-stone-600 bg-white dark:bg-stone-700 px-2 py-1 text-sm"
+                >
+                  <option v-for="opt in firmwareVersions" :value="opt.value">
+                    {{ opt.label }}
+                  </option>
+                </select>
+                <label
+                  class="flex items-center cursor-pointer select-none mt-2 text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    v-model="showOldVersions"
+                    class="mr-2"
+                  />
+                  {{ $t("showOldVersions") }}
+                </label>
+
+                <esp-web-install-button
+                  :manifest="manifestJSON"
+                  class="block mt-3"
+                >
+                  <button
+                    slot="activate"
+                    type="button"
+                    class="btn btn-install w-full flex justify-center"
+                  >
+                    <tray-arrow-down-icon :size="18" class="self-center mr-2" />
+                    {{ $t("firmwareInstall") }}
+                  </button>
+                  <span slot="unsupported">
+                    Ah snap, your browser doesn't have Web Serial support!
+                  </span>
+                  <span slot="not-allowed">
+                    Ah snap, you are not allowed to use this on HTTP!
+                  </span>
+                </esp-web-install-button>
+              </div>
+            </template>
+          </div>
         </div>
-        <label class="flex items-center cursor-pointer select-none ml-1 mr-1">
-          <input type="checkbox" v-model="showOldVersions" class="mr-1" />
-          {{ $t("showOldVersions") }}
-        </label>
 
-        <esp-web-install-button :manifest="manifestJSON">
-          <button slot="activate" type="button" class="btn btn-install flex">
-            <tray-arrow-down-icon :size="18" class="self-center mr-2" />
-            {{ $t("firmwareInstall") }}
+        <!-- Right: preferences + account -->
+        <div class="flex items-center gap-2">
+          <select
+            v-model="$i18n.locale"
+            class="btn language-selector"
+            @change="updatePageTitle"
+          >
+            <option value="en-US">English</option>
+            <option value="zh-TW">中文（繁體）</option>
+            <option value="zh-CN">中文（简体）</option>
+          </select>
+
+          <!-- Tutorial (icon-only) -->
+          <button
+            class="btn btn-export flex"
+            :title="$t('tutorial.buttonShow')"
+            @click="showTutorial = !showTutorial"
+          >
+            <book-open-variant-icon :size="18" class="self-center" />
           </button>
-          <span slot="unsupported">
-            Ah snap, your browser doesn't have Web Serial support!
-          </span>
-          <span slot="not-allowed">
-            Ah snap, you are not allowed to use this on HTTP!
-          </span>
-        </esp-web-install-button>
 
-        <!-- button to show tutorial -->
-        <button
-          class="btn btn-export flex"
-          @click="showTutorial = !showTutorial"
-        >
-          <book-open-variant-icon :size="18" class="self-center mr-2" />
-          {{ $t("tutorial.buttonShow") }}
-        </button>
+          <!-- Cloud saved configurations (Supabase) -->
+          <button
+            v-if="isSupabaseEnabled"
+            class="btn btn-export flex items-center"
+            :title="$t('cloud.title')"
+            @click="openCloudModal"
+          >
+            <account-icon :size="18" class="self-center mr-2" />
+            {{ cloudUser ? $t("cloud.myConfigs") : $t("cloud.signIn") }}
+          </button>
 
-        <!-- Cloud saved configurations (Supabase) -->
-        <button
-          v-if="isSupabaseEnabled"
-          class="btn btn-export flex"
-          :title="$t('cloud.title')"
-          @click="openCloudModal"
-        >
-          <account-icon :size="18" class="self-center mr-2" />
-          {{ cloudUser ? $t("cloud.myConfigs") : $t("cloud.signIn") }}
-        </button>
-
-        <dark-mode-button />
+          <dark-mode-button />
+        </div>
       </div>
     </div>
     <!-- File Upload Bar -->
