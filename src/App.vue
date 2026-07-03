@@ -10,7 +10,6 @@ import {
 } from "vue";
 import { useI18n } from "vue-i18n";
 import "esp-web-tools/dist/web/install-button";
-import axios from "axios";
 
 import "vue3-json-viewer/dist/index.css";
 import CheckIcon from "icons/Check.vue";
@@ -25,15 +24,6 @@ import HeartIcon from "icons/Heart.vue";
 import GithubIcon from "icons/Github.vue";
 import EmailIcon from "icons/Email.vue";
 import BookOpenVariantIcon from "icons/BookOpenVariant.vue";
-import LanConnectIcon from "icons/LanConnect.vue";
-import LanDisconnectIcon from "icons/LanDisconnect.vue";
-import WifiStrengthAlertOutlineIcon from "icons/WifiStrengthAlertOutline.vue";
-import WifiStrength1Icon from "icons/WifiStrength1.vue";
-import WifiStrength2Icon from "icons/WifiStrength2.vue";
-import WifiStrength3Icon from "icons/WifiStrength3.vue";
-import WifiStrength4Icon from "icons/WifiStrength4.vue";
-import IpNetworkIcon from "icons/IpNetwork.vue";
-import RefreshIcon from "icons/Refresh.vue";
 
 import MacrosEditor from "@/components/MacrosEditor.vue";
 import RotaryEncoderEditor from "@/components/RotaryEncoderEditor.vue";
@@ -50,8 +40,7 @@ import { useStore } from "vuex";
 import { key } from "./store";
 import { FwbToast } from "flowbite-vue";
 import ToggleCheckbox from "@/components/ToggleCheckbox.vue";
-import SerialConnection from "./components/SerialConnection.vue";
-import Modal from "@/components/Modal.vue";
+import DeviceConnection from "./components/DeviceConnection.vue";
 import CloudConfigModal from "@/components/CloudConfigModal.vue";
 import AccountIcon from "icons/Account.vue";
 import ChevronDownIcon from "icons/ChevronDown.vue";
@@ -64,17 +53,6 @@ const i18n = useI18n();
 document.title = i18n.t("navTitle");
 
 // Type declarations
-type NetworkInfo = {
-  apIP: string;
-  gatewayIP: string;
-  ip: string;
-  mac: string;
-  password: string;
-  rssi: number;
-  ssid: string;
-  subnetMask: string;
-};
-
 type Coordinate = {
   row: number;
   col: number;
@@ -181,18 +159,6 @@ type FirmwareIndex = {
   beta: { latest: string };
 };
 const firmwareIndex = ref<FirmwareIndex | null>(null);
-const keyboardUrl = ref("http://schnell.local");
-const isKeyboardConnected = ref(false);
-const networkInfo: NetworkInfo = reactive({
-  apIP: "",
-  gatewayIP: "",
-  ip: "",
-  mac: "",
-  password: "",
-  rssi: -100,
-  ssid: "",
-  subnetMask: "",
-});
 
 const macros: any = reactive([]);
 const macroComponentKey = ref(0);
@@ -317,34 +283,13 @@ watch(macroIndex, async () => {
 // Functions
 
 /**
- * Initialize the app
+ * Initialize the app (restore the saved language). Device/network status is
+ * handled by the DeviceConnection panel.
  */
-const initializeApp = async () => {
-  // Connect to the device
-  try {
-    const savedLocale = localStorage.getItem("locale");
-    i18n.locale.value =
-      savedLocale || navigator.language || navigator.languages[0];
-    isKeyboardConnected.value = false;
-    const response = await fetch(`${keyboardUrl.value}/api/network`);
-    const data = await response.json();
-
-    if (response.status === 200) {
-      isKeyboardConnected.value = true;
-    }
-
-    networkInfo.ip = data.wifi.ip;
-    networkInfo.ssid = data.wifi.ssid;
-    networkInfo.password = data.wifi.password;
-    networkInfo.mac = data.wifi.mac;
-    networkInfo.rssi = data.wifi.rssi;
-    networkInfo.gatewayIP = data.wifi.gatewayIP;
-    networkInfo.subnetMask = data.wifi.subnetMask;
-    networkInfo.apIP = data.wifi.apIp;
-  } catch (error) {
-    console.error("Failed to connect to the device");
-    console.log(error);
-  }
+const initializeApp = () => {
+  const savedLocale = localStorage.getItem("locale");
+  i18n.locale.value =
+    savedLocale || navigator.language || navigator.languages[0];
 };
 
 /**
@@ -653,25 +598,6 @@ const exportCombinedConfig = () => {
   document.body.removeChild(element);
 };
 
-const uploadConfigToDevice = async (type: string) => {
-  const url = `${keyboardUrl.value}/api/config?type=${type}`;
-  const data = combinedConfig;
-  try {
-    const response = await axios.put(url, data);
-    console.log(response.data);
-    store.commit("showToast", {
-      message: "Upload successful",
-      type: "success",
-    });
-  } catch (error: any) {
-    console.log(error);
-    store.commit("showToast", {
-      message: `Upload failed: ${error.message}`,
-      type: "danger",
-    });
-  }
-};
-
 /**
  * Update page title after changing the language
  *
@@ -743,28 +669,7 @@ const loadKeyConfigFile = (event: any) => {
 };
 
 /**
- * Read the configuration currently stored on the device over HTTP.
- */
-const readConfigFromDevice = async () => {
-  try {
-    const response = await axios.get(
-      `${keyboardUrl.value}/api/config?type=keyconfig`
-    );
-    applyKeyConfig(response.data.config);
-    store.commit("showToast", {
-      message: "Configuration read from device",
-      type: "success",
-    });
-  } catch (error: any) {
-    store.commit("showToast", {
-      message: `Read failed: ${error.message}`,
-      type: "danger",
-    });
-  }
-};
-
-/**
- * Apply a keyconfig.json string received from the device over serial.
+ * Apply a keyconfig.json string received from the device.
  */
 const onSerialConfigRead = (configJsonString: string) => {
   try {
@@ -779,31 +684,6 @@ const onSerialConfigRead = (configJsonString: string) => {
       type: "danger",
     });
   }
-};
-
-// Confirmation modal shared by the device read / upload actions.
-const confirmOpen = ref(false);
-const confirmMessage = ref("");
-let confirmAction: (() => void) | null = null;
-
-const askConfirm = (message: string, action: () => void) => {
-  confirmMessage.value = message;
-  confirmAction = action;
-  confirmOpen.value = true;
-};
-
-const onConfirm = () => {
-  const action = confirmAction;
-  confirmAction = null;
-  if (action) action();
-};
-
-const confirmReadFromDevice = () => {
-  askConfirm(i18n.t("confirmReadFromDevice"), readConfigFromDevice);
-};
-
-const confirmUploadToDevice = (type: string) => {
-  askConfirm(i18n.t("confirmUploadToDevice"), () => uploadConfigToDevice(type));
 };
 
 // Firmware controls (version + install) collapsed into a header dropdown.
@@ -1089,25 +969,11 @@ initializeLayout();
         </button>
       </div>
     </div>
-    <SerialConnection
+    <DeviceConnection
       :configString="configToSerialData"
       class="flex justify-center mt-4"
       @config-read="onSerialConfigRead"
     />
-
-    <Modal
-      v-model:isOpen="confirmOpen"
-      :title="$t('confirmTitle')"
-      :confirmText="$t('confirm')"
-      :cancelText="$t('cancel')"
-      @confirm="onConfirm"
-    >
-      <template #body>
-        <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">
-          {{ confirmMessage }}
-        </p>
-      </template>
-    </Modal>
 
     <!-- Cloud saved configurations (Supabase) -->
     <CloudConfigModal
@@ -1116,90 +982,6 @@ initializeLayout();
       :suggestedName="cloudSuggestedName"
       @load="onCloudConfigLoad"
     />
-    <div class="flex justify-center mt-4">
-      <div class="flex">
-        <div>
-          <label for="device_url"> Device URL: </label>
-          <input
-            type="text"
-            name="device_url"
-            class="text-input"
-            v-model="keyboardUrl"
-            :placeholder="`Ex: http://schnell.local`"
-          />
-        </div>
-        <lan-connect-icon
-          v-if="isKeyboardConnected"
-          :size="24"
-          class="self-center mx-2 text-lime-500"
-        />
-        <lan-disconnect-icon
-          v-else
-          :size="24"
-          class="self-center mx-2 text-red-500 animate-pulse"
-        />
-        <div class="flex mr-2 text-stone-600 dark:text-stone-400">
-          <ip-network-icon
-            :size="24"
-            class="self-center mx-2"
-          ></ip-network-icon>
-          <span class="self-center">
-            {{ networkInfo.ip ? networkInfo.ip : "Unkown" }}
-          </span>
-
-          <wifi-strength4-icon
-            v-if="networkInfo.rssi > -55"
-            :size="24"
-            class="self-center mx-2"
-          ></wifi-strength4-icon>
-          <wifi-strength3-icon
-            v-else-if="networkInfo.rssi > -70"
-            :size="24"
-            class="self-center mx-2"
-          ></wifi-strength3-icon>
-          <wifi-strength2-icon
-            v-else-if="networkInfo.rssi > -80"
-            :size="24"
-            class="self-center mx-2"
-          ></wifi-strength2-icon>
-          <wifi-strength1-icon
-            v-else-if="networkInfo.rssi > -90"
-            :size="24"
-            class="self-center mx-2"
-          ></wifi-strength1-icon>
-          <wifi-strength-alert-outline-icon
-            v-else
-            :size="24"
-            class="self-center mx-2"
-          ></wifi-strength-alert-outline-icon>
-          <span class="self-center">RSSI {{ networkInfo.rssi }}</span>
-        </div>
-
-        <button class="btn flex" @click="initializeApp">
-          <refresh-icon class="text-stone-400 hover:text-lime-400" />
-        </button>
-
-        <button
-          name="read"
-          class="btn btn-export grow flex"
-          @click="confirmReadFromDevice"
-          :disabled="!isKeyboardConnected"
-        >
-          <tray-arrow-down-icon :size="24" class="self-center mr-2" />
-          {{ $t("readKeyConfigFromDevice") }}
-        </button>
-
-        <button
-          name="export"
-          class="btn btn-export grow flex"
-          @click="confirmUploadToDevice('keyconfig')"
-          :disabled="!isKeyboardConnected"
-        >
-          <cloud-upload-icon :size="24" class="self-center mr-2" />
-          {{ $t("uploadKeyConfigToDevice") }}
-        </button>
-      </div>
-    </div>
     <div class="grid grid-cols-12 gap-4 grow">
       <MacrosEditor
         v-model="macroIndex"
