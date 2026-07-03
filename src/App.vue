@@ -988,7 +988,8 @@ initializeLayout();
 
                 <esp-web-install-button
                   :manifest="manifestJSON"
-                  class="block mt-3"
+                  class="mt-3"
+                  style="display: block; width: 100%"
                 >
                   <button
                     slot="activate"
