@@ -1069,11 +1069,6 @@ initializeLayout();
       <main-tutorial v-show="showTutorial" v-model="showTutorial" />
     </transition>
 
-    <!-- Hint -->
-    <p class="text-neutral-600 dark:text-neutral-400 mt-4 text-center">
-      <span class="label">{{ $t("hint") }}</span>
-      {{ $t("hintUpload") }}
-    </p>
     <div class="flex justify-center mt-4">
       <div class="flex">
         <button
