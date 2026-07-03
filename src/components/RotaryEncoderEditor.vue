@@ -508,9 +508,9 @@ initializeLayout();
   // Knob figure (white keycap-style circle with a dot indicator), matching
   // the outlined keycaps.
   @apply w-20 h-20 m-1 cursor-pointer rounded-full bg-white border border-stone-300 shadow-sm
-  dark:bg-neutral-700 dark:border-transparent;
+  dark:bg-neutral-700 dark:border-neutral-600;
   &:hover {
-    @apply bg-stone-100 border-stone-400 dark:bg-neutral-600;
+    @apply bg-stone-100 border-stone-400 dark:bg-neutral-600 dark:border-neutral-500;
   }
   &:before {
     content: " ";

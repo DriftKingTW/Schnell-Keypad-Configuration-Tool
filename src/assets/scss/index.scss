@@ -122,17 +122,17 @@ select:focus {
 
 .key-btn {
     @apply rounded bg-white border border-stone-300 hover:bg-stone-100 hover:border-stone-400 text-neutral-700 shadow-sm w-16 h-16 m-1 cursor-pointer
-    dark:bg-neutral-700 dark:border-transparent dark:text-neutral-400 dark:hover:bg-neutral-600;
+    dark:bg-neutral-700 dark:border-neutral-600 dark:text-neutral-400 dark:hover:bg-neutral-600 dark:hover:border-neutral-500;
 }
 
 .key-btn-active {
     @apply bg-amber-300 border-amber-400 hover:bg-amber-400 hover:border-amber-500 text-neutral-800
-    dark:bg-amber-400 dark:border-transparent dark:hover:bg-amber-500 dark:text-neutral-900;
+    dark:bg-amber-400 dark:border-amber-500 dark:hover:bg-amber-500 dark:hover:border-amber-600 dark:text-neutral-900;
 }
 
 .key-btn-dummy {
     @apply bg-stone-50 border-stone-200 text-neutral-400
-    dark:bg-neutral-800 dark:border-transparent dark:text-neutral-600;
+    dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-600;
 }
 
 .key-1u {
@@ -170,7 +170,7 @@ select:focus {
         z-index: -1;
         background: inherit;
         color: inherit;
-        @apply rounded w-16 h-32 border border-stone-300 shadow-sm dark:border-transparent;
+        @apply rounded w-16 h-32 border border-stone-300 shadow-sm dark:border-neutral-600;
         // Top edge comes from the main box; the extension supplies the sides
         // and bottom, so no seam appears where the two meet.
         border-top-color: transparent;
