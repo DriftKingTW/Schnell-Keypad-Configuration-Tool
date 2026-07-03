@@ -38,13 +38,16 @@ import {
 } from "./utils/specialKeyHandler";
 import { useStore } from "vuex";
 import { key } from "./store";
-import { FwbToast } from "flowbite-vue";
 import ToggleCheckbox from "@/components/ToggleCheckbox.vue";
 import DeviceConnection from "./components/DeviceConnection.vue";
 import CloudConfigModal from "@/components/CloudConfigModal.vue";
 import AccountIcon from "icons/Account.vue";
 import ChevronDownIcon from "icons/ChevronDown.vue";
 import TranslateIcon from "icons/Translate.vue";
+import CheckCircleIcon from "icons/CheckCircle.vue";
+import AlertCircleIcon from "icons/AlertCircle.vue";
+import AlertIcon from "icons/Alert.vue";
+import InformationIcon from "icons/Information.vue";
 import { useAuth } from "@/composables/useAuth";
 
 const store = useStore(key);
@@ -1442,14 +1445,34 @@ initializeLayout();
     leave-from-class="opacity-100"
     leave-to-class="transform opacity-0"
   >
-    <FwbToast
+    <div
       v-show="showToast"
-      :type="toastType || 'empty'"
-      closable
-      class="fixed bottom-6 right-1/2 translate-x-1/2"
+      class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white text-sm font-medium"
+      :class="{
+        'bg-lime-600': toastType === 'success',
+        'bg-red-500': toastType === 'danger',
+        'bg-amber-500': toastType === 'warning',
+        'bg-stone-700': !toastType,
+      }"
     >
-      {{ toastMessage }}
-    </FwbToast>
+      <check-circle-icon
+        v-if="toastType === 'success'"
+        :size="20"
+        class="shrink-0"
+      />
+      <alert-circle-icon
+        v-else-if="toastType === 'danger'"
+        :size="20"
+        class="shrink-0"
+      />
+      <alert-icon
+        v-else-if="toastType === 'warning'"
+        :size="20"
+        class="shrink-0"
+      />
+      <information-icon v-else :size="20" class="shrink-0" />
+      <span>{{ toastMessage }}</span>
+    </div>
   </transition>
 </template>
 
