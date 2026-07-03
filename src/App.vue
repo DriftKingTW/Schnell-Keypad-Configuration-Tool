@@ -728,9 +728,15 @@ const macroPreview = (m: any) => {
   if (!m) return "";
   if (m.type === 0) {
     return (m.keyStrokes || [])
-      .map((k: number) =>
-        checkSpecialKey(k) === "" ? asciiToEventCode(k) : checkSpecialKey(k)
-      )
+      .map((k: number) => {
+        const special = checkSpecialKey(k);
+        if (special !== "") return special;
+        const evt = asciiToEventCode(k);
+        if (evt !== "") return evt;
+        // Printable characters (e.g. punctuation like ";") that the lookups
+        // above don't cover — fall back to the character itself.
+        return String.fromCharCode(k);
+      })
       .join(" + ");
   }
   return m.stringContent || "";
