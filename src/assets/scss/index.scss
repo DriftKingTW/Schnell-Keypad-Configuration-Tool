@@ -161,19 +161,27 @@ select:focus {
 
 .key-h-2u {
     transform: translateY(-4.5rem);
-    // Drop the seam where the top box meets the :before extension.
+    // The top box and the :before extension form one tall key. Drop the
+    // border and rounding where they meet so the two halves join seamlessly.
     border-bottom-color: transparent;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
     &:before {
         content: " ";
         position: absolute;
-        transform: translateY(0.5rem);
+        // Centre horizontally so the extension lines up with the top box's
+        // border box (absolute children otherwise sit inside the 1px border).
+        left: 50%;
+        transform: translate(-50%, 0.5rem);
         z-index: -1;
         background: inherit;
         color: inherit;
         @apply rounded w-16 h-32 border border-stone-300 shadow-sm dark:border-neutral-600;
-        // Top edge comes from the main box; the extension supplies the sides
-        // and bottom, so no seam appears where the two meet.
+        // Top edge/corners come from the main box; the extension supplies the
+        // sides and bottom, so no seam appears where the two meet.
         border-top-color: transparent;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
     }
     &:hover:before {
         background: inherit;
