@@ -16,7 +16,7 @@ const value: any = computed({
 
 <template>
   <div class="flex items-center">
-    <label class="flex items-center cursor-pointer">
+    <label class="flex items-center cursor-pointer !mx-0">
       <div class="relative">
         <input type="checkbox" class="sr-only" v-model="value" />
         <div
