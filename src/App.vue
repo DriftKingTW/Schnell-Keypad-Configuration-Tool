@@ -713,6 +713,22 @@ const onSerialConfigRead = (configJsonString: string) => {
 const showFirmwareMenu = ref(false);
 // Copy / download config actions collapsed into an "Export" dropdown.
 const showExportMenu = ref(false);
+// Macro picker dropdown in the floating key editor.
+const showMacroMenu = ref(false);
+
+// One-line preview of a macro's content for the picker: the key combo for
+// keystroke macros, or the string for text macros.
+const macroPreview = (m: any) => {
+  if (!m) return "";
+  if (m.type === 0) {
+    return (m.keyStrokes || [])
+      .map((k: number) =>
+        checkSpecialKey(k) === "" ? asciiToEventCode(k) : checkSpecialKey(k)
+      )
+      .join(" + ");
+  }
+  return m.stringContent || "";
+};
 
 // Language selector as a dropdown.
 const languages = [
@@ -1287,25 +1303,53 @@ initializeLayout();
             >
               <check-icon :size="18" class="self-center" />
             </button>
-            <select
-              class="btn btn-export cursor-pointer !text-white !border-0 !m-1 self-stretch"
-              :value="-1"
-              :title="$t('macro')"
-              @change="
-                assignMacroToKey(
-                  Number(($event.target as HTMLSelectElement).value)
-                )
-              "
-            >
-              <option :value="-1" disabled>{{ $t("macro") }}</option>
-              <option
-                v-for="(m, i) in combinedConfig.macros"
-                :key="i"
-                :value="i"
+            <div class="relative flex">
+              <button
+                type="button"
+                class="btn btn-export flex items-center"
+                :title="$t('macro')"
+                @click="showMacroMenu = !showMacroMenu"
               >
-                {{ (m as any).name || `${$t("macro")} ${i}` }}
-              </option>
-            </select>
+                <alpha-m-box-icon :size="18" class="self-center" />
+                <chevron-down-icon :size="16" class="self-center" />
+              </button>
+
+              <template v-if="showMacroMenu">
+                <div
+                  class="fixed inset-0 z-10"
+                  @click="showMacroMenu = false"
+                ></div>
+                <div
+                  class="absolute right-0 top-full mt-1 z-20 w-64 max-h-72 overflow-auto rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 py-1 text-left text-gray-800 dark:text-gray-100"
+                >
+                  <button
+                    v-for="(m, i) in combinedConfig.macros"
+                    :key="i"
+                    type="button"
+                    class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-stone-700"
+                    @click="
+                      assignMacroToKey(i);
+                      showMacroMenu = false;
+                    "
+                  >
+                    <div class="text-sm font-medium">
+                      {{ (m as any).name || `${$t("macro")} ${i}` }}
+                    </div>
+                    <div
+                      class="text-xs text-gray-500 dark:text-gray-400 truncate"
+                    >
+                      {{ macroPreview(m) || "—" }}
+                    </div>
+                  </button>
+                  <div
+                    v-if="combinedConfig.macros.length === 0"
+                    class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400"
+                  >
+                    {{ $t("addMacro") }}
+                  </div>
+                </div>
+              </template>
+            </div>
             <button
               type="button"
               class="btn btn-cancel flex"
