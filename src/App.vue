@@ -49,6 +49,9 @@ import { useAuth } from "@/composables/useAuth";
 
 const store = useStore(key);
 
+// Public asset base path (handles the GitHub Pages sub-path).
+const baseUrl = import.meta.env.BASE_URL;
+
 // Set page title
 const i18n = useI18n();
 document.title = i18n.t("navTitle");
@@ -894,8 +897,13 @@ initializeLayout();
       <div
         class="container mx-auto h-full flex items-center justify-between px-4"
       >
-        <!-- Left: app identity + firmware -->
-        <div class="flex items-center gap-3">
+        <!-- Left: app identity -->
+        <div class="flex items-center gap-2">
+          <img
+            :src="`${baseUrl}logo_dark.svg`"
+            alt=""
+            class="h-8 w-auto"
+          />
           <span class="text-2xl tracking-wide brand-font whitespace-nowrap">
             Schnell 32
           </span>
@@ -1096,7 +1104,7 @@ initializeLayout();
 
     <DeviceConnection
       :configString="configToSerialData"
-      class="flex justify-center mt-4"
+      class="flex justify-center mt-8"
       @config-read="onSerialConfigRead"
     />
 

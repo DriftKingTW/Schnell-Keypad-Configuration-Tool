@@ -48,7 +48,9 @@ select:focus {
 }
 
 .floating-editor {
-    @apply fixed flex justify-center backdrop-opacity-10 bg-black/60 rounded-lg;
+    // Above the rotary editor modal (z-50) and the knob's indicator dot so the
+    // key editor is never covered.
+    @apply fixed z-[60] flex justify-center backdrop-opacity-10 bg-black/60 rounded-lg;
 }
 
 .label {
