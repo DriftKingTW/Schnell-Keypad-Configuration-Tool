@@ -1494,17 +1494,17 @@ initializeLayout();
 }
 
 .key-btn {
-  @apply rounded bg-neutral-100 hover:bg-neutral-300 text-neutral-600 shadow-md w-16 h-16 m-1 cursor-pointer 
+  @apply rounded bg-stone-200 hover:bg-stone-300 text-neutral-700 shadow-md w-16 h-16 m-1 cursor-pointer
   dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600;
 }
 
 .key-btn-active {
-  @apply bg-amber-300 hover:bg-amber-400
+  @apply bg-amber-300 hover:bg-amber-400 text-neutral-800
   dark:bg-amber-400 dark:hover:bg-amber-500 dark:text-neutral-900;
 }
 
 .key-btn-dummy {
-  @apply bg-neutral-100 text-neutral-300
+  @apply bg-stone-100 text-neutral-400
   dark:bg-neutral-800 dark:text-neutral-600;
 }
 
