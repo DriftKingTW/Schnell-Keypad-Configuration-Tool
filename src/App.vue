@@ -715,6 +715,12 @@ const showFirmwareMenu = ref(false);
 const showExportMenu = ref(false);
 // Macro picker dropdown in the floating key editor.
 const showMacroMenu = ref(false);
+// Index of the macro currently assigned to the key being edited (-1 if none),
+// so the picker can highlight it.
+const currentMacroIndex = computed(() => {
+  const t = editInfoText.value || "";
+  return t.startsWith("MACRO_") ? Number(t.slice(6)) : -1;
+});
 
 // One-line preview of a macro's content for the picker: the key combo for
 // keystroke macros, or the string for text macros.
@@ -1326,17 +1332,34 @@ initializeLayout();
                     v-for="(m, i) in combinedConfig.macros"
                     :key="i"
                     type="button"
-                    class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-stone-700"
+                    class="w-full text-left px-4 py-3"
+                    :class="
+                      i === currentMacroIndex
+                        ? 'bg-cyan-600'
+                        : 'hover:bg-gray-100 dark:hover:bg-stone-700'
+                    "
                     @click="
                       assignMacroToKey(i);
                       showMacroMenu = false;
                     "
                   >
-                    <div class="text-sm font-medium">
+                    <div
+                      class="text-sm font-medium"
+                      :class="
+                        i === currentMacroIndex
+                          ? 'text-white'
+                          : 'text-gray-500 dark:text-gray-400'
+                      "
+                    >
                       {{ (m as any).name || `${$t("macro")} ${i}` }}
                     </div>
                     <div
-                      class="text-xs text-gray-500 dark:text-gray-400 truncate"
+                      class="text-xs truncate"
+                      :class="
+                        i === currentMacroIndex
+                          ? 'text-cyan-100'
+                          : 'text-amber-600 dark:text-amber-400'
+                      "
                     >
                       {{ macroPreview(m) || "—" }}
                     </div>
