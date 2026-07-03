@@ -76,6 +76,11 @@ select:focus {
     @apply bg-stone-700 text-white border-none;
 }
 
+// Brand title font.
+.brand-font {
+    font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
 .text-input {
     @apply rounded border-solid border-2 border-stone-300 py-1 px-2 ml-1 m-1
     focus:border-lime-600 dark:bg-stone-800 dark:border-black dark:text-neutral-400;

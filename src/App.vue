@@ -855,7 +855,9 @@ initializeLayout();
               alt=""
               class="h-9 w-auto"
             />
-            <span class="text-xl">{{ $t("navTitle") }}</span>
+            <span class="text-xl font-semibold tracking-wide brand-font">{{
+              $t("navTitle")
+            }}</span>
           </div>
 
           <!-- Firmware dropdown: version + old versions + install -->
