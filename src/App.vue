@@ -993,7 +993,7 @@ initializeLayout();
                   <button
                     slot="activate"
                     type="button"
-                    class="btn btn-install w-full flex justify-center"
+                    class="btn btn-install w-full flex justify-center !m-0"
                   >
                     <tray-arrow-down-icon :size="18" class="self-center mr-2" />
                     {{ $t("firmwareInstall") }}
@@ -1022,15 +1022,6 @@ initializeLayout();
             <option value="zh-CN">中文（简体）</option>
           </select>
 
-          <!-- Tutorial (icon-only) -->
-          <button
-            class="btn btn-export flex"
-            :title="$t('tutorial.buttonShow')"
-            @click="showTutorial = !showTutorial"
-          >
-            <book-open-variant-icon :size="18" class="self-center" />
-          </button>
-
           <!-- Cloud saved configurations (Supabase) -->
           <button
             v-if="isSupabaseEnabled"
@@ -1040,6 +1031,15 @@ initializeLayout();
           >
             <account-icon :size="18" class="self-center mr-2" />
             {{ cloudUser ? $t("cloud.myConfigs") : $t("cloud.signIn") }}
+          </button>
+
+          <!-- Tutorial (icon button, matching the dark-mode button) -->
+          <button
+            class="btn flex"
+            :title="$t('tutorial.buttonShow')"
+            @click="showTutorial = !showTutorial"
+          >
+            <book-open-variant-icon class="hover:text-stone-400" />
           </button>
 
           <dark-mode-button />
