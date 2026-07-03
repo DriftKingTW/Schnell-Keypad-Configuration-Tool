@@ -505,7 +505,7 @@ initializeLayout();
 // Rotary-encoder specific styles. The shared keycap classes (.key-btn,
 // .key-w-1-5u, etc.) live in assets/scss/index.scss.
 .key-knob {
-  @apply text-stone-200 hover:text-stone-300 drop-shadow-md dark:text-neutral-700 dark:hover:text-neutral-600 cursor-pointer;
+  @apply text-stone-300 hover:text-stone-400 drop-shadow-md dark:text-neutral-700 dark:hover:text-neutral-600 cursor-pointer;
 }
 
 .knob {
