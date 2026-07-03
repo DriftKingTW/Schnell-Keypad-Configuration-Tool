@@ -455,7 +455,7 @@ initializeLayout();
           type="button"
           class="btn btn-export"
         >
-          Finish
+          {{ $t("finish") }}
         </button>
       </div>
     </div>

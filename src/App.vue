@@ -1192,7 +1192,7 @@ initializeLayout();
           </div>
         </div>
 
-        <div class="flex justify-center mt-2">
+        <div class="flex justify-center items-center gap-4 mt-2">
           <div>
             <label for="set_tt_layout">{{ $t("ttLayout") }}:</label>
             <select name="set_tt_layout" v-model="ttLayoutIndex" class="btn">

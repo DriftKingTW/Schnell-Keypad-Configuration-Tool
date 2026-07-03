@@ -391,7 +391,7 @@ onMounted(() => checkNetwork(true));
     >
       <button
         type="button"
-        class="flex items-center px-3 py-1.5"
+        class="flex items-center justify-center min-w-[7rem] px-6 py-1.5"
         :class="
           transport === 'usb'
             ? 'bg-cyan-600 text-white'
@@ -404,7 +404,7 @@ onMounted(() => checkNetwork(true));
       </button>
       <button
         type="button"
-        class="flex items-center px-3 py-1.5"
+        class="flex items-center justify-center min-w-[7rem] px-6 py-1.5"
         :class="
           transport === 'network'
             ? 'bg-cyan-600 text-white'
