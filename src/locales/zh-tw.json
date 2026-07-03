@@ -41,6 +41,8 @@
   "baudRate": "傳輸速率",
   "openSerialConnection": "開啟序列通訊 (USB)",
   "toggleSerialMonitor": "切換序列通訊監控顯示",
+  "serialMonitor": "序列監控",
+  "clearLog": "清除",
   "readKeyConfigFromDevice": "從裝置讀取設定檔",
   "confirm": "確認",
   "cancel": "取消",

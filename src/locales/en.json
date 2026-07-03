@@ -41,6 +41,8 @@
   "baudRate": "Baud Rate",
   "openSerialConnection": "Open Serial Connection",
   "toggleSerialMonitor": "Toggle Serial Monitor",
+  "serialMonitor": "Serial Monitor",
+  "clearLog": "Clear",
   "readKeyConfigFromDevice": "Read Configuration from Device",
   "confirm": "Confirm",
   "cancel": "Cancel",

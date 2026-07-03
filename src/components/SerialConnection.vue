@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import UsbIcon from "icons/Usb.vue";
 import MathLogIcon from "icons/MathLog.vue";
 import ConnectionIcon from "icons/Connection.vue";
 import TrayArrowDownIcon from "icons/TrayArrowDown.vue";
 import WifiSettingsIcon from "icons/WifiSettings.vue";
+import CloseIcon from "icons/Close.vue";
 import Modal from "@/components/Modal.vue";
 
 const { t } = useI18n();
@@ -14,6 +15,17 @@ const serialOutput = ref("");
 const port = ref<any | null>(null);
 const baudRate = ref(115200);
 const showSerialMonitor = ref(false);
+// Terminal log element, kept scrolled to the newest line as output arrives.
+const serialLog = ref<HTMLElement | null>(null);
+watch(serialOutput, () => {
+  nextTick(() => {
+    const el = serialLog.value;
+    if (el) el.scrollTop = el.scrollHeight;
+  });
+});
+const clearSerialOutput = () => {
+  serialOutput.value = "";
+};
 const isConnected = ref(false); // New variable to check if serial device is connected
 const props = defineProps(["configString"]);
 const emit = defineEmits(["config-read"]);
@@ -320,13 +332,43 @@ const updateWifiViaSerial = async () => {
       </button>
     </div>
 
-    <div
-      v-show="showSerialMonitor"
-      class="overflow-auto bg-stone-900 border-lime-500 text-lime-500 mt-4 whitespace-pre-wrap p-4"
-      style="height: 200px; width: 60rem; border-radius: 10px"
-    >
-      {{ serialOutput }}
-    </div>
+    <!-- Serial monitor: console docked to the bottom of the viewport -->
+    <Teleport to="body">
+      <div
+        v-show="showSerialMonitor"
+        class="fixed bottom-0 inset-x-0 z-40 flex flex-col shadow-[0_-4px_12px_rgba(0,0,0,0.25)]"
+      >
+        <div
+          class="flex items-center justify-between px-4 py-2 bg-stone-800 text-stone-200 border-t border-stone-700"
+        >
+          <span class="text-sm font-medium flex items-center">
+            <math-log-icon :size="18" class="mr-2" />
+            {{ $t("serialMonitor") }}
+          </span>
+          <div class="flex items-center gap-3">
+            <button
+              class="text-xs text-stone-300 hover:text-white"
+              @click="clearSerialOutput"
+            >
+              {{ $t("clearLog") }}
+            </button>
+            <button
+              class="text-stone-300 hover:text-white"
+              :title="$t('cancel')"
+              @click="showSerialMonitor = false"
+            >
+              <close-icon :size="18" />
+            </button>
+          </div>
+        </div>
+        <div
+          ref="serialLog"
+          class="overflow-auto bg-stone-900 text-lime-500 whitespace-pre-wrap p-4 font-mono text-sm h-56"
+        >
+          {{ serialOutput }}
+        </div>
+      </div>
+    </Teleport>
 
     <Modal
       v-model:isOpen="confirmOpen"
