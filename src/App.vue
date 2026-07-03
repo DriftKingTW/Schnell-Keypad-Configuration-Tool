@@ -691,6 +691,27 @@ const showFirmwareMenu = ref(false);
 // Copy / download config actions collapsed into an "Export" dropdown.
 const showExportMenu = ref(false);
 
+// Language selector as a dropdown.
+const languages = [
+  { value: "en-US", label: "English" },
+  { value: "zh-TW", label: "中文（繁體）" },
+  { value: "zh-CN", label: "中文（简体）" },
+];
+const showLangMenu = ref(false);
+const currentLangLabel = computed(() => {
+  const loc = i18n.locale.value;
+  const exact = languages.find((l) => l.value === loc);
+  if (exact) return exact.label;
+  if (loc.startsWith("zh-TW")) return "中文（繁體）";
+  if (loc.startsWith("zh-CN")) return "中文（简体）";
+  return "English";
+});
+const setLocale = (value: string) => {
+  i18n.locale.value = value;
+  showLangMenu.value = false;
+  updatePageTitle();
+};
+
 // Cloud (Supabase) saved configurations.
 const { user: cloudUser, isSupabaseEnabled } = useAuth();
 const showCloudModal = ref(false);
@@ -892,15 +913,39 @@ initializeLayout();
 
         <!-- Right: preferences + account -->
         <div class="flex items-center gap-2">
-          <select
-            v-model="$i18n.locale"
-            class="btn language-selector"
-            @change="updatePageTitle"
-          >
-            <option value="en-US">English</option>
-            <option value="zh-TW">中文（繁體）</option>
-            <option value="zh-CN">中文（简体）</option>
-          </select>
+          <!-- Language selector -->
+          <div class="relative">
+            <button
+              class="btn language-selector flex items-center"
+              @click="showLangMenu = !showLangMenu"
+            >
+              {{ currentLangLabel }}
+              <chevron-down-icon :size="18" class="self-center ml-1" />
+            </button>
+
+            <template v-if="showLangMenu">
+              <div
+                class="fixed inset-0 z-10"
+                @click="showLangMenu = false"
+              ></div>
+              <div
+                class="absolute left-0 mt-1 z-20 w-44 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 py-1 text-gray-800 dark:text-gray-100"
+              >
+                <button
+                  v-for="lang in languages"
+                  :key="lang.value"
+                  class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-stone-700"
+                  :class="{
+                    'font-medium text-cyan-600 dark:text-cyan-400':
+                      lang.label === currentLangLabel,
+                  }"
+                  @click="setLocale(lang.value)"
+                >
+                  {{ lang.label }}
+                </button>
+              </div>
+            </template>
+          </div>
 
           <!-- Cloud saved configurations (Supabase) -->
           <button
