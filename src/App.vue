@@ -1425,7 +1425,7 @@ initializeLayout();
             </button>
             <button
               type="button"
-              class="btn btn-reset flex"
+              class="btn btn-cancel flex"
               @click="resetKeyEditing"
             >
               <close-icon :size="18" class="self-center" />

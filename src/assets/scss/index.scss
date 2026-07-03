@@ -107,3 +107,8 @@ select:focus {
     @apply bg-stone-200 text-stone-400 hover:bg-stone-300 active:bg-stone-400  text-stone-600
     dark:bg-stone-700 dark:hover:bg-stone-800 dark:active:bg-stone-900 dark:text-stone-400;
 }
+
+.btn-cancel {
+    @apply bg-red-500 text-white hover:bg-red-600 active:bg-red-700
+    dark:bg-red-600 dark:hover:bg-red-700 dark:active:bg-red-800;
+}
