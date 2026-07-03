@@ -962,7 +962,7 @@ initializeLayout();
                 @click="showFirmwareMenu = false"
               ></div>
               <div
-                class="absolute left-0 mt-1 z-20 w-64 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 p-3 text-gray-800 dark:text-gray-100"
+                class="absolute left-0 mt-1 z-20 w-80 rounded-md bg-white dark:bg-stone-800 shadow-lg ring-1 ring-black ring-opacity-5 p-3 text-gray-800 dark:text-gray-100"
               >
                 <label class="block text-sm font-medium mb-1">
                   {{ $t("version") }}
