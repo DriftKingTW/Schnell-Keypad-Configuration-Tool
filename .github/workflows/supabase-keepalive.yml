@@ -1,0 +1,24 @@
+# Supabase free-tier projects are paused after 7 days without database
+# activity. This scheduled ping keeps the project alive by issuing a
+# lightweight PostgREST query every 3 days.
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    - cron: "0 3 */3 * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        run: |
+          curl -sf "$SUPABASE_URL/rest/v1/keypad_configs?select=id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            > /dev/null
+          echo "Supabase pinged successfully"
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
