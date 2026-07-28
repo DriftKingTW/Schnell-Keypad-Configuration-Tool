@@ -1,11 +1,12 @@
 # Supabase free-tier projects are paused after 7 days without database
 # activity. This scheduled ping keeps the project alive by issuing a
-# lightweight PostgREST query every 3 days.
+# lightweight PostgREST query once a day, so a few skipped runs (GitHub
+# drops scheduled jobs under high load) still stay well inside the window.
 name: Supabase Keep-Alive
 
 on:
   schedule:
-    - cron: "0 3 */3 * *"
+    - cron: "0 3 * * *"
   workflow_dispatch:
 
 jobs:
