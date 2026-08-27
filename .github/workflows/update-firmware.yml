@@ -131,3 +131,6 @@ jobs:
       pages: write
       id-token: write
     uses: ./.github/workflows/deploy.yml
+    # Called workflows get no secrets by default, so without this the build
+    # runs with empty VITE_SUPABASE_* and ships a site with cloud login off.
+    secrets: inherit

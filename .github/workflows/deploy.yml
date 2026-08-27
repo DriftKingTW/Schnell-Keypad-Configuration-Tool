@@ -46,6 +46,15 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm install
+      - name: Verify Supabase secrets are present
+        # A called workflow without `secrets: inherit` sees these as empty and
+        # would silently deploy a build with cloud login disabled.
+        run: |
+          test -n "$VITE_SUPABASE_URL" || { echo "VITE_SUPABASE_URL is empty"; exit 1; }
+          test -n "$VITE_SUPABASE_ANON_KEY" || { echo "VITE_SUPABASE_ANON_KEY is empty"; exit 1; }
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
       - name: Build
         run: npm run build
         env:
