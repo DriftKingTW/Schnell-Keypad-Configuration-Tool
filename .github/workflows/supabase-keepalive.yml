@@ -1,25 +1,76 @@
-# Supabase free-tier projects are paused after 7 days without database
-# activity. This scheduled ping keeps the project alive by issuing a
-# lightweight PostgREST query once a day, so a few skipped runs (GitHub
-# drops scheduled jobs under high load) still stay well inside the window.
+# Supabase pauses free-tier projects that go ~7 days without enough database
+# activity. The exact threshold is undocumented; the docs only promise that "a
+# few user requests to the database each day" is enough, and Supabase staff have
+# confirmed writes count while saying nothing about reads. One anon read per day
+# turned out to sit below the line -- the project still got paused while every
+# scheduled run here was green -- so this runs three times a day and writes.
 name: Supabase Keep-Alive
 
 on:
   schedule:
-    - cron: "0 3 * * *"
+    - cron: "0 1,9,17 * * *"
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase REST API
+      - name: Verify Management API secrets are present
+        # Without these the heartbeat below would post to an unresolvable
+        # project URL and fail with an opaque error instead of naming the cause.
         run: |
-          curl -sf "$SUPABASE_URL/rest/v1/keypad_configs?select=id&limit=1" \
+          test -n "$SUPABASE_PROJECT_REF" || { echo "SUPABASE_PROJECT_REF is empty"; exit 1; }
+          test -n "$SUPABASE_ACCESS_TOKEN" || { echo "SUPABASE_ACCESS_TOKEN is empty"; exit 1; }
+        env:
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Write a heartbeat row
+        # Goes through the Management API, the same path the dashboard SQL
+        # editor uses -- opening the dashboard is the one thing observed to
+        # reliably reset the inactivity timer. The table is created here rather
+        # than by a migration so the workflow stays self-contained.
+        #
+        # Until 2026-10-30 an existing project still grants every new public
+        # table to anon, which would put this one behind the public anon key.
+        # Revoking and enabling RLS closes that off; the statements below still
+        # run because RLS does not apply to the table owner. All of it is
+        # idempotent, so a dropped or re-granted table heals on the next run.
+        run: |
+          read -r -d '' SQL <<'SQL_EOF' || true
+          create table if not exists public._keepalive (
+            id bigint generated always as identity primary key,
+            at timestamptz not null default now()
+          );
+          revoke all on public._keepalive from anon, authenticated;
+          alter table public._keepalive enable row level security;
+          insert into public._keepalive default values;
+          delete from public._keepalive where at < now() - interval '30 days';
+          select count(*) as beats, max(at) as latest from public._keepalive;
+          SQL_EOF
+          jq -n --arg query "$SQL" '{query: $query}' > payload.json
+          curl -sS --fail-with-body -X POST \
+            "https://api.supabase.com/v1/projects/$SUPABASE_PROJECT_REF/database/query" \
+            -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data @payload.json
+        env:
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Query through PostgREST
+        # Second signal, over the path the app itself uses. This is kept only to
+        # prove PostgREST answers; it cannot prove the query did anything. The
+        # select policy on keypad_configs is `auth.uid() = user_id`, and
+        # auth.uid() is null for anon, so the result is an empty array by
+        # design, however much data the table holds. That is what a year of
+        # green runs was actually reporting, and why this workflow now writes.
+        run: |
+          body=$(curl -sS --fail-with-body \
+            "$SUPABASE_URL/rest/v1/keypad_configs?select=id&limit=1" \
             -H "apikey: $SUPABASE_ANON_KEY" \
-            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
-            > /dev/null
-          echo "Supabase pinged successfully"
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+          echo "PostgREST returned: $body (an empty array is expected for anon)"
         env:
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
