@@ -59,18 +59,18 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
       - name: Query through PostgREST
-        # Second signal, over the path the app itself uses. Row Level Security
-        # turns a blocked anon read into HTTP 200 with an empty array, which the
-        # previous `curl -sf` reported as success, so check the body too.
+        # Second signal, over the path the app itself uses. This is kept only to
+        # prove PostgREST answers; it cannot prove the query did anything. The
+        # select policy on keypad_configs is `auth.uid() = user_id`, and
+        # auth.uid() is null for anon, so the result is an empty array by
+        # design, however much data the table holds. That is what a year of
+        # green runs was actually reporting, and why this workflow now writes.
         run: |
           body=$(curl -sS --fail-with-body \
             "$SUPABASE_URL/rest/v1/keypad_configs?select=id&limit=1" \
             -H "apikey: $SUPABASE_ANON_KEY" \
             -H "Authorization: Bearer $SUPABASE_ANON_KEY")
-          echo "PostgREST returned: $body"
-          if [ "$body" = "[]" ]; then
-            echo "::warning::No rows visible to anon -- RLS may be hiding every row"
-          fi
+          echo "PostgREST returned: $body (an empty array is expected for anon)"
         env:
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
