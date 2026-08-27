@@ -30,12 +30,20 @@ jobs:
         # editor uses -- opening the dashboard is the one thing observed to
         # reliably reset the inactivity timer. The table is created here rather
         # than by a migration so the workflow stays self-contained.
+        #
+        # Until 2026-10-30 an existing project still grants every new public
+        # table to anon, which would put this one behind the public anon key.
+        # Revoking and enabling RLS closes that off; the statements below still
+        # run because RLS does not apply to the table owner. All of it is
+        # idempotent, so a dropped or re-granted table heals on the next run.
         run: |
           read -r -d '' SQL <<'SQL_EOF' || true
           create table if not exists public._keepalive (
             id bigint generated always as identity primary key,
             at timestamptz not null default now()
           );
+          revoke all on public._keepalive from anon, authenticated;
+          alter table public._keepalive enable row level security;
           insert into public._keepalive default values;
           delete from public._keepalive where at < now() - interval '30 days';
           select count(*) as beats, max(at) as latest from public._keepalive;
