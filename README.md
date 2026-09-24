@@ -1,10 +1,8 @@
 # Schnell Keyboard Key Configuration Tool
 
-[![Deploy](https://github.com/DriftKingTW/Schnell-Keypad-Configuration-Tool/actions/workflows/deploy.yml/badge.svg)](https://github.com/DriftKingTW/Schnell-Keypad-Configuration-Tool/actions/workflows/deploy.yml)
-
 This is a web based keyconfig generator and firmware install tool for [Schnell Keyboard by DriftKingTW](https://github.com/DriftKingTW/Schnell-BLE-Keypad).
 
-- [Web Demo](https://driftkingtw.github.io/Schnell-Keypad-Configuration-Tool/)
+- [Web App](https://schnell.driftking.tw/config/) (deployed by Cloudflare Pages on every push to `master`)
 
 - Flash generated config file to the keypad: [Schnell Keyboard Keyconfig Flash Tool](https://github.com/DriftKingTW/Schnell-BLE-Keypad/tree/master/tools/keyconfig-flash-tool)
 

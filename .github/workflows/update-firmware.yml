@@ -4,7 +4,8 @@ name: Update firmware from release
 # (via repository_dispatch), or manually from the Actions tab to re-pull a
 # specific tag. It downloads the release's flashable images, drops them into
 # the matching channel folder, regenerates the esp-web-tools manifest and
-# commits to master, which makes deploy.yml redeploy GitHub Pages.
+# commits to master; Cloudflare Pages deploys every push to master, including
+# this bot commit, so no separate deploy step is needed.
 
 on:
   repository_dispatch:
@@ -21,8 +22,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 env:
   FW_REPO: DriftKingTW/Schnell-BLE-Keypad
@@ -73,7 +72,7 @@ jobs:
             '{
               name: "Schnell Keypad Firmware",
               version: $version,
-              start_url: "/Schnell-Keypad-Configuration-Tool/",
+              start_url: "/config/",
               new_install_improv_wait_time: 10,
               builds: [
                 {
@@ -121,16 +120,3 @@ jobs:
           fi
           git commit -m "chore: update ${{ steps.vars.outputs.channel }} firmware to ${{ steps.vars.outputs.tag }}"
           git push
-
-  # The commit above is pushed with GITHUB_TOKEN, which does not re-trigger
-  # deploy.yml's push event, so deploy it explicitly here.
-  deploy:
-    needs: update
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    uses: ./.github/workflows/deploy.yml
-    # Called workflows get no secrets by default, so without this the build
-    # runs with empty VITE_SUPABASE_* and ships a site with cloud login off.
-    secrets: inherit

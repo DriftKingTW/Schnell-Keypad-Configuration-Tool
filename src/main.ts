@@ -1,4 +1,5 @@
 import { createApp } from "vue";
+import { importMigratedData } from "./migrate";
 import App from "./App.vue";
 import { createI18n } from "vue-i18n";
 import en from "./locales/en.json";
@@ -20,5 +21,7 @@ const i18n = createI18n({
     "zh-CN": zhCN,
   },
 });
+
+importMigratedData();
 
 createApp(App).use(store, key).use(i18n).use(VueSplide).mount("#app");

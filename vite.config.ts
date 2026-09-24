@@ -20,7 +20,7 @@ export default defineConfig({
       include: [fileURLToPath(new URL("./src/locales/**", import.meta.url))],
     }),
   ],
-  base: "/Schnell-Keypad-Configuration-Tool/",
+  base: "/config/",
   // Vite 8's (rolldown) dependency optimizer emits a broken pre-bundle for
   // vue-i18n ("init_runtime_dom_esm_bundler is not defined"), blanking the dev
   // app. Serve it as native ESM instead of pre-bundling it. Dev-only; the
