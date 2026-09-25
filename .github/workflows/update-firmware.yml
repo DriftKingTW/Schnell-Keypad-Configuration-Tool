@@ -77,9 +77,13 @@ jobs:
               builds: [
                 {
                   chipFamily: "ESP32-S3",
+                  # The images keep a fixed URL per channel and browsers
+                  # cache .bin files, so a new release could flash the
+                  # previous one (v1.1.0-beta.7 installed as beta.6). The
+                  # version query gives every release its own URL.
                   parts: [
-                    { path: "merged-firmware.bin", offset: "0x0" },
-                    { path: "spiffs.bin", offset: "0x210000" }
+                    { path: ("merged-firmware.bin?v=" + $version), offset: "0x0" },
+                    { path: ("spiffs.bin?v=" + $version), offset: "0x210000" }
                   ]
                 }
               ]

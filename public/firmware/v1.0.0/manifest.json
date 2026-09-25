@@ -8,11 +8,11 @@
       "chipFamily": "ESP32-S3",
       "parts": [
         {
-          "path": "merged-firmware.bin",
+          "path": "merged-firmware.bin?v=v1.0.0",
           "offset": "0x0"
         },
         {
-          "path": "spiffs.bin",
+          "path": "spiffs.bin?v=v1.0.0",
           "offset": "0x210000"
         }
       ]
