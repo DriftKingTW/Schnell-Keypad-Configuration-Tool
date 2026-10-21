@@ -14,6 +14,11 @@ create table if not exists public.keypad_configs (
   unique (user_id, name)
 );
 
+-- Data API access. From 2026-10-30 Supabase no longer grants new public tables
+-- to the API roles, so a fresh project needs this (an existing one already has
+-- it). Signed-in users only; the policies below limit them to their own rows.
+grant select, insert, update, delete on public.keypad_configs to authenticated;
+
 -- Row Level Security: each user can only see and modify their own configs.
 alter table public.keypad_configs enable row level security;
 
