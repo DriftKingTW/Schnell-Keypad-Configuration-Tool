@@ -44,8 +44,11 @@ npm run preview
 
 ## Deployment
 
-The web app deploys to GitHub Pages automatically on every push to `master`
-(`.github/workflows/deploy.yml`). No manual step is required.
+The web app deploys to Cloudflare Pages automatically on every push to `master`
+(Cloudflare's Git integration; no workflow in this repo). Every other pushed
+branch gets a preview at
+`https://<branch>.schnell-keypad-configuration-tool.pages.dev/config/`. No manual
+step is required.
 
 ## Releasing firmware
 

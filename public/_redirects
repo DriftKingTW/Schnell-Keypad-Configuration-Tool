@@ -1,0 +1,5 @@
+# The app is built with base /config/ (vite.config.ts). On the live site,
+# schnell.driftking.tw/config/ reaches this Pages project without the prefix.
+# Direct *.pages.dev URLs (branch previews) keep it, so every asset would fall
+# back to index.html and the page would stay blank. Map the prefix back here.
+/config/* /:splat 200
