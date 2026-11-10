@@ -72,12 +72,12 @@ let editInfoText = ref("");
 let isSelectingMacro = ref(false);
 let macroIndex = ref(-1);
 
-const props = defineProps([
-  "configTitles",
-  "rotaryEncoder",
-  "currentLayoutIndex",
-  "macros",
-]);
+const props = defineProps<{
+  configTitles: any;
+  rotaryEncoder: any;
+  currentLayoutIndex: any;
+  macros: any[];
+}>();
 const emit = defineEmits(["updateRotaryEncoder"]);
 const currentLayoutIndex = ref(0);
 const outputJsonString = ref("");
